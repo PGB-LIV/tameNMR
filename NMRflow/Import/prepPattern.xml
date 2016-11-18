@@ -1,0 +1,33 @@
+<tool id="prepPattern" name="Prepare" version="0.0.1">
+    <description> pattern file </description>
+    <command interpreter="Rscript">
+        prepPattern.R --input=$input --output=$output --type=$type
+    </command>
+
+    <inputs>
+        <param name="input" type="data" label="Pattern file" />
+        <!--param name="source" type="select" label="Source" >
+          <option value="history">History</option>
+          <option value="ftp">FTP server</option>
+        </param-->
+        <param name="type" type="select" label="Type of pattern file" >
+          <option value="BrukerPattern">Bruker pattern file</option>
+          <option value="csvTable">csv table</option>
+        </param>
+    </inputs>
+
+    <outputs>
+        <data format="tabular" name="output" label="Pattern"/>
+    </outputs>
+
+    <!--
+    <requirements>
+    </requirements>
+
+    <tests>
+    </tests>
+-->
+
+    <!--help>
+    </help-->
+</tool>

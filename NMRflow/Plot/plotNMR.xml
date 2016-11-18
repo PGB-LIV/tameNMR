@@ -1,0 +1,27 @@
+
+<tool id="plotnmr" name="Plot NMR" version="1.0.1">
+    <description> spectra </description>
+    <command interpreter="Rscript">
+        PlotNMR.R --input=$input --output=$output --outDir=$output.files_path --ppmInt=$ppmInt
+    </command>
+
+    <inputs>
+        <param name="input" type="data" label="Source" />
+        <param name="ppmInt" type="text" label="Interval to plot (ppm)" value="10-0" />
+    </inputs>
+
+    <outputs>
+        <data format="html" name="output" label="NMR Plot"/>
+    </outputs>
+
+    <!--
+    <requirements>
+    </requirements>
+
+    <tests>
+    </tests>
+
+    <help>
+    </help>
+-->
+</tool>

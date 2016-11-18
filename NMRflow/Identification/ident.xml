@@ -1,0 +1,26 @@
+
+<tool id="identify" name="Identify" version="0.0.1">
+    <description> metabolites in the data </description>
+    <command interpreter="python">
+        importTest.py $input $output
+    </command>
+
+    <inputs>
+        <param name="input" type="data" label="Source" />
+    </inputs>
+
+    <outputs>
+        <data format="txt" name="output" label="First lines of imports"/>
+    </outputs>
+
+    <!--
+    <requirements>
+    </requirements>
+
+    <tests>
+    </tests>
+
+    <help>
+    </help>
+-->
+</tool>

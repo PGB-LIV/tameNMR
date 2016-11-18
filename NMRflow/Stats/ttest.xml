@@ -1,0 +1,48 @@
+
+<tool id="ttest" name="Student's t-test" version="0.0.1">
+    <description>  </description>
+    <command interpreter="Rscript">
+        Ttest.R --input=$input --output=$output --outdir=$output.files_path --factorFile=$factorFile --factorCol=$factorCol --way=$way --paired=$paired --conf_level=$conf_level --adjust=$adjust
+    </command>
+
+    <inputs>
+        <param name="input" type="data" label="Dataset"/>
+        <param name="factorFile" type="data" label="Factor"/>
+        <param name="factorCol" type="integer" label="Factor column to use" value="1"/>
+        <param name="way" type="select" label="Type of test">
+            <option value="greater">One-way greater</option>
+            <option value="less">One-way lower</option>
+            <option value="two.sided" selected="true">Two-way</option>
+        </param>
+        <!--param name="var.equal" type="boolean" label="Are the variances asumed equal?" truevalue="Y" falsevalue="N"/-->
+        <param name="paired" type="boolean" label="Are the observations paired?" truevalue="Y" falsevalue="N"/>
+        <param name="conf_level" type="float" label="Confidence level" value="0.05" min="0" max="1"/>
+
+        <param name="adjust" type="select" label="Adjust for multiple testing?">
+            <option value="none">None</option>
+            <option value="BH" selected="true">Benjamini-Hochberg</option>
+            <option value="BY">Benjamini-Yakutieli</option>
+            <option value="bonferroni">Bonferroni</option>
+            <option value="hochberg">Hochberg</option>
+            <option value="holm">Holm</option>
+            <option value="hommel">Hommel</option>
+        </param>
+        <!--param /-->
+    </inputs>
+
+    <outputs>
+        <data format="html" name="output" label="t-test results"/>
+        <!--data format="csv" name="output" label="t-test results"/-->
+    </outputs>
+
+    <!--
+    <requirements>
+    </requirements>
+
+    <tests>
+    </tests>
+
+    <help>
+    </help>
+-->
+</tool>

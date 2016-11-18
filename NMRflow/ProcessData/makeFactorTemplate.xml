@@ -1,0 +1,26 @@
+
+<tool id="factorTemp" name="Make" version="0.0.1">
+    <description> a factor template  </description>
+    <command interpreter="Rscript">
+        MakeFactTemp.R --input=$input --output=$output
+    </command>
+
+    <inputs>
+        <param name="input" type="data" label="Binned Data"/>
+    </inputs>
+
+    <outputs>
+        <data format="tabular" name="output" label="Factor template"/>
+    </outputs>
+
+    <!--
+    <requirements>
+    </requirements>
+
+    <tests>
+    </tests>
+
+    <help>
+    </help>
+-->
+</tool>

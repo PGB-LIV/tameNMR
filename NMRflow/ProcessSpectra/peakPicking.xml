@@ -1,0 +1,26 @@
+
+<tool id="peakpick" name="Peak picking" version="0.0.1">
+    <description> </description>
+    <command interpreter="Rscript">
+        PeakPick.R --input=$input --output=$output
+    </command>
+
+    <inputs>
+        <param name="input" type="data" label="NMR Data"/>
+    </inputs>
+
+    <outputs>
+        <data format="tabular" name="output" label="Picked Peaks"/>
+    </outputs>
+
+    <!--
+    <requirements>
+    </requirements>
+
+    <tests>
+    </tests>
+
+    <help>
+    </help>
+-->
+</tool>

@@ -1,0 +1,40 @@
+
+<tool id="normalise" name="Normalisation" version="0.0.1">
+    <description></description>
+    <command interpreter="Rscript">
+        #if $method_choice.method == "refPeak"
+            Normalise.R --input=$input --output=$output --type=$method_choice.method --param=$method_choice.param
+        #else
+            Normalise.R --input=$input --output=$output --type=$method_choice.method
+        #end if
+    </command>
+
+    <inputs>
+        <param name="input" type="data" label="NMR Data"/>
+        <conditional name="method_choice">
+            <param name="method" type="select" label="Normalisation method">
+                <option value="PQN">PQN</option>
+                <option value="totInt">Total integral</option>
+                <option value="refPeak">Reference peak</option>
+            </param>
+            <when value="refPeak">
+                <param name="param" type="text" label="Peak position in ppm (ex. 0.01-0.011)"/>
+            </when>
+        </conditional>
+    </inputs>
+
+    <outputs>
+        <data format="tabular" name="output" label="Normalised Data"/>
+    </outputs>
+
+    <!--
+    <requirements>
+    </requirements>
+
+    <tests>
+    </tests>
+
+    <help>
+    </help>
+-->
+</tool>

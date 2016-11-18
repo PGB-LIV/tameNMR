@@ -1,0 +1,41 @@
+
+<tool id="anova" name="One-way ANOVA" version="0.0.1">
+    <description>  </description>
+    <command interpreter="Rscript">
+        Anova.R --input=$input --output=$output --outDir=$output.files_path --factorFile=$factorFile --factorCol=$factorCol --adjust=$adjust --confLevel=$conf_level
+    </command>
+
+    <inputs>
+        <param name="input" type="data" label="Data"/>
+        <param name="factorFile" type="data" label="Group factor"/>
+        <param name="factorCol" type="integer" label="Factor column to use" value="1"/>
+        <param name="conf_level" type="float" label="Confidence level" value="0.05" min="0" max="1"/>
+
+        <param name="adjust" type="select" label="Adjust for multiple testing?">
+            <option value="none">None</option>
+            <option value="BH" selected="true">Benjamini-Hochberg</option>
+            <option value="BY">Benjamini-Yakutieli</option>
+            <option value="bonferroni">Bonferoni</option>
+            <option value="hochberg">Hochberg</option>
+            <option value="holm">Holm</option>
+            <option value="hommel">Hommel</option>
+        </param>
+        <!--param /-->
+    </inputs>
+
+    <outputs>
+        <data format="html" name="output" label="Anova results"/>
+        <!--data format="csv" name="output" label="Anova results"/-->
+    </outputs>
+
+    <!--
+    <requirements>
+    </requirements>
+
+    <tests>
+    </tests>
+
+    <help>
+    </help>
+-->
+</tool>

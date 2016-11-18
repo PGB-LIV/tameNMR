@@ -1,0 +1,37 @@
+
+<tool id="import_to_csv" name="Import" version="0.0.1">
+    <description> Bruker NMR data </description>
+    <command interpreter="python">
+        import2csv.py $input $output
+    </command>
+
+    <inputs>
+        <param name="input" type="ftpfile" label="Bruker Experiment" />
+        <!--param name="vendor" type="select" label="NMR Vendor">
+            <option value="bruker">Bruker</option>
+            <option value="varian">Varian</option>
+        </param>
+        <param name="proc" type="select" label="Is the data processed?">
+            <option value="processed">Processed</option>
+            <option value="raw">Raw</option>
+        </param-->
+    </inputs>
+
+    <outputs>
+        <data format="tabular" name="output" label="Imported NMR data"/>
+    </outputs>
+    <requirements>
+        <requirement type="package" version="0.5">nmrglue</requirement>
+        <!--requirement type="package">numpy</requirement>
+        <requirement type="package">scipy</requirement>
+        <requirement type="package">pandas</requirement-->
+    </requirements>
+
+    <!--
+    <tests>
+    </tests>
+
+    <help>
+    </help>
+-->
+</tool>

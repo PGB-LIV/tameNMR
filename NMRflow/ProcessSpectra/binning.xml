@@ -1,0 +1,47 @@
+
+<tool id="binning" name="Binning" version="0.0.1">
+    <description> (Bucketing) </description>
+    <command interpreter="Rscript">
+        #if $method_choice.method == "uniform"
+            BinSpectra.R --input=$input --output=$output --method=$method_choice.method --binSize=$method_choice.binSize
+        #else if $method_choice.method == "custom"
+            BinSpectra.R --input=$input --output=$output --method=$method_choice.method --pattern=$method_choice.pattern
+        #else
+            BinSpectra.R --input=$input --output=$output --method=$method_choice.method
+        #end if
+    </command>
+
+    <inputs>
+        <param name="input" type="data" label="Processed Data" />
+        <conditional name="method_choice">
+            <param name="method" type="select" label="Method">
+                <option value="uniform" selected="true">Uniform</option>
+                <option value="custom">Pattern</option>
+                <!--option value="intelligent">Intelligent</option-->
+            </param>
+            <when value="uniform">
+                <param name="binSize" type="float" value="0.02" label="Bin size in ppm"/>
+            </when>
+            <when value="custom">
+                <param name="pattern" type="data" label="Pattern File"/>
+            </when>
+            <!--when value="intelligent">
+            </when-->
+        </conditional>
+    </inputs>
+
+    <outputs>
+        <data format="tabular" name="output" label="Binned Spectra"/>
+    </outputs>
+
+    <!--
+    <requirements>
+    </requirements>
+
+    <tests>
+    </tests>
+
+    <help>
+    </help>
+-->
+</tool>

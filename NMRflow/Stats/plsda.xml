@@ -1,0 +1,27 @@
+<tool id="pls-da" name="PLS-DA" version="1.0.1">
+    <description> </description>
+    <command interpreter="Rscript">
+        PLSDA.R --input=$input --output=$output --outDir=$output.files_path --factorFile=$factor --factorCol=$factorCol
+    </command>
+
+    <inputs>
+        <param name="input" type="data" label="Data" />
+        <param name="factor" type="data" label="Factor" />
+        <param name="factorCol" type="integer" value="1" label="Factor column" />
+    </inputs>
+
+    <outputs>
+        <data format="html" name="output" label="PLS-DA Results"/>
+    </outputs>
+
+    <!--
+    <requirements>
+    </requirements>
+
+    <tests>
+    </tests>
+
+    <help>
+    </help>
+-->
+</tool>

@@ -1,2 +1,3 @@
-# tameNMR
-Tools for Analysis of Metabolomic NMR
+# NMRflow
+
+A Galaxy based NMR metabolomics tool suite.
