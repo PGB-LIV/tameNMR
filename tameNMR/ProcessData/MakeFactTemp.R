@@ -25,6 +25,7 @@ argsDF = as.data.frame(do.call('rbind', parseArgs(args)))
 args = as.list(as.character(argsDF[,2]))
 names(args) <- argsDF[,1]
 
+# prepare the template
 data = read.table(args[['input']], header=T, row.names=1, stringsAsFactors = F, sep='\t')
 out = data.frame(samples=rownames(data))
 write.table(out, file=args[['output']], sep=',', row.names = F, col.names = T)
