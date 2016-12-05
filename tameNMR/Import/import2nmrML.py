@@ -75,7 +75,7 @@ def extractInfile(infile):
                 tf.extractall(path=infile_new)
             return infile_new
         except IOError as e:
-            print e.messge
+            print e.message
     else:
         return infile
 

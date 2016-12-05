@@ -69,7 +69,7 @@ PCA_Scores_Plot <- function(pc, groups, useLabels=F, labels = "", pcs=c(1,2), le
 
   label_offset_x <- 0.035 * (range(pcdf$pc1)[2] - range(pcdf$pc1)[1])
   label_offset_y <- 0.035 * (range(pcdf$pc2)[2] - range(pcdf$pc2)[1])
-  groups = as.factor*(groups)
+  groups = as.factor(groups)
   .e <- environment()
   p <- ggplot(data=pcdf, aes(x=pc1, y=pc2), environment=.e) + geom_point(size=5, aes(fill=groups), colour='black', pch=21)
 
