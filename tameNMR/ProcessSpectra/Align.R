@@ -27,7 +27,6 @@ args = as.list(as.character(argsDF[,2]))
 names(args) <- argsDF[,1]
 
 suppressMessages(library(speaq))
-#source('lib.R')
 # ----------------- functions -------------------------------
 
 readNMRTabFile <- function(inpath){
@@ -35,7 +34,6 @@ readNMRTabFile <- function(inpath){
   data = as.matrix(data)
   data
 }
-
 
 writeNMRTabFile <- function(data, outpath){
   write.table(data, file=outpath, row.names=F, col.names=T, sep='\t')
@@ -45,18 +43,6 @@ writeNMRTabFile <- function(data, outpath){
 ppm2pos <- function(peakList, ppms){
   getPos <- function(peak) which.min(abs(ppms-peak))
   do.call('c', lapply(peakList, getPos))
-}
-
-parsePpmIntervals <- function(ppmInts){
-  intervals <- strsplit(ppmInts, ',')[[1]]
-
-  intervals <- do.call('rbind', lapply(intervals, function(x) strsplit(x,'-')[[1]]))
-  intervals <- cbind(as.numeric(intervals[,1]),as.numeric(intervals[,2]))
-  intervals <- do.call('rbind', lapply(1:nrow(intervals), function(i) { if(intervals[i,1] > intervals[i,2]) {rev(intervals[i,])} else {intervals[i,]}} ))
-  # TODO merge and sort the intervals
-  #intervals <- mergeIntervals(intervals) #  Merge the overlapping intervals
-  intervals <- intervals[order(intervals[,1]),]
-  intervals
 }
 
 RangeScale<-function(x){
@@ -73,13 +59,11 @@ data <- readNMRTabFile(args[['inData']])
 peaks <- readNMRTabFile(args[['inPeaks']])
 
 # -- convert peaks file to list
-
 peakList <- as.list(as.data.frame(peaks))
 peakList <- lapply(peakList, function(x) x[!is.na(x)])
-
 peakList <- lapply(peakList, function(x) ppm2pos(x, data[,1]))
-# -- align the spectra
 
+# -- align the spectra
 resFindRef <- findRef(peakList)
 refInd <- resFindRef$refInd
 cat("\n Order of spectrum for reference \n")

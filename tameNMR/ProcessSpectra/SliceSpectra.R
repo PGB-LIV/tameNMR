@@ -49,11 +49,43 @@ parsePpmIntervals <- function(ppmInts){
     intervals <- do.call('rbind', lapply(intervals, function(x) strsplit(x,'-')[[1]]))
     intervals <- cbind(as.numeric(intervals[,1]),as.numeric(intervals[,2]))
     intervals <- do.call('rbind', lapply(1:nrow(intervals), function(i) { if(intervals[i,1] > intervals[i,2]) {rev(intervals[i,])} else {intervals[i,]}} ))
-    # TODO merge and sort the intervals
-    intervals <- intervals[order(intervals[,1]),]
+    intervals <- merge.Ints(intervals)
   }
-
   intervals
+}
+
+merge.Ints = function(inMat){
+  # merge overlapping intervals
+  inMat = do.call('rbind', lapply(1:nrow(inMat), function(x) sort(inMat[x,])))
+  inMat = inMat[order(inMat[,1]),]
+  out = matrix(nrow=0, ncol=2)
+  
+  curr = inMat[1,]
+  for(i in 2:(nrow(inMat))){
+    if(is.overlap(curr, inMat[i,])) curr = merge2Ints(curr, inMat[i,])
+    else {
+      out = rbind(out,curr)
+      curr = inMat[i,]
+    }
+  } 
+  out = rbind(out, curr) # add last curr to the result
+  unname(out)
+}
+
+is.overlap = function(x,y){
+  # checks if two 2d vectors overlap
+  if (any(is.na(x)) | any(is.na(y))) return(FALSE)
+  else{
+    if (x[2] < x[1]) x = c(x[2],x[1])
+    if (y[2] < y[1]) y = c(y[2],y[1])
+    return(!((x[2] < y[1]) | (y[2] < x[1])))
+  }
+}
+
+merge2Ints = function(x,y){
+  # merge two 2d intervals
+  tmp = c(x,y)
+  c(min(tmp), max(tmp)) 
 }
 
 # ---------------------------------------------------------
@@ -70,9 +102,11 @@ if(args[['remWater']]=='Y') data = data[!(data[,1] <= 4.9 & data[,1] >= 4.3),]
 if (!is.null(dim(intervals))){
   data_ = do.call('rbind', lapply(intervals, function(x) data[data[,1] >= min(x) & data[,1] <= max(x),]))
   colnames(data_) = c('ppm', colnames(data)[2:ncol(data)])
-} else {
+} else if(nrow(intervals == 1)) {
   data_ = data[data[,1] >= min(intervals) & data[,1] <= max(intervals),]
   colnames(data_) = c('ppm', colnames(data)[2:ncol(data)])
+} else {
+  
 }
 
 # -- write the data

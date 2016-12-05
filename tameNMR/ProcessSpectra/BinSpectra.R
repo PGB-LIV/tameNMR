@@ -67,8 +67,6 @@ uniformBinning <- function(data, ppms, wndw){
 }
 
 # -- Pattern file-based binning
-
-
 customBinning <- function(data, ppms, pattern){
   ppmInterval2Pos <- function(ppms, interval){
     bin = which(ppms>=min(interval) & ppms<=max(interval))
@@ -107,8 +105,8 @@ customBinning <- function(data, ppms, pattern){
   names(dataInt) = pattern[,3]
   dataInt
 }
-# -- Intelligent Binning (paper)
 
+# -- Intelligent Binning (paper)
 intelligentBinning <- function(data){
   # TODO
   print('Intelligent binning is not yet implemented')
