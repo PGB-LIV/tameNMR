@@ -53,6 +53,39 @@ plot_anova <- function(res, outdir){
   fileName
 }
 
+plot.ANOVA = function(res, main='Significant Bins (ANOVA)', showLabels = F){
+  labels = rownames(res)
+  X = 1:nrow(res)
+  sig = res[,2] <= 0.05
+  cols = ifelse(sig, "steelblue","navy")
+  
+  Y = -log10(res[,2])
+  plot(X,Y, col=cols, pch=16, main=main, xlab='Bins', ylab="-log10(p-val)")#, axes=F)
+  if(showLabels) {
+    Xsig = X[sig]
+    Ysig = Y[sig]
+    text(Xsig+0.02*max(Xsig),Ysig+0.02*max(Ysig), labels = rownames(res)[sig])
+    }
+  abline(h=-log10(0.05))
+}
+
+do_anova_Multi = function(data, groups, adjustMethod='fdr', thresh=0.05){
+  aov.res = apply(data,2,function(x) aov(x~groups))
+  anova.res = lapply(aov.res, anova)
+  res<-do.call('rbind', lapply(anova.res, function(x) { c(x["F value"][1,], x["Pr(>F)"][1,])}))
+  res[,2] = p.adjust(res[,2],method = adjustMethod)
+  #sigs = which(res[,2]<=thresh)
+  
+  posthoc.res<-lapply(aov.res, TukeyHSD, conf.level=1-thresh)
+  tukey_pvals = extract.pVals.Tukey(posthoc.res, thresh)
+  
+  return(list(anova_pvals = res, posthoc_res = posthoc.res, tukey_pvals = tukey_pvals, anova_res = anova.res))
+}
+
+extract.pVals.Tukey = function(tukey.res, thresh=0.05){
+  do.call('rbind', lapply(tukey.res, function(x) x[1][[1]][,'p adj']))
+}
+
 makeHTML <- function(res, files){
   # files - a list of files to display (files within each entry are displayed next to each other?)
   css.H1 <- '\"text-align: center;font-family:verdana; font-size:30px\"'
@@ -103,11 +136,21 @@ makeHTML <- function(res, files){
   html
 }
 
-pvals = do.call('c', lapply(1:ncol(data), function(i) calc_aov_Pval(data[,i], fac)))
-adj.p_vals = p.adjust(pvals, method=adjust)
-res = data.frame(p_vals = round(pvals,3), adj.p_vals=round(adj.p_vals,3))
+resAnova = do_anova_Multi(data, fac)
+TukeyFilter = resAnova$tukey_pvals <= 0.05
+SigBins = apply(TukeyFilter, 2, sum)
+
+
+pvalsPlot = paste(args[['output']],'/pvals.png',sep='')
+png(pvalsPlot)
+plot.ANOVA(resAnova$anova_pvals)
+dev.off()
+
+#pvals = do.call('c', lapply(1:ncol(data), function(i) calc_aov_Pval(data[,i], fac)))
+#adj.p_vals = p.adjust(pvals, method=adjust)
+res = data.frame(p_vals = round(resAnova$anova_pvals,3), adj.p_vals=round(resAnova$anova_pvals_vals,3))
 rownames(res) <- names(data)
-names(res) = c('p-values', 'adjusted p-values')
+names(res) = c('p-values', paste('adjusted p-values (',args[[adjust]],' )', sep=''))
 
 if(!dir.exists(args[['outDir']])) dir.create(args[['outDir']], showWarnings = F)
 

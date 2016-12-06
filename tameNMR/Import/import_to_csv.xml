@@ -30,8 +30,16 @@
     <!--
     <tests>
     </tests>
+-->
 
     <help>
+
+        .. class:: infomark
+
+        '''INFO''' This tool requires a tar.gz or a zip file uploaded through ftp
+        to your account. The file should contain a Bruker nmr experiments without
+        the parent directory.
+
     </help>
--->
+
 </tool>

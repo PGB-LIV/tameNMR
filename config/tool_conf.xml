@@ -34,38 +34,38 @@
         <!-- NMR Metabolomics tools -->
 
   <section id="import_data" name="Import Data">
-      <!--tool file="NMRflow/Import/import_to_nmrML.xml" /-->
-	  <tool file="NMRflow/Import/import_to_csv.xml" />
-	  <tool file="NMRflow/Import/prepPattern.xml" />
+      <!--tool file="tameNMR/Import/import_to_nmrML.xml" /-->
+	  <tool file="tameNMR/Import/import_to_csv.xml" />
+	  <tool file="tameNMR/Import/prepPattern.xml" />
   </section>
   <section id="procSpectra" name="Spectra Processing">
-      <tool file="NMRflow/ProcessSpectra/slice.xml" />
-      <tool file="NMRflow/ProcessSpectra/normalisation.xml" />
-      <tool file="NMRflow/ProcessSpectra/peakPicking.xml" />
-      <tool file="NMRflow/ProcessSpectra/alignment.xml" />
-      <tool file="NMRflow/ProcessSpectra/binning.xml" />
+      <tool file="tameNMR/ProcessSpectra/slice.xml" />
+      <tool file="tameNMR/ProcessSpectra/normalisation.xml" />
+      <tool file="tameNMR/ProcessSpectra/peakPicking.xml" />
+      <tool file="tameNMR/ProcessSpectra/alignment.xml" />
+      <tool file="tameNMR/ProcessSpectra/binning.xml" />
   </section>
   <!--section id="ident" name="Identification">
-      <tool file="NMRflow/ident/ident.xml" />
+      <tool file="tameNMR/ident/ident.xml" />
   </section-->
   <!--section id="quant" name="Quantification">
-      <tool file="NMRflow/quant/quant.xml" />
+      <tool file="tameNMR/quant/quant.xml" />
   </section-->
   <section id="prepData" name="Data Preparation">
-      <tool file="NMRflow/ProcessData/makeFactorTemplate.xml"/>
-      <tool file="NMRflow/ProcessData/scaling.xml"/>
+      <tool file="tameNMR/ProcessData/makeFactorTemplate.xml"/>
+      <tool file="tameNMR/ProcessData/scaling.xml"/>
   </section>
   <section id="stats" name="Statistics">
-      <tool file="NMRflow/Stats/ttest.xml" />
-      <tool file="NMRflow/Stats/anova.xml" />
-      <tool file="NMRflow/Stats/pca.xml" />
-      <tool file="NMRflow/Stats/plsda.xml" />
+      <tool file="tameNMR/Stats/ttest.xml" />
+      <tool file="tameNMR/Stats/anova.xml" />
+      <tool file="tameNMR/Stats/pca.xml" />
+      <tool file="tameNMR/Stats/plsda.xml" />
   </section>
   <section id="plots" name="Plots">
-      <tool file="NMRflow/Plot/plotNMR.xml"/>
-      <tool file="NMRflow/Plot/plotNMRBins.xml"/>
-      <tool file="NMRflow/Plot/plotNMRSig.xml"/>
-      <tool file="NMRflow/Plot/plotNMRQuantiles.xml"/>
+      <tool file="tameNMR/Plot/plotNMR.xml"/>
+      <tool file="tameNMR/Plot/plotNMRBins.xml"/>
+      <tool file="tameNMR/Plot/plotNMRSig.xml"/>
+      <tool file="tameNMR/Plot/plotNMRQuantiles.xml"/>
   </section>
 
 
