@@ -6,7 +6,7 @@
     </command>
 
     <inputs>
-        <param name="input" type="ftpfile" label="Bruker Experiment" />
+        <param name="input" type="data" label="Bruker Experiment" />
         <!--param name="vendor" type="select" label="NMR Vendor">
             <option value="bruker">Bruker</option>
             <option value="varian">Varian</option>
