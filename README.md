@@ -1,4 +1,4 @@
-# Tools for Analysis of MEtabolomic NMR (tameNMR)
+# *T*ools for *A*nalysis of *ME*tabolomic NMR (tameNMR)
 
 tameNMR is a suite of tools for processing and analysis of NMR data from metabolomics
 experiments. It is designed as a set of command line programs to be used
@@ -38,6 +38,7 @@ Following packages are required in order to run all the tools:
 
 1. R
     * ggplot2
+    * MassSpecWavelet
     * speaq
 2. Python
     * numpy
