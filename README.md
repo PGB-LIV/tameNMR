@@ -1,4 +1,4 @@
-# *T*ools for *A*nalysis of *ME*tabolomic NMR (tameNMR)
+# **T**ools for **A**nalysis of **ME*********tabolomic NMR (tameNMR)
 
 tameNMR is a suite of tools for processing and analysis of NMR data from metabolomics
 experiments. It is designed as a set of command line programs to be used
