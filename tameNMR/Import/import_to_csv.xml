@@ -2,11 +2,25 @@
 <tool id="import_to_csv" name="Import" version="0.0.1">
     <description> Bruker NMR data </description>
     <command interpreter="python">
-        import2csv.py $input $output
+        import2csv.py $input_type $output
     </command>
 
     <inputs>
-        <param name="input" type="data" label="Bruker Experiment" />
+        <conditional name="input_type">
+            <param name="source" type="select" label="NMR data source">
+                <option value="data" selected="True">Data</option>
+                <option value="ftp">FTP</option>
+            </param>
+            <when value="data">
+                <param name="input" type="data" label="Bruker Experiment" />
+            </when>
+            <when value="ftp">
+                <param name="input" type="ftpfile" label="Bruker Experiment" />
+            </when>
+        </conditional>
+
+
+
         <!--param name="vendor" type="select" label="NMR Vendor">
             <option value="bruker">Bruker</option>
             <option value="varian">Varian</option>
