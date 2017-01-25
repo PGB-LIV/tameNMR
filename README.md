@@ -35,6 +35,7 @@ The package includes the following tools:
 
 Most of the tools are implemented in R and Python.
 Following packages are required in order to run all the tools:
+
 1. R
     * ggplot2
     * speaq
@@ -51,4 +52,5 @@ The nmrML format (<http://nmrml.org>) has been developed as a uniform NMR
 data storage and exchange standard and is being rapidly adopted in the field.
 
 **This is a development version of tameNMR that changes quite often.**
+
 **Stable version will be available soon.**
