@@ -20,10 +20,15 @@ import numpy as np
 def main(args):
     """ Main function that runs the wrapper"""
 
-    galaxyPath = getGalaxyPath(args[0],args[1])
+    source = args[2]
 
     try:
-        infile = os.path.join(galaxyPath,args[0])
+        if source == 'ftp':
+            galaxyPath = getGalaxyPath(args[0],args[1])
+            infile = os.path.join(galaxyPath,args[0])
+        else:
+            infile = args[0]
+
         outfile = args[1]
     except:
         print 'usage: import2csv.py <infile> <outfile>'

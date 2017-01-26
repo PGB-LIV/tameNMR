@@ -2,7 +2,10 @@
 <tool id="import_to_csv" name="Import" version="0.0.1">
     <description> Bruker NMR data </description>
     <command interpreter="python">
-        import2csv.py $input_type $output
+        #if $input_type.source == 'data':
+            import2csv.py $input_type.input $output data
+        #else:
+            import2csv.py $input_type.input $output ftp
     </command>
 
     <inputs>
@@ -36,8 +39,8 @@
     </outputs>
     <requirements>
         <requirement type="package" version="0.5">nmrglue</requirement>
-        <!--requirement type="package">numpy</requirement>
-        <requirement type="package">scipy</requirement>
+        <requirement type="package" version="1.11.3">numpy</requirement>
+        <!--requirement type="package">scipy</requirement>
         <requirement type="package">pandas</requirement-->
     </requirements>
 
@@ -50,7 +53,7 @@
 
         .. class:: infomark
 
-        '''INFO''' This tool requires a tar.gz or a zip file uploaded through ftp
+        '''INFO''' This tool requires a zip file uploaded through ftp or upload tool
         to your account. The file should contain a Bruker nmr experiments without
         the parent directory.
 
