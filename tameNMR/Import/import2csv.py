@@ -5,17 +5,19 @@ import os
 import sys
 import zipfile
 import tarfile
-#import json
 import shutil
 import traceback
 
-import subprocess
-import nmrglue as ng
+#import nmrglue as ng
 import pandas as pd
 import numpy as np
-#from xml.dom import core
-#from xml.dom.html_builder import HtmlBuilder
 
+
+# hacky way to suppress deprecation warnings
+import warnings
+
+warnings.filterwarnings("ignore")
+import nmrglue as ng
 
 def main(args):
     """ Main function that runs the wrapper"""
@@ -40,7 +42,6 @@ def main(args):
         print e.message
 
     try:
-        print infile
         if os.path.isdir(infile):
             spectraDirs = os.listdir(infile)
         else:
@@ -56,10 +57,11 @@ def main(args):
 
     writeCsv(importedFiles, outfile)
 
-    #try:
-    #    shutil.rmtree(infile)
-    #except FileNotFoundError as e:
-    #    print e.message
+    # remove the unzipped folder
+    try:
+        shutil.rmtree(infile)
+    except FileNotFoundError as e:
+        print e.message
 ################################################################################
 # functions #
 ################################################################################
@@ -84,8 +86,10 @@ def extractInfile(infile, outFolder):
     Extracts the archive at <infile> if it is a zip or tar.gz and returns a
     path to the folder containing contents of the archive, otherwise returns
     the path.
+
+    Added support for zip files masqueraded as .dat for galaxy upload.
     """
-    if infile.endswith('.zip'):
+    if infile.endswith('.zip') or infile.endswith('.dat'):
         try:
             with zipfile.ZipFile(infile,'r') as zf:
                 zf.extractall(path=outFolder)

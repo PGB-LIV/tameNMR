@@ -102,12 +102,11 @@ if(args[['remWater']]=='Y') data = data[!(data[,1] <= 4.9 & data[,1] >= 4.3),]
 if (!is.null(dim(intervals))){
   data_ = do.call('rbind', lapply(intervals, function(x) data[data[,1] >= min(x) & data[,1] <= max(x),]))
   colnames(data_) = c('ppm', colnames(data)[2:ncol(data)])
-} else if(nrow(intervals == 1)) {
+} else {
   data_ = data[data[,1] >= min(intervals) & data[,1] <= max(intervals),]
   colnames(data_) = c('ppm', colnames(data)[2:ncol(data)])
-} else {
-  
 }
+
 
 # -- write the data
 write.table(data_, file=args[['output']], row.names=F, col.names=T, sep='\t')

@@ -2,10 +2,11 @@
 <tool id="import_to_csv" name="Import" version="0.0.1">
     <description> Bruker NMR data </description>
     <command interpreter="python">
-        #if $input_type.source == 'data':
+        #if str($input_type.source) == "data":
             import2csv.py $input_type.input $output data
         #else:
             import2csv.py $input_type.input $output ftp
+        #end if
     </command>
 
     <inputs>
