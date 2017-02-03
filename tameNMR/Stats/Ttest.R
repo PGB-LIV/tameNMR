@@ -21,6 +21,12 @@ if("--help" %in% args) {
   q(save="no")
 }
 
+#knitr::knit2html(input = '~/Desktop/test2.rmd', output = '~/Desktop/out.html', quiet = T)
+
+suppressMessages(require(ggplot2))
+suppressMessages(require(ggrepel))
+suppressMessages(require(knitr))
+
 parseArgs = function(x) strsplit(sub("^--", "", x),"=")
 argsDF = as.data.frame(do.call('rbind', parseArgs(args)))
 args = as.list(as.character(argsDF[,2]))
@@ -33,27 +39,101 @@ way = args[['way']]
 if (args[['paired']] == 'Y') {paired=T} else {paired=F}
 conf.level = as.numeric(args[['conf_level']])
 adjust = args[['adjust']]
+outdir = args[['outdir']]
 
-ttest = function(data, factor, paired, way, conf.level){
+ttest = function(data, factor, paired = F, way = 'two.sided', conf.level = 0.05){
   out = t.test(data~factor, paired=paired, alternative = way, conf.level = conf.level)
   return(round(c(out$p.value, out$conf.int[1], out$conf.int[2]),3))
 }
 
-plot.Pvals = function(res, main='P_values (T-Test)', showLabels = F){
-  # Plot P values as -log10(p)
-  labels = rownames(res)
-  X = 1:nrow(res)
-  sig = res[,"adj_p_val"] <= 0.05
-  cols = ifelse(sig, "steelblue","navy")
+ttest_all = function(data, factor, paired = F, way = 'two.sided', conf.level = 0.05, adjust = 'BH'){
   
+  res = do.call('rbind', lapply(1:ncol(data), function(i) ttest(data[,i], factor, paired, way, conf.level)))
+  res = as.data.frame(res)
+  res$adj.p_val = round(p.adjust(res[,1], method=adjust),3)
+  rownames(res) <- colnames(data)
+  names(res) <- c('p_val', 'conf_int_1','conf_int_2','adj_p_val')
+  res
+}
+
+plot.Pvals = function(res, showLabels = F, sigLvl = 0.05, main='P_values (T-Test)'){
+  
+  labels = rownames(res)
+  X = factor(1:nrow(res))
+  sig = res[,"adj_p_val"] <= sigLvl
+  cols = ifelse(sig, "steelblue","navy")
+  #cols = factor(ifelse(sig, "significant","non-significant"))
   Y = -log10(res[,"adj_p_val"])
-  plot(X,Y, col=cols, pch=16, main=main, xlab='Bins', ylab="-log10(p-val)")#, axes=F)
-  if(showLabels) {
-    Xsig = X[sig]
-    Ysig = Y[sig]
-    text(Xsig+0.02*max(Xsig),Ysig+0.02*max(Ysig), labels = rownames(res)[sig])
+  pltTemp = data.frame(X=X, Y=Y, cols=cols)
+  rownames(pltTemp) = labels
+  
+  p = ggplot(data=pltTemp, aes(x=X, y=Y))+
+    geom_point(col=cols)+
+    geom_abline(intercept = -log10(sigLvl), slope = 0, col='red')
+  
+  if(showLabels) p = p + geom_text_repel(aes(x = X, y=Y, label=rownames(res)))
+  
+  p = p+ 
+    theme_bw()+
+    ggtitle('P-values')+
+    xlab('Bins')+
+    ylab('-log10( p-value )')+
+    theme(axis.ticks.x=element_blank(), 
+          axis.text.x = element_blank(),
+          plot.title = element_text(hjust = 0.5))
+  p
+}
+
+plot.Bars = function(data, fact, pvals, xlabName='Bins', ylabName='Mean intensity', main='Bin means'){
+  dataAgg = aggregate(data, list(fact), mean)
+  fact_ = as.character(dataAgg[,1])
+  dataAgg = as.matrix(dataAgg[,2:ncol(dataAgg)])
+  meanMax = apply(dataAgg, 2, max)
+  
+  pltTemp = data.frame(means = c(dataAgg[1,], dataAgg[2,]), 
+                       groups = rep(fact_, each=ncol(dataAgg)), 
+                       names = rep(colnames(data),2),
+                       sig = rep(make.SigStars(pvals),2),
+                       sigHeight = rep(meanMax, 2) * 1.05)
+  
+  
+  p = ggplot(data = pltTemp, aes(x=names, y=means, group=factor(groups), fill=factor(groups)))+
+    geom_bar(stat='identity', position='dodge')+
+    scale_fill_discrete(guide = guide_legend(title = "Groups"))+
+    geom_text(aes(x = names, y = sigHeight, label = sig))
+  
+  p = p+
+    theme_bw()+
+    theme(axis.text.x = element_text(angle=60, hjust=1),
+          plot.title = element_text(hjust = 0.5))+
+    ggtitle(main)+
+    xlab(xlabName)+
+    ylab(ylabName)
+  
+  p
+}
+
+make.SigStars = function(pvals, lvls = c(0.05, 0.01, 0.001), sgns = c('','*','**','***')){
+  getSigLvl = function(x){
+    for(i in 1:length(lvls)){
+      if(x>lvls[i]) return(sgns[i])
     }
-  abline(h=-log10(0.05))
+    return(sgns[length(lvls)+1])
+  }
+  # map over whole vector
+  sapply(pvals, getSigLvl)
+}
+
+make.MDoutput = function(res, plots){
+  output = ''
+  header = '## T-test results\n'
+  intro = ''
+  plt1 = paste('![](',plots[1],')\n', sep='')
+  plt2 = paste('![](',plots[2],')\n', sep='')
+  tableOfRes = ''
+  
+  output = c(output,header, intro, plt1, plt2, tableOfRes)
+  
 }
 
 makeHTML <- function(res, pvalsPlot){
@@ -104,21 +184,41 @@ makeHTML <- function(res, pvalsPlot){
   html
 }
 
-res = do.call('rbind', lapply(1:ncol(data), function(i) ttest(data[,i], factor, paired, way, conf.level)))
-res = as.data.frame(res)
-res$adj.p_val = round(p.adjust(res[,1], method=adjust),3)
-rownames(res) <- colnames(data)
-names(res) <- c('p_val', 'conf_int_1','conf_int_2','adj_p_val')
+# calculations
+res = ttest_all(data, factor, paired, way, conf.level)
 
-pvalsPlot = paste(args[['output']],'/pvals.png',sep='')
-png(pvalsPlot)
-plot.Pvals(res)
-dev.off()
+# plotting
+plots = c()
 
-htmlCode <- makeHTML(res)
+if (nrow(res)>50){
+  p1 = plot.Pvals(res[1:50,], showLabels = T, sigLvl = conf.level)
+} else{
+  p1 = plot.Pvals(res, showLabels = T, sigLvl = conf.level)
+}
+fileName = 'p_Vals.png'
+suppressMessages(ggsave(path = outdir, filename = fileName, plot = p1))
+plots = c(plots, paste(outdir, '/', fileName, sep=''))
 
-htmlFile <- file(args[['output']])
-writeLines(htmlCode, htmlFile)
-close(htmlFile)
+if (ncol(data)>50){
+  p2 = plot.Bars(data[,1:50], factor, res[1:50,"adj_p_val"])
+} else {
+  p2 = plot.Bars(data, factor, res[,"adj_p_val"])
+}
+fileName = 'meanBars.png'
+suppressMessages(ggsave(path = outdir, filename = fileName, plot = p2))
+plots = c(plots, paste(outdir, '/', fileName, sep=''))
 
-#write.table(res, file=args[[output]], row.names=T, col.names=T)
+# generating other outputs
+
+write.table(res, file=paste(outdir,'/results.txt', sep=''), row.names=T, col.names=T)
+
+mdEncoded <- make.MDoutput(res, plots)
+writeLines(mdEncoded, paste(outdir, "/results.Rmd", sep=''))
+knitr::knit2html(input = paste(outdir,"/results.Rmd", sep=''), output = args[['output']], quiet = T)
+
+# TODO implement pdf generation
+#if(args[['makepdf']] == 'T') knitr::knit2pdf(input = paste(outdir,"/results.Rmd", sep=''), output = paste(outdir,'/report.pdf',sep=''), quiet = T, compiler = 'texi2pdf')
+
+#htmlFile <- file(args[['output']])
+#writeLines(htmlCode, htmlFile)
+#close(htmlFile)
