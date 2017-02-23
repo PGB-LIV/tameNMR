@@ -2,7 +2,7 @@
 <tool id="ttest" name="Student's t-test" version="0.0.1">
     <description>  </description>
     <command interpreter="Rscript">
-        Ttest.R --input=$input --output=$output --outdir=$output.files_path --factorFile=$factorFile --factorCol=$factorCol --way=$way --paired=$paired --conf_level=$conf_level --adjust=$adjust
+        Ttest.R --input=$input --output=$output --outdir=$output.files_path --factorFile=$factorFile --factorCol=$factorCol --tails=$way --paired=$paired --conf_level=$conf_level --adjust=$adjust
     </command>
 
     <inputs>

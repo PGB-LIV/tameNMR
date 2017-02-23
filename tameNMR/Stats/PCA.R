@@ -37,22 +37,29 @@ suppressMessages(library(ggplot2))
 PCA_VarAcc_Plot <- function(pc, outdir){
 
   perc_accounted <- (pc$sdev^2/sum(pc$sdev^2)*100)
+  perc_cumsum = cumsum(perc_accounted)
+  #cols = c('white','lightgreen')[ rep(c(1,2), ceiling(nrow(pc$x)/2)) ][1:nrow(pc$x)]
+  cols = rep('ghostwhite', nrow(pc$x))
+  cols[min(which(perc_cumsum >= 95))] = gg_color_hue(3)[2]
   perc_with_cumsum <- data.frame(pc = as.factor(1:length(perc_accounted)),
                                   perc_acc = perc_accounted,
-                                 perc_cumsum = cumsum(perc_accounted))
+                                 perc_cumsum = perc_cumsum,
+                                 col = cols)
+  
   p<-ggplot(data = perc_with_cumsum, aes(x=pc, y=perc_cumsum))+
-      geom_bar(stat='identity', col='black', fill='white')+
+      geom_bar(stat='identity', col='black', fill=cols)+
       geom_hline(yintercept = 95, col='red')+
       geom_hline(yintercept = 0, col='black')+
       xlab('PC')+
       ylab('% Variance')+
       ggtitle('% Variance accounted for by principle components')+
+      theme(plot.title = element_text(hjust = 0.5))+
       theme_bw()
 
   fileName <- 'VarAcc.png'
   filePath <- paste(outdir,'/',fileName, sep='')
-  ggsave(filePath, p)
-  fileName
+  ggsave(filename = fileName, plot = p, path = outdir)
+  filePath
 }
 
 PCA_Scores_Plot <- function(pc, groups, useLabels=F, labels = "", pcs=c(1,2), legendName="Groups", outdir){
@@ -78,14 +85,15 @@ PCA_Scores_Plot <- function(pc, groups, useLabels=F, labels = "", pcs=c(1,2), le
   p <- p+#guides(color=FALSE)+
   theme_bw()+
   guides(fill = guide_legend(title = legendName))+
+  theme(plot.title = element_text(hjust = 0.5), legend.position = 'bottom')+
   xlab(paste("PC",pcs[1], " (", round(perc_accounted[1],2), "%)", sep=""))+
   ylab(paste("PC",pcs[2], " (", round(perc_accounted[2],2), "%)", sep=""))+
   ggtitle("PCA scores plot")
 
   fileName <- paste('PC_',pcs[1],'-',pcs[2],'_scores.png', sep='')
   filePath <- paste(outdir,'/',fileName, sep='')
-  ggsave(filePath, p)
-  fileName
+  ggsave(filename = fileName, plot = p, path = outdir)
+  filePath
 }
 
 PCA_Loadings_Plot <- function(pc, groups, useLabels=F, labels = "", pcs=c(1,2), legendName="Groups", outdir){
@@ -102,7 +110,10 @@ PCA_Loadings_Plot <- function(pc, groups, useLabels=F, labels = "", pcs=c(1,2), 
 
   .e <- environment()
 
-  p <- ggplot(data=pcdf, aes(x=load1, y=load2), environment=.e) + geom_point()
+  p <- ggplot(data=pcdf, aes(x=load1, y=load2), environment=.e)+
+    geom_hline(yintercept = 0, colour = 'grey', linetype = 2)+
+    geom_vline(xintercept = 0, colour = 'grey', linetype = 2)+
+    geom_point()
 
   if(useLabels) p <- p + geom_text(aes(x=load1+label_offset_x, y=load2+label_offset_y, label=labels))
 
@@ -110,12 +121,18 @@ PCA_Loadings_Plot <- function(pc, groups, useLabels=F, labels = "", pcs=c(1,2), 
   xlab(paste("Loadings for PC",pcs[1],sep=""))+
   ylab(paste("Loadings for PC",pcs[2],sep=""))+
   ggtitle("PCA loadings plot")+
+  theme(plot.title = element_text(hjust = 0.5))+
   theme_bw()
 
   fileName <- paste('PC_',pcs[1],'-',pcs[2],'_loadings.png', sep='')
   filePath <- paste(outdir,'/', fileName, sep='')
-  ggsave(filePath, p)
-  fileName
+  ggsave(filename = fileName, plot = p, path = outdir)
+  filePath
+}
+
+gg_color_hue <- function(n) {
+  hues = seq(15, 375, length = n + 1)
+  hcl(h = hues, l = 65, c = 100)[1:n]
 }
 
 makeHTML <- function(files){
@@ -155,6 +172,24 @@ makeHTML <- function(files){
   html
 }
 
+make.MDoutput = function(plts){
+  output = ''
+  header = paste('## Pricipal Component Analysis results\n',
+                 '### ',
+                 Sys.Date(), '\n','---\n', sep='')
+  
+  intro = ''
+  prePlt1 = 'Barplot showing the variance accounted for by each principal component.\n'
+  plt1 = sprintf('![](%s)\n', plts[[1]])
+  
+  output = c(header, intro, prePlt1,plt1)
+  for(i in 2:length(plts)){
+    temp = sprintf('![](%s) ![](%s)\n\n', plts[[i]][1], plts[[i]][2])
+    output = c(output, temp)
+  }
+  output
+}
+  
 parsePCs <- function(pcs){
   # parse the pcs vector into 2col matrix
   pcs <-strsplit(pcs,',')[[1]]
@@ -166,8 +201,9 @@ data = read.table(args[['input']], header=T, row.names=1, stringsAsFactors = F, 
 factorFile = read.table(args[['factorFile']], header=T, sep=',', stringsAsFactors = T, row.names=1)
 colnum <- as.numeric(args[['factorCol']])
 factor = factorFile[,colnum]
+outdir = args[['outdir']]
 
-if(!dir.exists(args[['outdir']])) dir.create(args[['outdir']], showWarnings = F)
+if(!dir.exists(outdir)) dir.create(outdir, showWarnings = F)
 
 if(args[['scale']]=='Y'){
   pc<-prcomp(data, scale = T)
@@ -179,27 +215,24 @@ pcs = parsePCs(args[['pcs']])
 
 plts = list()
 
-plts[[1]] = suppressMessages(PCA_VarAcc_Plot(pc=pc, outdir = args[['outdir']]))
+plts[[1]] = suppressMessages(PCA_VarAcc_Plot(pc=pc, outdir = outdir))
 for(i in 1:nrow(pcs)){
-  temp = c(suppressMessages(PCA_Scores_Plot(pc=pc, groups=factor, pcs=pcs[i,], outdir = args[['outdir']])),
-           suppressMessages(PCA_Loadings_Plot(pc=pc, groups=factor, pcs=pcs[i,], outdir = args[['outdir']])))
+  temp = c(suppressMessages(PCA_Scores_Plot(pc=pc, groups=factor, pcs=pcs[i,], outdir = outdir)),
+           suppressMessages(PCA_Loadings_Plot(pc=pc, groups=factor, pcs=pcs[i,], outdir = outdir)))
   plts[[i+1]] = temp
 }
 
-#plts[[1]] = PCA_VarAcc_Plot(pc=pc, groups=factor, outdir = args[['outdir']])
-#for(i in 1:nrow(pcs)){
-#  tmp1 = PCA_Scores_Plot(pc=pc, groups=factor, pcs=pcs[i,], outdir = args[['outdir']])
-#  tmp2 = PCA_Loadings_Plot(pc=pc, groups=factor, pcs=pcs[i,], outdir = args[['outdir']])
-#  plts[[i+1]] = c(tmp1, tmp2)
-#}
 
-#plts = suppressMessages(do_PCA_Plot(pc=pc, groups=factor, outdir = args[['outdir']]))
+mdEncoded <- make.MDoutput(plts)
+writeLines(mdEncoded, paste(outdir, "/results.Rmd", sep=''))
+knitr::knit2html(input = paste(outdir,"/results.Rmd", sep=''), output = outdir, quiet = T)
 
-htmlCode <- makeHTML(plts)
 
-htmlFile <- file(args[['output']])
-writeLines(htmlCode, htmlFile)
-close(htmlFile)
+#htmlCode <- makeHTML(plts)
+
+#htmlFile <- file(args[['output']])
+#writeLines(htmlCode, htmlFile)
+#close(htmlFile)
 
 
 

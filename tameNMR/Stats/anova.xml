@@ -2,7 +2,7 @@
 <tool id="anova" name="One-way ANOVA" version="0.0.1">
     <description>  </description>
     <command interpreter="Rscript">
-        Anova.R --input=$input --output=$output --outDir=$output.files_path --factorFile=$factorFile --factorCol=$factorCol --adjust=$adjust --confLevel=$conf_level
+        Anova.R --input=$input --output=$output --outdir=$output.files_path --factorFile=$factorFile --factorCol=$factorCol --adjust=$adjust --conf_level=$conf_level
     </command>
 
     <inputs>

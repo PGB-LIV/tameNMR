@@ -22,6 +22,7 @@ if("--help" %in% args) {
 }
 
 suppressMessages(library(ggplot2))
+suppressMessages(library(ggrepel))
 
 parseArgs = function(x) strsplit(sub("^--", "", x),"=")
 argsDF = as.data.frame(do.call('rbind', parseArgs(args)))
@@ -30,15 +31,45 @@ names(args) <- argsDF[,1]
 
 data = read.table(args[['input']], header=T, sep='\t', row.names=1, stringsAsFactors = F)
 factorFile = read.table(args[['factorFile']], header=T, sep=',', stringsAsFactors = T, row.names=1)
-fac = factorFile[,as.numeric(args[['factorCol']])]
+fac = as.factor(factorFile[,as.numeric(args[['factorCol']])])
 adjust = args[['adjust']]
+outdir = args[['outdir']]
+conf.level = as.numeric(args[['conf_level']])
 
 calc_aov_Pval <- function(data, fac){
   fit = aov(data ~ fac)
   summary(fit)[[1]][["Pr(>F)"]][1] # extractig p-val
 }
 
-plot_anova <- function(res, outdir){
+plot.Pvals = function(res, showLabels = F, sigLvl = 0.05, main='P_values (ANOVA)'){
+  
+  labels = rownames(res)
+  X = factor(1:nrow(res))
+  sig = res[,"adj.p-val"] <= sigLvl
+  cols = ifelse(sig, "steelblue","navy")
+  #cols = factor(ifelse(sig, "significant","non-significant"))
+  Y = -log10(res[,"adj.p-val"])
+  pltTemp = data.frame(X=X, Y=Y, cols=cols)
+  rownames(pltTemp) = labels
+  
+  p = ggplot(data=pltTemp, aes(x=X, y=Y))+
+    geom_point(col=cols)+
+    geom_abline(intercept = -log10(sigLvl), slope = 0, col='red')
+  
+  if(showLabels) p = p + geom_text_repel(aes(x = X, y=Y, label=rownames(res)))
+  
+  p = p+ 
+    theme_bw()+
+    ggtitle('P-values')+
+    xlab('Bins')+
+    ylab('-log10( p-value )')+
+    theme(axis.ticks.x=element_blank(), 
+          axis.text.x = element_blank(),
+          plot.title = element_text(hjust = 0.5))
+  p
+}
+
+plot_anova <- function(res){
   res$names = rownames(res)
   names(res) <- c('p_val', 'adj_pval', 'names')
   p <- ggplot(data=res, aes(x=as.factor(names), y=-log10(adj_pval)))+
@@ -47,10 +78,7 @@ plot_anova <- function(res, outdir){
     xlab('Bins')+
     ylab('Adjusted p-value (-log10)')
 
-  fileName <- 'AnovaPlot.png'
-  filePath <- paste(outdir,'/',fileName, sep='')
-  ggsave(filePath, p)
-  fileName
+  p
 }
 
 plot.ANOVA = function(res, main='Significant Bins (ANOVA)', showLabels = F){
@@ -73,7 +101,8 @@ do_anova_Multi = function(data, groups, adjustMethod='fdr', thresh=0.05){
   aov.res = apply(data,2,function(x) aov(x~groups))
   anova.res = lapply(aov.res, anova)
   res<-do.call('rbind', lapply(anova.res, function(x) { c(x["F value"][1,], x["Pr(>F)"][1,])}))
-  res[,2] = p.adjust(res[,2],method = adjustMethod)
+  res = cbind(res,p.adjust(res[,2],method = adjustMethod))
+  colnames(res) = c('F-stat','p-val','adj.p-val')
   #sigs = which(res[,2]<=thresh)
   
   posthoc.res<-lapply(aov.res, TukeyHSD, conf.level=1-thresh)
@@ -84,6 +113,63 @@ do_anova_Multi = function(data, groups, adjustMethod='fdr', thresh=0.05){
 
 extract.pVals.Tukey = function(tukey.res, thresh=0.05){
   do.call('rbind', lapply(tukey.res, function(x) x[1][[1]][,'p adj']))
+}
+
+make.MDoutput = function(res, plots, conf.level){
+  output = ''
+  #header = '## T-test results\n'
+  header = paste('## One-way ANOVA test results\n',
+                 '### ',
+                 Sys.Date(), '\n','---\n', sep='')
+  
+  intro = paste('**Total ANOVA tests performed:** ',nrow(res$anova_pvals),'\n\n',
+                '**Number of significant variables:** ', sum(res$anova_pvals[,'adj.p-val']<=conf.level),
+                '\n\n',sep='')
+  prePlt1 = paste('P-values are plotted on a negative log scale  - larger values on the plot correspond to lower p-values.',
+                  sprintf('The line corresponds to the given significance level ( %.3f ).', conf.level),
+                  'The points are colored to help distinguish the statistically significant results.\n', sep='')
+  plt1 = sprintf('![](%s)\n', plots[1])
+  
+  preTabl = paste('The Following table contains the p-values (raw and adjusted).',
+                  '\n\n',
+                  sep='')
+  tableOfRes = c('<center>\n', printPvalTableInMD(res$anova_pvals), '\n </center> \n')
+  
+  preTabl2 = paste('Results of Tukey post-hoc analysis.',
+                  '\n\n',
+                  sep='')
+  tableOfRes2 = '' #c('<center>\n', printPvalTableInMD(res$tukey_pvals), '\n </center> \n')
+  
+  output = c(output,header, intro, prePlt1, plt1, preTabl, tableOfRes)
+  output
+}
+
+printTableInMD = function(tabl){
+  makeLine = function(line){
+    i = paste(line, collapse=' | ')
+    c(i,' \n')
+  }
+  
+  firstLine = makeLine(colnames(tabl))
+  sepBar = c(rep('---|', ncol(tabl)-1),'---\n')
+  res = c(firstLine, sepBar, do.call('c', lapply(1:nrow(tabl), function(x) makeLine(tabl[x,]))))
+  paste(res, collapse=' ')
+}
+
+printPvalTableInMD = function(tabl){
+  makeLine = function(line, rn){
+    i = paste(line, collapse=' | ')
+    c(paste(rn,' | ',sep=''), i,' \n')
+}
+  
+  #firstLine = makeLine(colnames(tabl))
+  firstLine = 'bin | p-value | adjusted p-value \n'
+  #tabl = as.matrix(tabl)
+  tabl_ = cbind(rownames(tabl), tabl[,1], tabl[,2])
+  #sepBar = c(rep('---|', ncol(tabl)-1),'---\n')
+  sepBar = ':--- | :---: | :---: | :---:\n'
+  res = c(firstLine, sepBar, do.call('c', lapply(1:nrow(tabl_), function(x) makeLine(tabl_[x,], rownames(tabl)[x]))))
+  paste(res, collapse=' ')
 }
 
 makeHTML <- function(res, files){
@@ -141,26 +227,32 @@ TukeyFilter = resAnova$tukey_pvals <= 0.05
 SigBins = apply(TukeyFilter, 2, sum)
 
 
-pvalsPlot = paste(args[['output']],'/pvals.png',sep='')
-png(pvalsPlot)
-plot.ANOVA(resAnova$anova_pvals)
-dev.off()
+#pvalsPlot = paste(args[['output']],'/pvals.png',sep='')
+#plot.ANOVA(resAnova$anova_pvals)
 
-#pvals = do.call('c', lapply(1:ncol(data), function(i) calc_aov_Pval(data[,i], fac)))
-#adj.p_vals = p.adjust(pvals, method=adjust)
-res = data.frame(p_vals = round(resAnova$anova_pvals,3), adj.p_vals=round(resAnova$anova_pvals_vals,3))
-rownames(res) <- names(data)
-names(res) = c('p-values', paste('adjusted p-values (',args[[adjust]],' )', sep=''))
+res = data.frame(p_vals = round(resAnova$anova_pvals,3), adj.p_vals=round(resAnova$anova_pvals,3))
+rownames(res) = names(data)
+#names(res) = c('p-values', paste('adjusted p-values (',args[[adjust]],' )', sep=''))
+names(res) = c('p-values', 'adj.p-val')
 
-if(!dir.exists(args[['outDir']])) dir.create(args[['outDir']], showWarnings = F)
+if(!dir.exists(outdir)) dir.create(outdir , showWarnings = F)
 
-plots = suppressMessages(plot_anova(res, args[['outDir']]))
+plots = c()
+fileName <- 'AnovaPlot.png'
+filePath <- paste(outdir,'/',fileName, sep='')
+p = suppressMessages(plot.Pvals(resAnova$anova_pvals))
+ggsave(filename = fileName, plot = p, path = outdir)
+plots = c(plots,filePath)
 
-htmlCode <- makeHTML(res, plots)
+#htmlCode <- makeHTML(res, p)
 
-htmlFile <- file(args[['output']])
-writeLines(htmlCode, htmlFile)
-close(htmlFile)
+mdEncoded <- make.MDoutput(resAnova, plots, conf.level)
+writeLines(mdEncoded, paste(outdir, "/results.Rmd", sep=''))
+knitr::knit2html(input = paste(outdir,"/results.Rmd", sep=''), output = outdir, quiet = T)
+
+#htmlFile <- file(args[['output']])
+#writeLines(htmlCode, htmlFile)
+#close(htmlFile)
 
 #write.table(res[res,2]<0.05, file=paste(args[['outDir']],'.csv',sep=''),sep=',', row.names=T, col.names=T)
-write.table(res, file=paste(args[['outDir']],'/pvals.csv',sep=''),sep=',', row.names=T, col.names=T)
+write.table(res, file=paste(outdir,'/pvals.csv',sep=''),sep=',', row.names=T, col.names=T)

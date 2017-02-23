@@ -1,0 +1,18 @@
+## Pricipal Component Analysis results
+### 2017-02-16
+---
+
+
+Barplot showing the variance accounted for by each principal component.
+
+![](../outputs/pca_out/VarAcc.png)
+
+![](../outputs/pca_out/PC_1-2_scores.png) ![](../outputs/pca_out/PC_1-2_loadings.png)
+
+
+![](../outputs/pca_out/PC_2-3_scores.png) ![](../outputs/pca_out/PC_2-3_loadings.png)
+
+
+![](../outputs/pca_out/PC_1-3_scores.png) ![](../outputs/pca_out/PC_1-3_loadings.png)
+
+

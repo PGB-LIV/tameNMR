@@ -15,12 +15,15 @@ if("--help" %in% args) {
       --outdir=path - folder for storing outputs
       --factorFile=fact - a factor to use for grouping
       --factorCol=factCol - a factor to use for grouping
+      --tails=two.tailed - a string denoting the type of the t-test ('greater','less','two.sided')
+      --paired=Y - if the data is paired (Y/N)
 
       Example:
       ./ttest.R --input=inputFilePath --output=outputFilePath \n\n")
   q(save="no")
 }
 
+print(getwd())
 #knitr::knit2html(input = '~/Desktop/test2.rmd', output = '~/Desktop/out.html', quiet = T)
 
 suppressMessages(require(ggplot2))
@@ -32,23 +35,25 @@ argsDF = as.data.frame(do.call('rbind', parseArgs(args)))
 args = as.list(as.character(argsDF[,2]))
 names(args) <- argsDF[,1]
 
+# reading data and parameters
 data = read.table(args[['input']], header=T, sep='\t', row.names=1, stringsAsFactors = F)
 factorFile = read.table(args[['factorFile']], header=T, sep=',', stringsAsFactors = T, row.names=1)
 factor = factorFile[,as.numeric(args[['factorCol']])]
-way = args[['way']]
+
+tails = args[['tails']]
 if (args[['paired']] == 'Y') {paired=T} else {paired=F}
 conf.level = as.numeric(args[['conf_level']])
 adjust = args[['adjust']]
 outdir = args[['outdir']]
 
-ttest = function(data, factor, paired = F, way = 'two.sided', conf.level = 0.05){
-  out = t.test(data~factor, paired=paired, alternative = way, conf.level = conf.level)
+ttest = function(data, factor, paired = F, tails = 'two.sided', conf.level = 0.05){
+  out = t.test(data~factor, paired=paired, alternative = tails, conf.level = conf.level)
   return(round(c(out$p.value, out$conf.int[1], out$conf.int[2]),3))
 }
 
-ttest_all = function(data, factor, paired = F, way = 'two.sided', conf.level = 0.05, adjust = 'BH'){
+ttest_all = function(data, factor, paired = F, tails = 'two.sided', conf.level = 0.05, adjust = 'BH'){
   
-  res = do.call('rbind', lapply(1:ncol(data), function(i) ttest(data[,i], factor, paired, way, conf.level)))
+  res = do.call('rbind', lapply(1:ncol(data), function(i) ttest(data[,i], factor, paired, tails, conf.level)))
   res = as.data.frame(res)
   res$adj.p_val = round(p.adjust(res[,1], method=adjust),3)
   rownames(res) <- colnames(data)
@@ -62,7 +67,6 @@ plot.Pvals = function(res, showLabels = F, sigLvl = 0.05, main='P_values (T-Test
   X = factor(1:nrow(res))
   sig = res[,"adj_p_val"] <= sigLvl
   cols = ifelse(sig, "steelblue","navy")
-  #cols = factor(ifelse(sig, "significant","non-significant"))
   Y = -log10(res[,"adj_p_val"])
   pltTemp = data.frame(X=X, Y=Y, cols=cols)
   rownames(pltTemp) = labels
@@ -124,16 +128,61 @@ make.SigStars = function(pvals, lvls = c(0.05, 0.01, 0.001), sgns = c('','*','**
   sapply(pvals, getSigLvl)
 }
 
-make.MDoutput = function(res, plots){
+make.MDoutput = function(res, plots, conf.level){
   output = ''
-  header = '## T-test results\n'
-  intro = ''
+  #header = '## T-test results\n'
+  header = paste('## T-test results\n',
+                 '### ',
+                 Sys.Date(), '\n','---\n', sep='')
+  
+  intro = paste('**Total t-test performed:** ',nrow(res),'\n\n',
+                '**Number of significant variables:** ', sum(res[,'adj_p_val']<=conf.level),'\n\n',
+                sep='')
+  prePlt1 = paste('P-values are plotted on a negative log scale  - larger values on the plot correspond to lower p-values.',
+                  sprintf('The line corresponds to the given significance level ( %f ).', round(conf.level),3),
+                          'The points are colored to help distinguish the statistically significant results.', sep='')
   plt1 = paste('![](',plots[1],')\n', sep='')
+  
+  prePlt2 = paste('Variables are plotted as bars coloured by group.',
+                  'The significance is denoted by the stars drawn above each pair of bars.',
+                  sep='')
   plt2 = paste('![](',plots[2],')\n', sep='')
-  tableOfRes = ''
   
-  output = c(output,header, intro, plt1, plt2, tableOfRes)
+  preTabl = paste('The Following table contains the p-values (raw and adjusted) as well as confidence intervals for the mean difference.',
+                  '\n\n',
+                  sep='')
+  tableOfRes = c('<center>\n', printPvalTableInMD(res), '\n </center> \n')
   
+  output = c(output,header, intro, prePlt1, plt1, prePlt2, plt2, preTabl, tableOfRes)
+  
+}
+
+printTableInMD = function(tabl){
+  makeLine = function(line){
+    i = paste(line, collapse=' | ')
+    c(i,' \n')
+  }
+  
+  firstLine = makeLine(colnames(tabl))
+  sepBar = c(rep('---|', ncol(tabl)-1),'---\n')
+  res = c(firstLine, sepBar, do.call('c', lapply(1:nrow(tabl), function(x) makeLine(tabl[x,]))))
+  paste(res, collapse=' ')
+}
+
+printPvalTableInMD = function(tabl){
+  makeLine = function(line, rn){
+    i = paste(line, collapse=' | ')
+    c(paste(rn,' | ',sep=''), i,' \n')
+}
+  
+  #firstLine = makeLine(colnames(tabl))
+  firstLine = 'bin | p-value | confidence interval | adjusted p-value \n'
+  #tabl = as.matrix(tabl)
+  tabl_ = cbind(as.character(tabl[,1]), paste(tabl[,2], tabl[,3],sep='  -  '), as.character(tabl[,4]))
+  #sepBar = c(rep('---|', ncol(tabl)-1),'---\n')
+  sepBar = ':--- | :---: | :---: | :---:\n'
+  res = c(firstLine, sepBar, do.call('c', lapply(1:nrow(tabl_), function(x) makeLine(tabl_[x,], rownames(tabl)[x]))))
+  paste(res, collapse=' ')
 }
 
 makeHTML <- function(res, pvalsPlot){
@@ -184,8 +233,10 @@ makeHTML <- function(res, pvalsPlot){
   html
 }
 
+if(!dir.exists(args[['outdir']])) dir.create(args[['outdir']], showWarnings = F)
+
 # calculations
-res = ttest_all(data, factor, paired, way, conf.level)
+res = ttest_all(data, factor, paired, tails, conf.level)
 
 # plotting
 plots = c()
@@ -199,6 +250,7 @@ fileName = 'p_Vals.png'
 suppressMessages(ggsave(path = outdir, filename = fileName, plot = p1))
 plots = c(plots, paste(outdir, '/', fileName, sep=''))
 
+# Only plot 50 values if there are more
 if (ncol(data)>50){
   p2 = plot.Bars(data[,1:50], factor, res[1:50,"adj_p_val"])
 } else {
@@ -210,10 +262,12 @@ plots = c(plots, paste(outdir, '/', fileName, sep=''))
 
 # generating other outputs
 
+
 write.table(res, file=paste(outdir,'/results.txt', sep=''), row.names=T, col.names=T)
 
-mdEncoded <- make.MDoutput(res, plots)
+mdEncoded <- make.MDoutput(res, plots, conf.level)
 writeLines(mdEncoded, paste(outdir, "/results.Rmd", sep=''))
+markdown::markdownToHTML(input = paste(outdir,"/results.Rmd", sep=''), output = args[['output']], quiet = T)
 knitr::knit2html(input = paste(outdir,"/results.Rmd", sep=''), output = args[['output']], quiet = T)
 
 # TODO implement pdf generation

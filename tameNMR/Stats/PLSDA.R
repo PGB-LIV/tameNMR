@@ -12,7 +12,7 @@ if("--help" %in% args) {
       Arguments:
       --input=path - input file path
       --output=path - output file path
-      --outDir=path - output folder
+      --outdir=path - output folder
       --factorFile=path - a path to a factorfile
       --factorCol=num - a which column to use
 
@@ -23,6 +23,8 @@ if("--help" %in% args) {
 
 suppressMessages(require(pls))
 suppressMessages(require(ggplot2))
+suppressMessages(require(ellipse))
+suppressMessages(require(reshape2))
 # -------------------functions --------------------
 
 make.factorMat = function(fact){
@@ -48,7 +50,7 @@ do_PLSDA = function(data, groups, comp.num=0, choice='Q2'){
 
   # prep data
   #if(length(unique(groups)) > 2) 
-    groups = scale(as.numeric(groups))[,1]
+  groups = scale(as.numeric(groups))[,1]
   datmat = as.matrix(data)
   
   # perform pls
@@ -114,9 +116,7 @@ calc.VarImp = function(pls, group.num){
   coef.mat
 }
 
-
-plot_PLSDA = function(plsdaObj, groups, comp=c(1,2), type='scores', legendName = 'Groups', n.bins=20){
-  
+plot_PLSDA = function(plsdaObj, groups, comp=c(1,2), type='scores', legendName = 'Groups', n.bins=20, drawEllipse=T){
   #type = {scores, VIP, varImp} - only top <=n.bins plotted
      diag = plsdaObj$diagnostics[,plsdaObj$n.comp]
   
@@ -129,20 +129,54 @@ plot_PLSDA = function(plsdaObj, groups, comp=c(1,2), type='scores', legendName =
     theme_bw(base_size = 14)+
     guides(col = guide_legend(title = legendName))
     
+    if (drawEllipse){
+      # Generate an ellipse for each groups of points 
+      df_ell = do.call('rbind', lapply(levels(as.factor(groups)), function(grp) {
+        ellipse(cor(tmpData[which(groups==grp),'comp1'], tmpData[which(groups==grp),'comp2']), 
+                scale=c(sd(tmpData[which(groups==grp),'comp1']),sd(tmpData[which(groups==grp),'comp2'])), 
+                centre=c(mean(tmpData[which(groups==grp),'comp1']),mean(tmpData[which(groups==grp),'comp2'])))
+      }
+      ))
+      df_ell = as.data.frame(df_ell)
+      grp = levels(as.factor(groups))
+      grp = do.call('c', lapply(grp, function(x) rep(x, 100)))
+      df_ell$group = grp
+    }
+    
+    if (drawEllipse){
+      
+      #cols <- rainbow(length(unique(as.character(groups))))
+      cols = gg_color_hue(length(unique(as.character(groups))))
+      p <- p+
+        geom_path(data=df_ell, aes(x=x, y=y, colour=group ), size=1, linetype=2)+
+        scale_colour_manual(values=cols, guide=F)
+      }
     
     p = p+ 
       xlab(paste('Component ', comp[1], sep=''))+
       ylab(paste('Component ', comp[2], sep=''))+
-      ggtitle(bquote(PLS-DA~scores~(.(plsdaObj$n.comp)~comp.~R^2-.(round(diag[2],2))~Q^2-.(round(diag[3],2)))))
+      ggtitle(bquote(PLS-DA~scores~(.(plsdaObj$n.comp)~comp.~R^2-.(round(diag[2],2))~Q^2-.(round(diag[3],2)))))+
+      theme(plot.title = element_text(hjust = 0.5), legend.position = 'bottom')
+    p
     
   } else if(type == 'VIP'){
+    
     tmpData = plsdaObj$VIPs
-    tmpData = tmpData[order(tmpData[,plsdaObj$n.comp]),]
+    if(ncol(tmpData)!=1) {tmpData = tmpData[order(tmpData[,plsdaObj$n.comp]),]}
+    else {tmpData = data.frame(x=sort(tmpData))}
     n.vars = ifelse(nrow(tmpData) >= n.bins, n.bins, nrow(tmpData))
     tmpData = data.frame(vars = as.character(rownames(tmpData)[1:n.vars]), VIPs = tmpData[1:n.vars,plsdaObj$n.comp])
     
+    #tmpData = plsdaObj$VIPs
+    #tmpData = tmpData[order(tmpData[,plsdaObj$n.comp]),]
+    #n.vars = ifelse(nrow(tmpData) >= n.bins, n.bins, nrow(tmpData))
+    #tmpData = data.frame(vars = as.character(rownames(tmpData)[1:n.vars]), VIPs = tmpData[1:n.vars,plsdaObj$n.comp])
+    
+    tmpSegm = data.frame(x1=rep(0, nrow(tmpData)), y1=1:nrow(tmpData), x2=tmpData$VIPs, y2=1:nrow(tmpData))
+    
     p = ggplot(data = tmpData, aes(x=reorder(vars, VIPs), y=VIPs))+
-      geom_point(size=4)
+      geom_point(size=4)+
+      geom_segment(data=tmpSegm, aes(x=y1 ,y=x1 , xend=y2 ,yend=x2), linetype='dotted', col='black')
     
     p = p+
     theme_bw(base_size = 14)+
@@ -151,7 +185,9 @@ plot_PLSDA = function(plsdaObj, groups, comp=c(1,2), type='scores', legendName =
     p = p+ 
       ylab('VIP score')+
       xlab('Variable')+
+      theme(plot.title = element_text(hjust = 0.5))+
       ggtitle(paste('VIP scores for ',plsdaObj$n.comp,'-comp. PLS-DA model',sep=''))
+    p
     
   } else if(type == 'varImp'){
     n.vars = ifelse(nrow(plsdaObj$varImp) > 20, 20 , nrow(plsdaObj$varImp))
@@ -168,44 +204,56 @@ plot_PLSDA = function(plsdaObj, groups, comp=c(1,2), type='scores', legendName =
       ylab('Variable importance score')+
       xlab('Variable')+
       ggtitle(paste('Variable importance scores for ',plsdaObj$n.comp,'-comp. PLS-DA model',sep=''))
+    p
     
+  } else if(type == 'diagnostics'){
+    diags = plsdaObj$diagnostics
+    diags_ = t(as.matrix(diags))
+    rownames(diags_) = colnames(diags)
+    colnames(diags_) = rownames(diags)
+    tempDF = as.data.frame(diags_)
+    tempDF$components = 1:nrow(diags_)
+    tempDF = melt(tempDF, id.vars = 'components')
+    
+    p = ggplot(data=tempDF, aes(x=components, y=value, group=variable, col=variable))+
+      geom_line()+
+      geom_point()
+    
+    p = p+
+      ggtitle('PLS-DA diagnostics')+
+      xlab('# of components')+
+      ylab('Value')+
+      theme_bw()+
+      theme(plot.title = element_text(hjust = 0.5),
+            legend.position = 'bottom')+
+      scale_color_discrete(guide=guide_legend(title='Measure'))
+    p
   }
  p 
 }
 
-PCA_Scores_Plot <- function(scores, groups, useLabels=F, labels = "", pcs=c(1,2), legendName="Groups", outdir){
+gg_color_hue <- function(n) {
+  hues = seq(15, 375, length = n + 1)
+  hcl(h = hues, l = 65, c = 100)[1:n]
+}
 
- if(useLabels & length(labels) != nrow(data)){
-  print("Warning: The labels not given or given incorrectly. Using rownames.")
-  labels <- rownames(data)
-  }
-
-  if (length(groups)!=nrow(scores$x)) {print(paste('groups length',length(groups),' while nrow', nrow(scores), sep="") ) }
-  pcdf<-data.frame(pc1=scores[,pcs[1]], pc2=scores[,pcs[2]])
-  if(useLabels) pcdf$labels<-labels
-
-  #perc_accounted <- ((pc$sdev)^2/sum((pc$sdev)^2)*100)[pcs]
-  perc_accounted <- c(0,0) #TODO: make this calculation correct for pls
-
-  label_offset_x <- 0.035 * (range(pcdf$pc1)[2] - range(pcdf$pc1)[1])
-  label_offset_y <- 0.035 * (range(pcdf$pc2)[2] - range(pcdf$pc2)[1])
-  groups = as.factor*(groups)
-  .e <- environment()
-  p <- ggplot(data=pcdf, aes(x=pc1, y=pc2), environment=.e) + geom_point(size=5, aes(fill=groups), colour='black', pch=21)
-
-  if(useLabels)  p <- p + geom_text(aes(x=pc1+label_offset_x, y=pc2+label_offset_y, label=labels))
-
-  p <- p+#guides(color=FALSE)+
-  theme_bw()+
-  guides(fill = guide_legend(title = legendName))+
-  xlab(paste("PC",pcs[1], " (", round(perc_accounted[1],2), "%)", sep=""))+
-  ylab(paste("PC",pcs[2], " (", round(perc_accounted[2],2), "%)", sep=""))+
-  ggtitle("PCA scores plot")
-
-  fileName <- paste('PC_',pcs[1],'-',pcs[2],'_scores.png', sep='')
-  filePath <- paste(outdir,'/',fileName, sep='')
-  ggsave(filePath, p)
-  fileName
+make.MDoutput = function(plts, n.comp){
+  output = ''
+  header = paste('## Partial Least-Squares Discriminant Analysis results\n',
+                 '### ',
+                 Sys.Date(), '\n','---\n', sep='')
+  
+  intro = paste('PLS-DA performed on the dataset using k-fold cross-validation.\n',
+                sprintf('%d PLS components were selected using Q^2 metric.',n.comp), sep='')
+  prePlt1 = 'Scores plot showing the first two PLS components.'
+  plt1 = sprintf('![](%s)\n', plts[1])
+  prePlt2 = 'VIP plot showing up to 20 most influential variables.'
+  plt2 = sprintf('![](%s)\n', plts[2])
+  prePlt3 = 'Diagnostics plot showing the cross-validation diagnostic measures.'
+  plt3 = sprintf('![](%s)\n', plts[3])
+  
+  output = c(header, intro, prePlt1, plt1, prePlt2, plt2, prePlt3, plt3)
+  output
 }
 # -------------------------------------------------
 
@@ -219,40 +267,40 @@ names(args) <- argsDF[,1]
 
 data = read.table(args[['input']], header=T, sep='\t', row.names=1, stringsAsFactors = F)
 factorFile = read.table(args[['factorFile']], header=T, sep=',', stringsAsFactors = T, row.names=1)
-factor = factorFile[,as.numeric(args[['factorCol']])]
+grp = factorFile[,as.numeric(args[['factorCol']])]
+grp = as.factor(grp)
+outdir = args[['outdir']]
 
-factor_  = make.factorMat(factor)
+#factor_  = make.factorMat(factor)
 
 comp.num = nrow(data) - 1;
 if(comp.num > 8) comp.num = 8
 
-res = plsr(factor_ ~ as.matrix(data), method='oscorespls', ncomp=comp.num)
-res = do_PLSDA(as.matrix(data), factor_, comp.num=comp.num)
+#res = plsr(factor_ ~ as.matrix(data), method='oscorespls', ncomp=comp.num)
+res = suppressMessages(do_PLSDA(as.matrix(data), grp, comp.num=comp.num))
 
-makeHTML = function(res){
+# make output folder if it does not exist
+if(!dir.exists(outdir)) dir.create(outdir, showWarnings = F)
 
-  # files - a list of files to display (files within each entry are displayed next to each other?)
-  css.H1 <- '\"text-align: center;font-family:verdana; font-size:30px\"'
-  css.textDiv <- '\"text-align=: center; font-family:verdana; font-size:10px; padding-top:35px;padding-bottom=25px\"'
+# plotting
+plots = c()
 
-  html <- c('<!DOCTYPE html>',
-            '<html>',
-            '<head>',
-            '</head>',
-            '<body>')
+p1 = plot_PLSDA(res, grp, type='scores')
+fileName = 'PLSDA_Scores.png'
+suppressMessages(ggsave(path = outdir, filename = fileName, plot = p1))
+plots = c(plots, paste(outdir, '/', fileName, sep=''))
 
+# Only plot 50 values if there are more
+p2 = plot_PLSDA(res, grp, type='VIP')
+fileName = 'VIP.png'
+suppressMessages(ggsave(path = outdir, filename = fileName, plot = p2))
+plots = c(plots, paste(outdir, '/', fileName, sep=''))
 
-  html <- c(html,
-            '</body>',
-            '</html>')
+p3 = plot_PLSDA(res, grp, type='diagnostics')
+fileName = 'Diagnostics.png'
+suppressMessages(ggsave(path = outdir, filename = fileName, plot = p3))
+plots = c(plots, paste(outdir, '/', fileName, sep=''))
 
-  html
-}
-
-htmlCode <- makeHTML(res)
-
-htmlFile <- file(args[['output']])
-writeLines(htmlCode, htmlFile)
-close(htmlFile)
-
-# write outputs
+mdEncoded <- make.MDoutput(plots, comp.num)
+writeLines(mdEncoded, paste(outdir, "/results.Rmd", sep=''))
+knitr::knit2html(input = paste(outdir,"/results.Rmd", sep=''), output = outdir, quiet = T)
