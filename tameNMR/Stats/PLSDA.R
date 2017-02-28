@@ -49,7 +49,8 @@ do_PLSDA = function(data, groups, comp.num=0, choice='Q2'){
   }
 
   # prep data
-  #if(length(unique(groups)) > 2) 
+  #if(length(unique(groups)) > 2) groups = scale(as.numeric(groups))[,1]
+  #else groups = factor(groups)
   groups = scale(as.numeric(groups))[,1]
   datmat = as.matrix(data)
   
@@ -69,9 +70,9 @@ do_PLSDA = function(data, groups, comp.num=0, choice='Q2'){
   # default use best number determined by Q2
   if(choice == 'Q2'){
     best.num <- which(all.info[3,] == max(all.info[3,]));
-  }else if(choice == "R2"){
+  } else if(choice == "R2"){
     best.num <- which(all.info[2,] == max(all.info[2,]));
-  }else{
+  } else{
     best.num <- which(all.info[1,] == max(all.info[1,]));
   }
   
@@ -303,4 +304,9 @@ plots = c(plots, paste(outdir, '/', fileName, sep=''))
 
 mdEncoded <- make.MDoutput(plots, comp.num)
 writeLines(mdEncoded, paste(outdir, "/results.Rmd", sep=''))
-knitr::knit2html(input = paste(outdir,"/results.Rmd", sep=''), output = outdir, quiet = T)
+MDTEST = markdown::markdownToHTML(file = paste(outdir,"/results.Rmd", sep=''))
+
+htmlFile <- file(args[['output']])
+writeLines(MDTEST, htmlFile)
+close(htmlFile)
+#knitr::knit2html(input = paste(outdir,"/results.Rmd", sep=''), output = outdir, quiet = T)

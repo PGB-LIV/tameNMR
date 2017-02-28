@@ -138,9 +138,9 @@ make.MDoutput = function(res, plots, conf.level){
   intro = paste('**Total t-test performed:** ',nrow(res),'\n\n',
                 '**Number of significant variables:** ', sum(res[,'adj_p_val']<=conf.level),'\n\n',
                 sep='')
-  prePlt1 = paste('P-values are plotted on a negative log scale  - larger values on the plot correspond to lower p-values.',
-                  sprintf('The line corresponds to the given significance level ( %f ).', round(conf.level),3),
-                          'The points are colored to help distinguish the statistically significant results.', sep='')
+  prePlt1 = paste('P-values are plotted on a negative log scale  - larger values on the plot correspond to lower p-values. ',
+                  sprintf('The line corresponds to the given significance level ( %f ). ', round(conf.level,4)),
+                          ' The points are colored to help distinguish the statistically significant results.', sep='')
   plt1 = paste('![](',plots[1],')\n', sep='')
   
   prePlt2 = paste('Variables are plotted as bars coloured by group.',
@@ -156,6 +156,10 @@ make.MDoutput = function(res, plots, conf.level){
   output = c(output,header, intro, prePlt1, plt1, prePlt2, plt2, preTabl, tableOfRes)
   
 }
+
+#formatConfLvl = function(conf){
+#  if(conf<=0.01)
+#}
 
 printTableInMD = function(tabl){
   makeLine = function(line){
@@ -267,12 +271,11 @@ write.table(res, file=paste(outdir,'/results.txt', sep=''), row.names=T, col.nam
 
 mdEncoded <- make.MDoutput(res, plots, conf.level)
 writeLines(mdEncoded, paste(outdir, "/results.Rmd", sep=''))
-markdown::markdownToHTML(input = paste(outdir,"/results.Rmd", sep=''), output = args[['output']], quiet = T)
-knitr::knit2html(input = paste(outdir,"/results.Rmd", sep=''), output = args[['output']], quiet = T)
+MDTEST = markdown::markdownToHTML(file = paste(outdir,"/results.Rmd", sep=''))
 
 # TODO implement pdf generation
 #if(args[['makepdf']] == 'T') knitr::knit2pdf(input = paste(outdir,"/results.Rmd", sep=''), output = paste(outdir,'/report.pdf',sep=''), quiet = T, compiler = 'texi2pdf')
 
-#htmlFile <- file(args[['output']])
-#writeLines(htmlCode, htmlFile)
-#close(htmlFile)
+htmlFile <- file(args[['output']])
+writeLines(MDTEST, htmlFile)
+close(htmlFile)

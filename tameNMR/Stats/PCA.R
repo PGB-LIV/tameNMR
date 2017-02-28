@@ -225,7 +225,12 @@ for(i in 1:nrow(pcs)){
 
 mdEncoded <- make.MDoutput(plts)
 writeLines(mdEncoded, paste(outdir, "/results.Rmd", sep=''))
-knitr::knit2html(input = paste(outdir,"/results.Rmd", sep=''), output = outdir, quiet = T)
+MDTEST = markdown::markdownToHTML(file = paste(outdir,"/results.Rmd", sep=''))
+
+htmlFile <- file(args[['output']])
+writeLines(MDTEST, htmlFile)
+close(htmlFile)
+#knitr::knit2html(input = paste(outdir,"/results.Rmd", sep=''), output = outdir, quiet = T)
 
 
 #htmlCode <- makeHTML(plts)
@@ -233,6 +238,3 @@ knitr::knit2html(input = paste(outdir,"/results.Rmd", sep=''), output = outdir, 
 #htmlFile <- file(args[['output']])
 #writeLines(htmlCode, htmlFile)
 #close(htmlFile)
-
-
-

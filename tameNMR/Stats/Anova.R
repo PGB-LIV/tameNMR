@@ -241,18 +241,18 @@ plots = c()
 fileName <- 'AnovaPlot.png'
 filePath <- paste(outdir,'/',fileName, sep='')
 p = suppressMessages(plot.Pvals(resAnova$anova_pvals))
-ggsave(filename = fileName, plot = p, path = outdir)
+suppressMessages(ggsave(filename = fileName, plot = p, path = outdir))
 plots = c(plots,filePath)
 
-#htmlCode <- makeHTML(res, p)
+write.table(res, file=paste(outdir,'/pvals.csv',sep=''),sep=',', row.names=T, col.names=T)
 
 mdEncoded <- make.MDoutput(resAnova, plots, conf.level)
 writeLines(mdEncoded, paste(outdir, "/results.Rmd", sep=''))
-knitr::knit2html(input = paste(outdir,"/results.Rmd", sep=''), output = outdir, quiet = T)
+MDTEST = markdown::markdownToHTML(file = paste(outdir,"/results.Rmd", sep=''))
 
-#htmlFile <- file(args[['output']])
-#writeLines(htmlCode, htmlFile)
-#close(htmlFile)
+htmlFile <- file(args[['output']])
+writeLines(MDTEST, htmlFile)
+close(htmlFile)
 
-#write.table(res[res,2]<0.05, file=paste(args[['outDir']],'.csv',sep=''),sep=',', row.names=T, col.names=T)
-write.table(res, file=paste(outdir,'/pvals.csv',sep=''),sep=',', row.names=T, col.names=T)
+#knitr::knit2html(input = paste(outdir,"/results.Rmd", sep=''), output = outdir, quiet = T)
+
