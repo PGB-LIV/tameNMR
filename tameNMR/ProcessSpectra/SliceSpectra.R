@@ -18,7 +18,7 @@ if("--help" %in% args) {
       --remWater=Y - should the water signal (4.3-4.9 ppm) be removed
 
       Example:
-      ./SliceSpectra.R --input=inputFilePath --output=outputFilePath --reatainPpm=0-4,6.5-10 --remWater=Y\n\n")
+      ./SliceSpectra.R --input=inputFilePath --output=outputFilePath --retainPpm=0-4,6.5-10 --remWater=Y\n\n")
   q(save="no")
 }
 

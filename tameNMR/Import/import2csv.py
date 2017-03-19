@@ -33,13 +33,13 @@ def main(args):
 
         outfile = args[1]
     except:
-        print 'usage: import2csv.py <infile> <outfile>'
+        print('usage: import2csv.py <infile> <outfile>')
         sys.exit(2)
 
     try:
         infile = extractInfile(infile, outfile[:-4])
     except IOError as e:
-        print e.message
+        print(e.message)
 
     try:
         if os.path.isdir(infile):
@@ -47,7 +47,7 @@ def main(args):
         else:
             sys.exit(1)
     except IOError as e:
-        print e.message
+        print(e.message)
 
     importedFiles = []
     for spec in spectraDirs:
@@ -61,7 +61,7 @@ def main(args):
     try:
         shutil.rmtree(infile)
     except FileNotFoundError as e:
-        print e.message
+        print(e.message)
 ################################################################################
 # functions #
 ################################################################################
@@ -96,7 +96,7 @@ def extractInfile(infile, outFolder):
             return outFolder
         except IOError:
             traceback.print_exc()
-            print 'could not unzip'
+            print('could not unzip')
 
     elif(infile.endswith('.tar.gz') or infile.endswith('tar')):
         try:
@@ -104,7 +104,7 @@ def extractInfile(infile, outFolder):
                 tf.extractall(path=outFolder)
             return outFolder
         except IOError as e:
-            print e.message
+            print (e.message)
     else:
         return infile
 

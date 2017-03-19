@@ -165,7 +165,7 @@ hr {
 <body>
 <h2>T-test results</h2>
 
-<h3>2017-02-23</h3>
+<h3>2017-03-18</h3>
 
 <hr/>
 
@@ -173,7 +173,7 @@ hr {
 
 <p><strong>Number of significant variables:</strong> 0</p>
 
-<p>P-values are plotted on a negative log scale  - larger values on the plot correspond to lower p-values. The line corresponds to the given significance level ( 0.000000 ).  The points are colored to help distinguish the statistically significant results.
+<p>P-values are plotted on a negative log scale  - larger values on the plot correspond to lower p-values. The line corresponds to the given significance level ( 0.050000 ).  The points are colored to help distinguish the statistically significant results.
 <img src="../outputs/ttest_out/p_Vals.png" alt=""/></p>
 
 <p>Variables are plotted as bars coloured by group.The significance is denoted by the stars drawn above each pair of bars.

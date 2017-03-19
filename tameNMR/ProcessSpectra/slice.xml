@@ -25,6 +25,7 @@
 
     <help>
     This tool retains selected regions of the spectra and removes the rest. The regions should be entered in ppm and separated by commas.
-    Ex: "10-0" will remove any spectral regions outside of the range 0 to 10 ppm.
+    Ex: "10-0" will remove any spectral regions outside of the range 0 to 10 ppm. Choose "Remove water signal" (default) to remove the
+    region 4.9-4.3 ppm.
     </help>
 </tool>

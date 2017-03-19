@@ -31,9 +31,10 @@ PQN <- function(data, loc = "median"){
 # normalisation to total integral
 totInt <- function(data) {
   data_ = data[,2:ncol(data)]
-  meanInt = trapezoid(apply(data_,1,mean))
-  scalingFactor = apply(data_,2,trapezoid) / meanInt
-  data_ = t(t(data_) / scalingFactor)
+  
+  meanInt = trapezoid(apply(abs(data_),1,mean))
+  scalingFactor = meanInt / apply(abs(data_),2,trapezoid)
+  data_ = t(t(data_) * scalingFactor)
   data_ = cbind(data[,1],data_)
   #colnames(data_) = names(data)
   data_

@@ -108,9 +108,23 @@ customBinning <- function(data, ppms, pattern){
 
 # -- Intelligent Binning (paper)
 intelligentBinning <- function(data){
-  # TODO
+  data_ = data[,2:ncol(data)]
+  meanSpec = apply(data_,1,median)
+  
+  #Detect peaks
+  baselineThresh <- max(meanSpec[1:200]) # determine threshold
+  peakList <- detectSpecPeaks(matrix(meanSpec,nrow = 1),
+                              nDivRange = c(128),
+                              scales = seq(1, 16, 2),
+                              baselineThresh = baselineThresh,
+                              SNR.Th = -1,
+                              verbose=FALSE)
+
+  #find peak boarders
+  
   print('Intelligent binning is not yet implemented')
-  data[1:2,1:2]
+  #data
+  peakList[[1]]
 }
 # -------------------------------------------------------------------
 

@@ -78,11 +78,11 @@ data_ = apply(data_, 2, RangeScale) * 100
 
 # alignment through clustering
 maxShift = 50;
-Y <- dohCluster(t(data_),
+Y <- suppressMessages(dohCluster(t(data_),
                 peakList = peakList,
                 refInd = refInd,
                 maxShift = maxShift,
-                acceptLostPeak = TRUE, verbose=FALSE)
+                acceptLostPeak = TRUE, verbose=FALSE))
 #list(data=Y,peakList=peakList)
 Y <- t(Y)
 

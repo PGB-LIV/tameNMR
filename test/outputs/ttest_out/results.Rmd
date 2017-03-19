@@ -1,6 +1,6 @@
 
 ## T-test results
-### 2017-02-23
+### 2017-03-18
 ---
 
 **Total t-test performed:** 187
@@ -8,7 +8,7 @@
 **Number of significant variables:** 0
 
 
-P-values are plotted on a negative log scale  - larger values on the plot correspond to lower p-values. The line corresponds to the given significance level ( 0.000000 ).  The points are colored to help distinguish the statistically significant results.
+P-values are plotted on a negative log scale  - larger values on the plot correspond to lower p-values. The line corresponds to the given significance level ( 0.050000 ).  The points are colored to help distinguish the statistically significant results.
 ![](../outputs/ttest_out/p_Vals.png)
 
 Variables are plotted as bars coloured by group.The significance is denoted by the stars drawn above each pair of bars.

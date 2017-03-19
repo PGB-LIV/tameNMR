@@ -13,7 +13,7 @@ if (length(args) < 1) {
 
 if("--help" %in% args) {
   cat("
-      Normalization of NMR spectra
+      Peak-picking of NMR spectra
 
       Arguments:
       --input=path - input file path

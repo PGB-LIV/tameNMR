@@ -56,7 +56,9 @@
 
         '''INFO''' This tool requires a zip file uploaded through ftp or upload tool
         to your account. The file should contain a Bruker nmr experiments without
-        the parent directory.
+        the parent directory. To make the zip file you can enter your Bruker experiment
+        folder, select all folders that you want to add to zip file, right-click, choose
+        compress and click OK.
 
     </help>
 
