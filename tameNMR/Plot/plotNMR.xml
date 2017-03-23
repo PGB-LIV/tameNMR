@@ -1,13 +1,54 @@
-
 <tool id="plotnmr" name="Plot NMR" version="1.0.1">
     <description> spectra </description>
     <command interpreter="Rscript">
-        PlotNMR.R --input=$input --output=$output --outDir=$output.files_path --ppmInt=$ppmInt
+        #if $method_choice.type == "difference"
+            plotNMR.R --type=$method_choice.type --input=$input --output=$output  --outDir=$output.files_path --ppmInt=$ppmInt --plotBins=$plotBins_choice.plotBins --bins=$plotBins_choice.bins --fact=$groups_choice.fact --factCol=$groups_choice.factCol --diffAvg=method_choice.diffAvg
+        #else
+            plotNMR.R --type=$method_choice.type --input=$input --output=$output  --outDir=$output.files_path --ppmInt=$ppmInt --plotBins=$plotBins_choice.plotBins --bins=$plotBins_choice.bins --fact=$groups_choice.fact --factCol=$groups_choice.factCol
+        #end if
     </command>
 
     <inputs>
-        <param name="input" type="data" label="Source" />
+        <param name="input" type="data" label="NMR Spectra" />
         <param name="ppmInt" type="text" label="Interval to plot (ppm)" value="10-0" />
+        <conditional name="method_choice">
+            <param name="type" type="select" label="Plot type">
+                <option value="overlap" selected="true">Overlap</option>
+                <option value="spread">Spread</option>
+                <option value="mean">Mean</option>
+                <option value="median">Median</option>
+                <option value="difference">Difference</option>
+            </param>
+            
+            <when value="overlap">
+            </when>
+            <when value="spread">
+            </when>
+            <when value="mean">
+            </when>
+            <when value="median">
+            </when>
+            <when value="difference">
+              <param name="diffAvg" type="select" label="Difference of.." />
+                <option value="mean">group means</option>
+                <option value="median">group medians</option>
+            </when>
+        </conditional>
+        
+        <conditional name='plotBins_choice'>
+          <param name="plotBins" type="boolean" label="Plot bins?" checked="False", truevalue='Y', falsevalue='N' />
+          <when value='Y'>
+            <param name="bins" type="data" label="Bin table" />
+          </when>
+        </conditional>
+        
+        <conditional name='groups_choice'>
+          <param name="factCond" type="boolean" label="Group spectra?" checked="False", truevalue='Y', falsevalue='N' />
+          <when value='Y'>
+            <param name="fact" type="data" label="Grouping factor file" />
+            <param name="factCol" type="integer" label="Which column (factor) to use" />
+          </when>
+        </conditional>
     </inputs>
 
     <outputs>
@@ -25,3 +66,5 @@
     </help>
 -->
 </tool>
+      
+      

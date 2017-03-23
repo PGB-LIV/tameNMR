@@ -1,0 +1,31 @@
+
+<tool id="quantilePlot" name="Quantile plot" version="1.0.1">
+    <description> </description>
+    <command interpreter="Rscript">
+        QuantilePlot.R --input=$input --output=$output --outDir=$output.files_path --ppmInt=$ppmInt --pltMean=$pltMean
+    </command>
+
+    <inputs>
+        <param name="input" type="data" label="Source" />
+        <param name="ppmInt" type="text" label="Interval to plot (ppm)" value="10-0" />
+        <param name="pltMean" type="select" label="Average spectrum calculate by">
+          <option value="mean" selected="True">Mean</option>
+          <option value="median">Median</option>
+        </param>
+    </inputs>
+
+    <outputs>
+        <data format="html" name="output" label="NMR Plot"/>
+    </outputs>
+
+    <!--
+    <requirements>
+    </requirements>
+
+    <tests>
+    </tests>
+
+    <help>
+    </help>
+-->
+</tool>

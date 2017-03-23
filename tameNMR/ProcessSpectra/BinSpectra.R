@@ -14,12 +14,10 @@ if("--help" %in% args) {
       Arguments:
       --input=path - input file path
       --output=path - output file path
-      --method=method - (uniform, intelligent, custom) the intervals of ppm to retain
-      --binSize=sizeInPpm - (optional, required when method=uniform)
-      --pattern=path - (optional, required when method=custom) path to a pattern file
+      --pattern=path - path to a pattern file
 
       Example:
-      ./BinSpectra.R --input=inputFilePath --output=outputFilePath --method=uniform --binSize=0.05\n\n")
+      ./BinSpectra.R --input=inputFilePath --output=outputFilePath --pattern=path \n\n")
   q(save="no")
 }
 
@@ -37,37 +35,8 @@ readNMRTabFile <- function(inpath){
   data
 }
 
-
-
-# -------------------- Functions for binning NMR spectra --------------------
-
-# -- Uniform binning
-uniformBinning <- function(data, ppms, wndw){
-
-  # find the interval width in points
-  windowInP <- ceiling( wndw / abs(ppms[1] - ppms[2]) )
-
-  # generate the interval starts/ends
-  starts <- seq(1, nrow(data), by=windowInP)
-  ends <- seq(windowInP, nrow(data), by=windowInP)
-  if(length(starts) != length(ends)) starts = starts[1:length(ends)]
-  binSize = ends[1] - starts[1] + 1
-
-  # bin data (ppm values are averages within each interval)
-  dataColNames = names(data)
-  data = as.matrix(data) * 1.0
-  dataBinned = do.call('rbind', lapply(1:length(starts), function(i) apply(data[starts[i]:ends[i],],2,sum)/binSize))
-
-  ppmBins = paste(round(ppms[starts],4), round(ppms[ends],4), sep='-')
-
-  allBinned = as.data.frame(t(dataBinned))
-  rownames(allBinned) <- dataColNames
-  names(allBinned) <- ppmBins
-  allBinned
-}
-
 # -- Pattern file-based binning
-customBinning <- function(data, ppms, pattern){
+patternBasedBinning <- function(data, ppms, pattern){
   ppmInterval2Pos <- function(ppms, interval){
     bin = which(ppms>=min(interval) & ppms<=max(interval))
     c(min(bin),max(bin))
@@ -105,53 +74,18 @@ customBinning <- function(data, ppms, pattern){
   names(dataInt) = pattern[,3]
   dataInt
 }
-
-# -- Intelligent Binning (paper)
-intelligentBinning <- function(data){
-  data_ = data[,2:ncol(data)]
-  meanSpec = apply(data_,1,median)
-  
-  #Detect peaks
-  baselineThresh <- max(meanSpec[1:200]) # determine threshold
-  peakList <- detectSpecPeaks(matrix(meanSpec,nrow = 1),
-                              nDivRange = c(128),
-                              scales = seq(1, 16, 2),
-                              baselineThresh = baselineThresh,
-                              SNR.Th = -1,
-                              verbose=FALSE)
-
-  #find peak boarders
-  
-  print('Intelligent binning is not yet implemented')
-  #data
-  peakList[[1]]
-}
 # -------------------------------------------------------------------
 
 # -- read data
+if('input' %in% names(args)){
 data = readNMRTabFile(args[['input']])
+} else stop('Data file not given. See ./BinPattern --help')
 
-# -- bin the spectra
-if('method' %in% names(args)){
-  if (args[['method']]=='uniform'){
-    if ('binSize' %in% names(args)) {
-      binSize = as.numeric(args[['binSize']])
-      data = uniformBinning(data[,2:ncol(data)], data[,1], binSize)}
-    else {
-      binSize = 0.02 # default value
-      data = uniformBinning(data[,2:ncol(data)], data[,1], binSize)}
-  } else if (args[['method']] == 'custom'){
-    if('pattern' %in% names(args)){
-      patternFile = read.table(args[['pattern']], sep="\t", header=F, stringsAsFactors = F)
-      data = customBinning(data[,2:ncol(data)], data[,1], patternFile)
-    } else {
-      data = intelligentBinning(data)
-    }
-  } else if (args[['method']] == 'intelligent'){
-    data = intelligentBinning(data)
-  } else {
-    cat(sprintf('Method %s is not available. Try --help \n', args[['method']]))
-  }
-}
+if('pattern' %in% names(args)){
+  patternFile = read.table(args[['pattern']], sep="\t", header=F, stringsAsFactors = F)
+} else stop('Pattern file not given. See ./BinPattern --help')
+  
+data = patternBasedBinning(data[,2:ncol(data)], data[,1], patternFile)
+
 # -- write the output
 write.table(data, file=args[['output']], row.names=T, col.names=T, sep='\t')

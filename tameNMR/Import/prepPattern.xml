@@ -1,19 +1,42 @@
 <tool id="prepPattern" name="Prepare" version="0.0.1">
     <description> pattern file </description>
     <command interpreter="Rscript">
-        prepPattern.R --input=$input --output=$output --type=$type
+        #if $method_choice.method == "uniform"
+            prepPattern.R --method=method_choice.method --output=$output  --dataSet=$method_choice.dataSet --binSize=$method_choice.binSize
+        #else if $method_choice.method == "brukerPattern"
+            prepPattern.R --method=method_choice.method --output=$output  --pattern=$method_choice.pattern
+        #else if $method_choice.method == "csvTable"
+            prepPattern.R --method=method_choice.method --output=$output  --pattern=$method_choice.pattern
+        #else
+            prepPattern.R --method=method_choice.method --output=$output  --dataSet=$method_choice.dataSet
+        #end if
     </command>
 
     <inputs>
-        <param name="input" type="data" label="Pattern file" />
-        <!--param name="source" type="select" label="Source" >
-          <option value="history">History</option>
-          <option value="ftp">FTP server</option>
-        </param-->
-        <param name="type" type="select" label="Type of pattern file" >
-          <option value="BrukerPattern">Bruker pattern file</option>
-          <option value="csvTable">csv table</option>
-        </param>
+      
+        <conditional name="method_choice">
+            <param name="method" type="select" label="Method">
+                <option value="uniform" selected="true">Uniform</option>
+                <option value="brukerPattern">Bruker pattern file</option>
+                <option value="csvTable">CSV table</option>
+                <option value="intelligent">Intelligent</option>
+            </param>
+            
+            <when value="uniform">
+                <param name="dataSet" type="data" label="Spectra"/>
+                <param name="binSize" type="float" value="0.02" label="Bin size in ppm"/>
+            </when>
+            <when value="brukerPattern">
+                <param name="pattern" type="data" label="Bruker Pattern File"/>
+            </when>
+            <when value="csvTable">
+                <param name="pattern" type="data" label="CSV Pattern File"/>
+            </when>
+            <when value="intelligent">
+                <param name="dataSet" type="data" label="Spectra"/>
+            </when>
+        </conditional>
+        
     </inputs>
 
     <outputs>
