@@ -61,11 +61,11 @@
       <tool file="tameNMR/Stats/pca.xml" />
       <tool file="tameNMR/Stats/plsda.xml" />
   </section>
-  <section id="plots" name="Plots">
+  <section id="plot" name="Plots">
       <tool file="tameNMR/Plot/plotNMR.xml"/>
-      <tool file="tameNMR/Plot/plotNMRBins.xml"/>
+      <!--tool file="tameNMR/Plot/plotNMRBins.xml"/-->
       <tool file="tameNMR/Plot/plotNMRSig.xml"/>
-      <tool file="tameNMR/Plot/plotNMRQuantiles.xml"/>
+      <tool file="tameNMR/Plot/quantilePlot.xml"/>
   </section>
 
 

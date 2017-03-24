@@ -2,14 +2,18 @@
 <tool id="plotnmrsig" name="Plot NMR" version="1.0.1">
     <description> significant bins </description>
     <command interpreter="Rscript">
-        PlotNMRSig.R --input=$input --output=$output --outDir=$output.files_path --ppmInt=$ppmInt --bins=$binFile --pvals=$pvalFile
+        PlotNMRSig.R --input=$input --output=$output --outDir=$output.files_path --ppmInt=$ppmInt --bins=$binFile --pvals=$pvalFile --colourbar=$cbar
     </command>
 
     <inputs>
-        <param name="input" type="data" label="Source" />
+        <param name="input" type="data" label="Spectra" />
         <param name="ppmInt" type="text" label="Interval to plot (ppm)" value="10-0" />
-        <param name="binFile" type="data" label="Bin file" />
-        <param name="pvalFile" type="data" label="ANOVA result file" />
+        <param name="binFile" type="data" label="Bin table" />
+        <param name="pvalFile" type="data" label="ANOVA results" />
+        <param name="cbar" type="select" label="Colour the spectra:">
+          <option value="continuous" selected="True">Continuous</option>
+          <option value="discrete">Discrete</option>
+        </param>
     </inputs>
 
     <outputs>

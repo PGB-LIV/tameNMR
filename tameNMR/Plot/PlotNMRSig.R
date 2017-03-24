@@ -42,10 +42,10 @@ scale = data[,1]
 toplt = strsplit(args[['ppmInt']], '-')[[1]]
 toplt = sort(as.numeric(toplt), decreasing = T)
 
-bins = read.csv(args[['bins']], header=T, stringsAsFactors = F)
+bins = read.table(args[['bins']], header=T, stringsAsFactors = F, sep='\t')
 if(grep('.dat',args[['pvals']])) { args[['pvals']]=gsub('.dat$','',args[['pvals']]) }
 pvals = read.table(paste(args[['pvals']],'/pvals.csv',sep=''), header=T, sep=',', stringsAsFactors = F)
-pvals_ = pval[,'adj-pvals']
+pvals_ = pvals[,'adj_p_val']
 test = args[['test']]
 
 if('fact' %in% names(args) & 'factCol' %in% names(args)) {
@@ -53,8 +53,14 @@ if('fact' %in% names(args) & 'factCol' %in% names(args)) {
   groups = groups[,as.numeric(args[['factCol']])]
   if(length(groups) != ncol(data_)) groups=NULL
   } else groups=NULL
-if('plotDiff' %in% names(args)) plotDiff = ifelse(args[['plotDiff']]=='Y', TRUE, FALSE)
-if('avgFun' %in% names(args)) avgFun = args[['avgFun']]
+if('plotDiff' %in% names(args)){
+  plotDiff = ifelse(args[['plotDiff']]=='Y', TRUE, FALSE)
+  } else plotDiff = F
+if('avgFun' %in% names(args)) {
+  avgFun = args[['avgFun']]
+} else {
+    avgFun = 'mean'
+  }
 
 # -------------------- Function definitions --------------------
 suppressMessages(library(RColorBrewer))
@@ -183,7 +189,7 @@ plotNMRSignif_2 = function(data, ppms, bins, pvals, toPlot=c(0,10), test='ANOVA'
 
   ppms<- ppms[ppm_to_point(ppms,toPlot[1]):ppm_to_point(ppms,toPlot[2])]
   N = ncol(dataNew)
-  levs = c('Unbinned', gsub(",", " - ", levs))
+  #levs = c('Unbinned', gsub(",", " - ", levs))
 
   ticks <- floor(seq(1,ncol(dataNew),length=7))
   #colsBrew = brewer.pal(11, 'Spectral')

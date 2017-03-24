@@ -2,13 +2,13 @@
     <description> pattern file </description>
     <command interpreter="Rscript">
         #if $method_choice.method == "uniform"
-            prepPattern.R --method=method_choice.method --output=$output  --dataSet=$method_choice.dataSet --binSize=$method_choice.binSize
+            prepPattern.R --method=$method_choice.method --output=$output  --dataSet=$method_choice.dataSet --binSize=$method_choice.binSize
         #else if $method_choice.method == "brukerPattern"
-            prepPattern.R --method=method_choice.method --output=$output  --pattern=$method_choice.pattern
+            prepPattern.R --method=$method_choice.method --output=$output  --pattern=$method_choice.pattern
         #else if $method_choice.method == "csvTable"
-            prepPattern.R --method=method_choice.method --output=$output  --pattern=$method_choice.pattern
+            prepPattern.R --method=$method_choice.method --output=$output  --pattern=$method_choice.pattern
         #else
-            prepPattern.R --method=method_choice.method --output=$output  --dataSet=$method_choice.dataSet
+            prepPattern.R --method=$method_choice.method --output=$output  --dataSet=$method_choice.dataSet
         #end if
     </command>
 

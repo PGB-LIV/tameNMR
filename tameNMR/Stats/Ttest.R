@@ -267,7 +267,7 @@ plots = c(plots, paste(outdir, '/', fileName, sep=''))
 # generating other outputs
 
 
-write.table(res, file=paste(outdir,'/results.txt', sep=''), row.names=T, col.names=T)
+write.table(res, file=paste(outdir,'/pvals.txt', sep=''), row.names=T, col.names=T)
 
 mdEncoded <- make.MDoutput(res, plots, conf.level)
 writeLines(mdEncoded, paste(outdir, "/results.Rmd", sep=''))

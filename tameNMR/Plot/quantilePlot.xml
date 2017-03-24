@@ -15,7 +15,7 @@
     </inputs>
 
     <outputs>
-        <data format="html" name="output" label="NMR Plot"/>
+        <data format="html" name="output" label="Quantile Plot"/>
     </outputs>
 
     <!--

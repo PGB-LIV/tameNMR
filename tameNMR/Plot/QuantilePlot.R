@@ -161,16 +161,17 @@ makeHTML <- function(plt){
   html
 }
 
-plt = paste(args[['outDir']],'/QuantilePlot.png',sep='')
+outdir = args[['outDir']]
+plt = paste(outdir,'/QuantilePlot.png',sep='')
 plt1 = 'QuantilePlot.png'
-if(!dir.exists(args[['outDir']])) dir.create(args[['outDir']], showWarnings = F)
+if(!dir.exists(outdir)) dir.create(outdir, showWarnings = F)
 
 pltMean = ifelse(args[['pltMean']]=='Y', TRUE, FALSE)
-png(plt, width=30, height=18, units= 'in', res=300)
+png(plt1, width=30, height=18, units= 'in', res=300)
 plotQuantiles(data = t(data_), ppmRange = c(min(scale), max(scale)), ppmPlot = toplt, plotMean = pltMean)
 dev.off()
 
-htmlCode <- makeHTML(plt)
+htmlCode <- makeHTML(plt1)
 # write outputs
 
 htmlFile <- file(args[['output']])
