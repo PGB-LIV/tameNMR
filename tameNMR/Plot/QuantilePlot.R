@@ -161,6 +161,18 @@ makeHTML <- function(plt){
   html
 }
 
+make.MDoutput = function(plts){
+  output = ''
+  header = '## NMR quantile plot\n'
+  
+  intro = ''
+  prePlt1 = ''
+  plt1 = sprintf('![](%s)\n', plts[[1]])
+  
+  output = c(header, intro, prePlt1,plt1)
+  output
+}
+
 outdir = args[['outDir']]
 plt = paste(outdir,'/QuantilePlot.png',sep='')
 plt1 = 'QuantilePlot.png'
@@ -171,9 +183,18 @@ png(plt1, width=30, height=18, units= 'in', res=300)
 plotQuantiles(data = t(data_), ppmRange = c(min(scale), max(scale)), ppmPlot = toplt, plotMean = pltMean)
 dev.off()
 
-htmlCode <- makeHTML(plt1)
+mdEncoded = make.MDoutput(plts)
+writeLines(mdEncoded, paste(outdir, "/results.Rmd", sep=''))
+MDfile = markdown::markdownToHTML(file = paste(outdir,"/results.Rmd", sep=''))
+
+htmlFile = file(args[['output']])
+writeLines(MDfile, htmlFile)
+close(htmlFile)
+
+
+#htmlCode <- makeHTML(plt1)
 # write outputs
 
-htmlFile <- file(args[['output']])
-writeLines(htmlCode, htmlFile)
-close(htmlFile)
+#htmlFile <- file(args[['output']])
+#writeLines(htmlCode, htmlFile)
+#close(htmlFile)

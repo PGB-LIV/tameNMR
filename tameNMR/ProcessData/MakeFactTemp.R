@@ -28,4 +28,4 @@ names(args) <- argsDF[,1]
 # prepare the template
 data = read.table(args[['input']], header=T, row.names=1, stringsAsFactors = F, sep='\t')
 out = data.frame(samples=rownames(data))
-write.table(out, file=args[['output']], sep=',', row.names = F, col.names = T)
+write.table(out, file=args[['output']], sep='\t', row.names = F, col.names = T)

@@ -30,7 +30,7 @@ args = as.list(as.character(argsDF[,2]))
 names(args) <- argsDF[,1]
 
 data = read.table(args[['input']], header=T, sep='\t', row.names=1, stringsAsFactors = F)
-factorFile = read.table(args[['factorFile']], header=T, sep=',', stringsAsFactors = T, row.names=1)
+factorFile = read.table(args[['factorFile']], header=T, sep='\t', stringsAsFactors = T, row.names=1)
 fac = as.factor(factorFile[,as.numeric(args[['factorCol']])])
 adjust = args[['adjust']]
 outdir = args[['outdir']]

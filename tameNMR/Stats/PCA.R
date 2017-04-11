@@ -198,7 +198,7 @@ parsePCs <- function(pcs){
 }
 
 data = read.table(args[['input']], header=T, row.names=1, stringsAsFactors = F, sep='\t')
-factorFile = read.table(args[['factorFile']], header=T, sep=',', stringsAsFactors = T, row.names=1)
+factorFile = read.table(args[['factorFile']], header=T, sep='\t', stringsAsFactors = T, row.names=1)
 colnum <- as.numeric(args[['factorCol']])
 factor = factorFile[,colnum]
 outdir = args[['outdir']]
@@ -225,10 +225,10 @@ for(i in 1:nrow(pcs)){
 
 mdEncoded <- make.MDoutput(plts)
 writeLines(mdEncoded, paste(outdir, "/results.Rmd", sep=''))
-MDTEST = markdown::markdownToHTML(file = paste(outdir,"/results.Rmd", sep=''))
+MDfile = markdown::markdownToHTML(file = paste(outdir,"/results.Rmd", sep=''))
 
 htmlFile <- file(args[['output']])
-writeLines(MDTEST, htmlFile)
+writeLines(MDfile, htmlFile)
 close(htmlFile)
 #knitr::knit2html(input = paste(outdir,"/results.Rmd", sep=''), output = outdir, quiet = T)
 

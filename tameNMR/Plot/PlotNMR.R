@@ -14,15 +14,17 @@ if("--help" %in% args) {
       --output=path - output file path
       --outDir=path - output folder
       --ppmInt=interval - ppm interval to plot
-      --type=overlap {overlap,spread,mean,median,diff} - type of plot
-      --plotBins=Y {Y,N} - if to plot bins
-      --bins=path - path to bins file
+      --spread=N {Y,N} - spread the spectra (otherwise overlap, default)
+      --group=Y {Y,N} - group spectra
       --fact=path - path to factor file
       --factCol=1 - which column in fact contains groups
-      --diffAvg=mean {mean, median} (only with type=diff) - which way to average
+      --aggr=Y {Y,N} - if aggregate spectra
+      --aggrAvg=median {mean,median} - what function to use for aggregating spectra
+      --plotBins=Y {Y,N} - if to plot bins
+      --bins=path - path to bins file
 
       Example:
-      ./plotNMR.R --input=inputFilePath --output=outputFilePath --outDir=outputDirPath --ppmInt=10-0 type=overlap\n\n")
+      ./plotNMR.R --input=inputFilePath --output=outputFilePath --outDir=outputDirPath --ppmInt=10-0 spread=Y \n\n")
   q(save="no")
 }
 
@@ -41,178 +43,193 @@ scale = data[,1]
 toplt = strsplit(args[['ppmInt']], '-')[[1]]
 toplt = sort(as.numeric(toplt), decreasing = T)
 
-if('bins' %in% names(args)) bins = read.csv(args[['bins']], header=T, stringsAsFactors = F)
+if('spread' %in% names(args)){
+  spreadPar = ifelse(args[['spread']] == 'Y', T, F)
+} else spreadPar = F
+
+if('group' %in% names(args)){
+  groupPar = ifelse(args[['group']] == 'Y', T, F)
+} else groupPar = F
+
+if(groupPar & 'fact' %in% names(args) & 'factCol' %in% names(args)) {
+  groupsPar = read.table(fact, header=T, sep='\t', row.names=1)
+  groupsCol = as.numeric(args[['factCol']])
+  groupsPar = groupsPar[,groupsCol]
+} else {
+  groupPar = F
+  groupsPar = NULL
+}
+
+if('aggr' %in% names(args)) {
+  aggrPar = ifelse(args[['aggr']] == 'Y', T, F)
+} else aggrPar = F
+
+if('aggrAVG' %in% names(args)) {
+  aggrAvgPar = args[['aggrAvg']]
+} else aggrAvg = 'median'
+
+if('plotBins' %in% names(args)) {
+  plotBinsPar = ifelse(args[['plotBins']] == 'Y', T, F)
+} else plotBinsPar = F
+
+if('bins' %in% names(args)) {
+  binsPar = read.table(args[['bins']], header=T, sep='\t', stringsAsFactors = F)
+} binsPar = NULL
 
 # -------------------- Function definitions --------------------
+# Plot NMR spectra
 
-plotNMR.new = function(data, scale, toPlot=c(10, 0), 
+plotNMRspectra = function(data, scale, toPlot=c(10, 0), 
+                        spread = F,
+                        group = F, groups = NULL,
+                        aggregate = F, aggAvg = 'median',
                         plotBins=F, bins=NULL,
-                        type='overlap', # cana also be {spread, mean, median, difference
-                        groups=NULL, diffAvg = 'mean',
+                        #diff = F, diffAvg = 'median', TODO: implement plotting of difference spectra
                         showLegend=F, labs=c(), ...){
 
-  ppm_to_point = function(ppm_scale, ppm){
-    which.min(abs(ppm_scale-ppm))
-  }
-
+  
   if (ncol(data)>6) showLegend = F
   
+  # subset data to the range in toPlot
   data = as.matrix(data)
   data = data[ppm_to_point(scale,toPlot[1]):ppm_to_point(scale,toPlot[2]),]
   scale = scale[ppm_to_point(scale,toPlot[1]):ppm_to_point(scale,toPlot[2])]
-  if(!is.null(groups) & length(as.character(unique(groups)))<2) groups = NULL # don't use groups if only 1 present
+  if(toPlot[2] > toPlot[1]) toPlot = rev(toPlot) # toPlot is left to right larger to smaller
+  
+  
+  if(group & !is.null(groups)){
+    if(length(as.character(unique(groups))) < 2) {group = F; groups = NULL} # don't use groups if only 1 present
+  } else {group = F; groups=NULL}
+  
+  if(plotBins & !is.null(bins)) {
+    bins = bins[apply(bins,1, function(x) all(c(x[2:3] < toPlot[1], x[2:3] > toPlot[2]))),]
+    if(nrow(bins) == 0) {plotBins=F; bins=NULL}
+    } else plotBins = F
+  
+  # aggregate data if required 
+  if(aggregate){
+    if(aggAvg == 'median') {
+      data = aggregateByGroup(data, groups, median)
+    } else if (aggAvg == 'mean') {
+      data = aggregateByGroup(data, groups, mean)
+    } else {
+      cat(sprintf('No such average method %s, defaulting to median. \n', aggAvg))
+      data = aggregateByGroup(data, groups, mean)
+    }
+  }
+  # make colours
+  if(aggregate & group){
+    cols = rainbow(ncol(data))
+  } else if(group) {
+    groups = as.factor(groups)
+    cols = rainbow(length(levels(groups)))[groups]
+  } else if(aggregate){
+      cols = rainbow(ncol(data))
+  } else {
+      cols = rainbow(ncol(data))
+  }
+  
+  if(spread) plotSpectraSpread(data, scale, cols, plotBins=plotBins, bins=bins)
+  else plotSpectraOlap(data, scale, cols, plotBins=plotBins, bins=bins)
+}
 
-  
-  if(type == 'overlap'){ # <- normal overlapped spectra
-    
-    ylim = c(0,max(data)*1.05)
-    xlim = c(0, nrow(data))
-    N <- nrow(data)
-    if(!is.null(groups)){
-      groups = as.factor(groups)
-      cols = rainbow(length(levels(groups)))[groups]
-      } else {
-        cols = rainbow(ncol(data))
-    }
-  
-    ticks <- floor(seq(1,nrow(data),length=7))
-    plot(NULL, xlim=xlim, ylim=ylim, axes=F, xlab="ppm", ylab="", ...)
-    axis(1, at=ticks, labels=round(scale[ticks],2), srt=45)
-    
-    for (i in 1:ncol(data)){
-      lines(1:N, data[,i], col=cols[i])
-    }
-    if(showLegend){
-      if (!is.null(labs)>0){
-        legend(xlim[1], ylim[2], legend=labs,fill = cols, cex=0.75, box.col='white')
-      } else {
-        legend(xlim[1], ylim[2], legend=colnames(data),fill = cols, cex=0.75, box.col='white')
-      }
-    }
-  } else if(type == 'spread'){ # <- spread spectra for better visualisation of alignment
-    
-    offset = max(data)
-    ylim = c(0, offset*ncol(data)+offset*1.05)
-    xlim = c(0, nrow(data))
-    N <- nrow(data)
-    if(!is.null(groups)){
-      groups = as.factor(groups)
-      cols = rainbow(length(levels(groups)))[groups]
-      } else {
-        cols = rainbow(ncol(data))
-    }
-    if(is.null(labs)) labs = colnames(data) 
-     
-    x.ticks = floor(seq(1,nrow(data),length=7))
-    y.ticks = (offset * (0:(ncol(data)-1))) + 0.3 * offset
-    plot(NULL, xlim=xlim, ylim=ylim, axes=F, xlab="ppm", ylab="", ...)
-    axis(1, at=x.ticks, labels=round(scale[x.ticks],2), srt=45)
-    if(plotBins) abline(h=0, lty=4, col='grey')
-    #axis(2, at=y.ticks, labels=labs, las=2)
-    
-    for (i in 1:ncol(data)){
-      lines(1:N, data[,i] + (i-1)*offset, col=cols[i])
-    }
-    text(x=floor(range(xlim)/100), y=y.ticks, labels = labs, cex = 0.6)
-    if(!is.null(groups)) legend('topright', legend=levels(groups), fill = rainbow(length(levels(groups))), cex=0.75, box.col='white')
-    
-  } else if(type == 'mean'){ # <- mean spectrum (good for looking at bins)
-    if(!is.null(groups)){
-      groups = as.character(groups)
-      uniGroups = unique(groups)
-      data = do.call('cbind', lapply(uniGroups, function(grp)  apply(data[,which(groups==grp)],1,mean)))
-    } else {
-      data = matrix(apply(data,1,mean), ncol = 1)
-    }
-    
-    ylim = c(0,max(data)*1.05)
-    xlim = c(0, nrow(data))
-    N <- nrow(data)
-    if(is.null(labs)) labs = colnames(data) 
-    cols = rainbow(ncol(data))
-    x.ticks = floor(seq(1,nrow(data),length=7))
-    plot(NULL, xlim=xlim, ylim=ylim, axes=F, xlab="ppm", ylab="", ...)
-    axis(1, at=x.ticks, labels=round(scale[x.ticks],2), srt=45)
-    axis(2)
-    abline(h=0, lty=4, col='black')
-    for (i in 1:ncol(data)){
-      lines(1:N, data[,i], col=cols[i])
-    }
-    if(!is.null(groups)) legend('topright', legend=uniGroups, fill = cols, cex=0.75, box.col='white')
-      #text(x=floor(range(xlim)/100), y=y.ticks, labels = labs, cex = 0.6)
-    
-  } else if(type == 'median'){ # <- median spectrum (good for looking at bins)
-    if(!is.null(groups)){
-      groups = as.character(groups)
-      uniGroups = unique(groups)
-      data = do.call('cbind', lapply(1:length(uniGroups), function(i)  apply(data[,groups==uniGroups[i]],1,median)))
-    } else {
-      data = matrix(apply(data,2,median), ncol = 1)
-    }
-    
-    ylim = c(0,max(data)*1.05)
-    xlim = c(0, nrow(data))
-    N <- nrow(data)
-    if(is.null(labs)) labs = colnames(data) 
-    cols = rainbow(ncol(data))
-    x.ticks = floor(seq(1,nrow(data),length=7))
-    plot(NULL, xlim=xlim, ylim=ylim, axes=F, xlab="ppm", ylab="", ...)
-    axis(1, at=x.ticks, labels=round(scale[x.ticks],2), srt=45)
-    axis(2)
-    abline(h=0, lty=4, col='black')
-    for (i in 1:ncol(data)){
-      lines(1:N, data[,i], col=cols[i])
-    }
-    if(!is.null(groups)) legend('topright', legend=uniGroups, fill = cols, cex=0.75, box.col='white')
-      #text(x=floor(range(xlim)/100), y=y.ticks, labels = labs, cex = 0.6)
-    
-  } else if(type == 'difference'){ # <- difference spectrum
+ppm_to_point = function(ppm_scale, ppm){
+  # convert ppm values to point values in spectra
+  which.min(abs(ppm_scale-ppm))
+}
+
+aggregateByGroup = function(data, groups, avgF = median){
+  # aggregate spectra by group if groups given, else just aggregate into 1 spectrum
+  if(!is.null(groups)){
     groups = as.character(groups)
-    if(length(unique(groups))==2){
-      uniGrp = unique(groups)
-      avg = ifelse(diffAvg=='mean', mean, median)
-      avgA = apply(data[,groups == uniGrp[1]], 1, avg)
-      avgB = apply(data[,groups == uniGrp[2]], 1, avg)
-      diffSpec = avgA-avgB
-      
-      ylim = c(min(diffSpec) - (abs(min(diffSpec) * 0.05)), max(diffSpec)*1.05)
-      xlim = c(0, length(diffSpec))
-      N <- length(diffSpec)
-      cols = rainbow(1)
-      x.ticks = floor(seq(1, length(diffSpec), length=7))
-      plot(NULL, xlim=xlim, ylim=ylim, axes=F, xlab="ppm", ylab="", main=paste('Difference plot ( ', uniGrp[1], ' - ', uniGrp[2],' )', sep=''), ...)
-      axis(1, at=x.ticks, labels=round(scale[x.ticks],2), srt=45)
-      axis(2)
-      abline(h=0, lty=4, col='grey')
-      lines(1:N, diffSpec, col=cols)
-      
-    } else stop('Difference plot only works with 2 groups.\n')
-    
-  } else stop(sprintf('No such type %s\n', type))
+    grps = unique(groups)
+    out = do.call('cbind', lapply(grps, function(grp) apply(data[,groups == grp], 1, avgF)))
+    colnames(out) = grps
+  } else {
+    out = apply(data, 1, avgF)
+    out = matrix(out, ncol = 1)
+    print(dim(out))
+    colnames(out) = 'Avg.Spectrum'
+  }
+  out
+}
+
+plotSpectraOlap = function(data, scale, cols, labs = NULL, showLegend = T, plotBins=NULL, bins=NULL, ...){
+  # Plot NMR spectra ovelapped
   
+  ylim = c(0,max(data)*1.05)
+  xlim = c(0, nrow(data))
+  N <- nrow(data)
+  if(is.null(labs)) labs = colnames(data) 
+  if(ncol(data)>8) showLegend = F
   
-  # Plotting bin boundaries and labels
-  if(plotBins){
-    scale_min = min(scale)
-    scale_max = max(scale)
-    binsToPlot = intersect(which(bins[,2] > scale_min & bins[,2] < scale_max),
-                           which(bins[,2] > scale_min & bins[,2] < scale_max))
-    labels = bins[binsToPlot,1]
-    if(type=='spread') y = 0.9 * ylim[2] 
-    else y = 0.5 * ylim[2] 
-    
-    for(i in 1:nrow(bins)){
-      x1 = ppm_to_point(scale,bins[i,2])
-      x2 = ppm_to_point(scale,bins[i,3])
-      segments(x1, y, x2, y)
-      text(x=mean(x1,x2), y=y*1.10, labels=labels[i], srt=45)
-      segments(x1,y*1.05,x1,0)
-      segments(x2,y*1.05,x2,0)
+  ticks <- floor(seq(1,nrow(data),length=7))
+  plot(NULL, xlim=xlim, ylim=ylim, axes=F, xlab="ppm", ylab="", ...)
+  axis(1, at=ticks, labels=round(scale[ticks],2), srt=45)
+  
+  for (i in 1:ncol(data)){
+    lines(1:N, data[,i], col=cols[i])
+  }
+  if(showLegend){
+    if (!is.null(labs)>0){
+      legend(xlim[1], ylim[2], legend=labs,fill = cols, cex=0.75, box.col='white')
+    } else {
+      legend(xlim[1], ylim[2], legend=colnames(data),fill = cols, cex=0.75, box.col='white')
     }
+  }
+  
+  if(plotBins & !is.null(bins)) {
+    plotBins(data, scale, bins, type='overlap', ylim=ylim)
+  }
+
+}
+
+plotSpectraSpread = function(data, scale, cols, labs = NULL, showLegend = F, plotBins=NULL, bins=NULL, ...){
+  # Plot NMR spectra spread
+  
+  offset = max(data)
+  ylim = c(0, offset*ncol(data))#+offset*1.05)
+  xlim = c(0, nrow(data))
+  N <- nrow(data)
+  
+  if(is.null(labs)) labs = colnames(data) 
+   
+  x.ticks = floor(seq(1,nrow(data),length=7))
+  y.ticks = (offset * (0:(ncol(data)-1))) + 0.3 * offset
+  plot(NULL, xlim=xlim, ylim=ylim, axes=F, xlab="ppm", ylab="", ...)
+  axis(1, at=x.ticks, labels=round(scale[x.ticks],2), srt=45)
+  #if(plotBins) abline(h=0, lty=4, col='grey')
+  #axis(2, at=y.ticks, labels=labs, las=2)
+  
+  for (i in 1:ncol(data)){
+    lines(1:N, data[,i] + (i-1)*offset, col=cols[i])
+  }
+  text(x=floor(range(xlim)/100), y=y.ticks, labels = labs, cex = 0.6)
+  #if(!is.null(groups)) legend('topright', legend=levels(groups), fill = rainbow(length(levels(groups))), cex=0.75, box.col='white')
+  if(plotBins & !is.null(bins)) {
+    plotBins(data, scale, bins, type='spread', ylim=ylim)
   }
 }
 
+plotBins = function(data, scale, bins, type, ylim){
+  labels = bins[,1]
+  if(type=='spread') y = 0.95 * ylim[2] 
+  else y = 0.5 * ylim[2] 
+  
+  for(i in 1:nrow(bins)){
+    x1 = ppm_to_point(scale,bins[i,2])
+    x2 = ppm_to_point(scale,bins[i,3])
+    rect(x1,0,x2,y, col=rgb(0.8,0.8,0.8,0.5),border = NA)
+    segments(x1, y, x2, y, lty = 4, lwd = 0.5)
+    segments(x1, 0, x2, 0, lty = 4, lwd = 0.5)
+    segments(x1,y*1.01,x1,0, lty = 4, lwd = 0.5)
+    segments(x2,y*1.01,x2,0, lty = 4, lwd = 0.5)
+    text(x=mean(c(x1,x2)), y=y*1.05, labels=labels[i], srt=0)
+  }
+  
+}
 # ================================================== 
+
 makeHTML <- function(plt){
   # files - a list of files to display (files within each entry are displayed next to each other?)
   css.H1 <- '\"text-align: center;font-family:verdana; font-size:30px\"'
@@ -241,25 +258,40 @@ makeHTML <- function(plt){
   html
 }
 
+make.MDoutput = function(plts){
+  output = ''
+  header = '## NMR spectra\n'
+  
+  intro = ''
+  prePlt1 = ''
+  plt1 = sprintf('![](%s)\n', plts[[1]])
+  
+  output = c(header, intro, prePlt1,plt1)
+  output
+}
+
 plt = paste(args[['outDir']],'/NMRplot.png',sep='')
 plt1 = 'NMRplot.png'
 if(!dir.exists(args[['outDir']])) dir.create(args[['outDir']], showWarnings = F)
 
 png(plt, width=30, height=18, units= 'in', res=300)
-if(plotBins){
-  if('bins' %in% names(args)){
-    plotNMR(data_, scale, toPlot=toplt, plotBins=T, bins = bins)
-  } else {
-    stop('Bins not specified.')
-  }
-} else {
-  plotNMR(data_, scale, toPlot=toplt)
-}
+plotNMRspectra(data_, scale, toPlot=toplt, 
+               spread = spreadPar,
+               group = groupPar, groups = groupsPar,
+               aggregate = aggrPar, aggAvg = aggrAvgPar,
+               plotBins=plotBinsPar, bins = binsPar)
 dev.off()
 
-htmlCode <- makeHTML(plt1)
-# write outputs
+mdEncoded = make.MDoutput(plts)
+writeLines(mdEncoded, paste(outdir, "/results.Rmd", sep=''))
+MDfile = markdown::markdownToHTML(file = paste(outdir,"/results.Rmd", sep=''))
 
-htmlFile <- file(args[['output']])
-writeLines(htmlCode, htmlFile)
+htmlFile = file(args[['output']])
+writeLines(MDfile, htmlFile)
 close(htmlFile)
+
+#htmlCode <- makeHTML(plt1)
+
+#htmlFile <- file(args[['output']])
+#writeLines(htmlCode, htmlFile)
+#close(htmlFile)

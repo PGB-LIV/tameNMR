@@ -267,7 +267,7 @@ names(args) <- argsDF[,1]
 # import data
 
 data = read.table(args[['input']], header=T, sep='\t', row.names=1, stringsAsFactors = F)
-factorFile = read.table(args[['factorFile']], header=T, sep=',', stringsAsFactors = T, row.names=1)
+factorFile = read.table(args[['factorFile']], header=T, sep='\t', stringsAsFactors = T, row.names=1)
 grp = factorFile[,as.numeric(args[['factorCol']])]
 grp = as.factor(grp)
 outdir = args[['outdir']]

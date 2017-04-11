@@ -46,9 +46,9 @@ makeUniformBinTable <- function(dataSet, wndw){
   ends <- seq(windowInP, nrow(data), by=windowInP)
   if(length(starts) != length(ends)) starts = starts[1:length(ends)]
 
-  ppmBins = data.frame(binLabel = as.character(round((ppms[starts]+ppms[ends])/2,3)),
-                       left = round(ppms[starts],4),
-                       right = round(ppms[ends],4))
+  ppmBins = data.frame(left = round(ppms[starts],4),
+                       right = round(ppms[ends],4),
+                       binLabel = as.character(round((ppms[starts]+ppms[ends])/2,3)))
   ppmBins
 }
 
@@ -80,9 +80,9 @@ makeIntelliBinTable <- function(data){
   }
   
   bins = do.call('rbind', lapply(peakList[[1]], function(x) c(x, find.peak.edges(x, deriv))))
-  bins = cbind(round((data[bins[,2],1]+data[bins[,3],1])/2,3), data[bins[,2],1], data[bins[,3],1])
+  bins = cbind(data[bins[,2],1], data[bins[,3],1], round((data[bins[,2],1]+data[bins[,3],1])/2,3))
   bins = as.data.frame(bins)
-  colnames(bins) = c('binLabel', 'left', 'right')
+  colnames(bins) = c('left', 'right', 'binLabel')
   bins
 }
 
@@ -90,7 +90,8 @@ makeIntelliBinTable <- function(data){
 readBrukerPatternFile <- function(path){
   pf = read.table(path, sep="", header=F, skip=9, stringsAsFactors = F)
   pf = pf[,c(3,4,6)]
-  colnames(pf) = c('binLabel', 'left', 'right')
+  colnames(pf) = c('left', 'right', 'binLabel')
+  pf
 }
 
 # -- csv table pattern file
@@ -98,7 +99,7 @@ readcsvTable = function(path){
   pattern = read.csv(args[['input']], header=F, stringsAsFactors = F, sep=',')
   if(ncol(pattern) < 3) stop('Invalid csv table. Make sure that the table has no headers, 3 columns and is comma-delimited')
   else {
-    colnames(pattern) =c('binLabel', 'left', 'right') 
+    colnames(pattern) = c('left', 'right', 'binLabel') 
     return(pattern)
     }
 }
