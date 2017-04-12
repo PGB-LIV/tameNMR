@@ -102,7 +102,7 @@ plotNMRspectra = function(data, scale, toPlot=c(10, 0),
   } else {group = F; groups=NULL}
   
   if(plotBins & !is.null(bins)) {
-    bins = bins[apply(bins,1, function(x) all(c(x[2:3] < toPlot[1], x[2:3] > toPlot[2]))),]
+    bins = bins[apply(bins,1, function(x) all(c(x[1:2] < toPlot[1], x[1:2] > toPlot[2]))),]
     if(nrow(bins) == 0) {plotBins=F; bins=NULL}
     } else plotBins = F
   
@@ -212,13 +212,13 @@ plotSpectraSpread = function(data, scale, cols, labs = NULL, showLegend = F, plo
 }
 
 plotBins = function(data, scale, bins, type, ylim){
-  labels = bins[,1]
+  labels = bins[,3]
   if(type=='spread') y = 0.95 * ylim[2] 
   else y = 0.5 * ylim[2] 
   
   for(i in 1:nrow(bins)){
-    x1 = ppm_to_point(scale,bins[i,2])
-    x2 = ppm_to_point(scale,bins[i,3])
+    x1 = ppm_to_point(scale,bins[i,1])
+    x2 = ppm_to_point(scale,bins[i,2])
     rect(x1,0,x2,y, col=rgb(0.8,0.8,0.8,0.5),border = NA)
     segments(x1, y, x2, y, lty = 4, lwd = 0.5)
     segments(x1, 0, x2, 0, lty = 4, lwd = 0.5)

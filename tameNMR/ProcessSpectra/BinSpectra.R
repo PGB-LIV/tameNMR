@@ -61,7 +61,7 @@ patternBasedBinning <- function(data, ppms, pattern){
   bins = do.call('rbind', lapply(1:nrow(pattern), function(i) ppmInterval2Pos(ppms, pattern[i,1:2])))
   binSize = abs(bins[,2] - bins[,1]) + 1
   dataInt = do.call('cbind', lapply(1:nrow(bins), function(i) apply(data[bins[i,1]:bins[i,2],], 2, sum)/binSize[i]))
-  dataInt = as.data.frame(dataInt)
+  dataInt = as.data.frame(dataInt, stringsAsFactors=F)
 
   dupes = duplicated(colnames(data))
   if (any(dupes)){

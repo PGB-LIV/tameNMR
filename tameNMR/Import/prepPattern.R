@@ -48,7 +48,8 @@ makeUniformBinTable <- function(dataSet, wndw){
 
   ppmBins = data.frame(left = round(ppms[starts],4),
                        right = round(ppms[ends],4),
-                       binLabel = as.character(round((ppms[starts]+ppms[ends])/2,3)))
+                       binLabel = as.character(round((ppms[starts]+ppms[ends])/2,3)),
+                       stringsAsFactors = F)
   ppmBins
 }
 
@@ -81,7 +82,7 @@ makeIntelliBinTable <- function(data){
   
   bins = do.call('rbind', lapply(peakList[[1]], function(x) c(x, find.peak.edges(x, deriv))))
   bins = cbind(data[bins[,2],1], data[bins[,3],1], round((data[bins[,2],1]+data[bins[,3],1])/2,3))
-  bins = as.data.frame(bins)
+  bins = as.data.frame(bins, stringsAsFactors=F)
   colnames(bins) = c('left', 'right', 'binLabel')
   bins
 }
