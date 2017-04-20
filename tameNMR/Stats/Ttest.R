@@ -57,7 +57,7 @@ ttest_all = function(data, factor, paired = F, tails = 'two.sided', conf.level =
   res = as.data.frame(res)
   res$adj.p_val = round(p.adjust(res[,1], method=adjust),3)
   rownames(res) <- colnames(data)
-  names(res) <- c('p_val', 'conf_int_1','conf_int_2','adj_p_val')
+  names(res) <- c('p-val', 'conf-int_1','conf-int_2','adj.p-val')
   res
 }
 
@@ -65,9 +65,9 @@ plot.Pvals = function(res, showLabels = F, sigLvl = 0.05, main='P_values (T-Test
   
   labels = rownames(res)
   X = factor(1:nrow(res))
-  sig = res[,"adj_p_val"] <= sigLvl
+  sig = res[,"adj.p-val"] <= sigLvl
   cols = ifelse(sig, "steelblue","navy")
-  Y = -log10(res[,"adj_p_val"])
+  Y = -log10(res[,"adj.p-val"])
   pltTemp = data.frame(X=X, Y=Y, cols=cols)
   rownames(pltTemp) = labels
   
@@ -136,7 +136,7 @@ make.MDoutput = function(res, plots, conf.level){
                  Sys.Date(), '\n','---\n', sep='')
   
   intro = paste('**Total t-test performed:** ',nrow(res),'\n\n',
-                '**Number of significant variables:** ', sum(res[,'adj_p_val']<=conf.level),'\n\n',
+                '**Number of significant variables:** ', sum(res[,'adj.p-val']<=conf.level),'\n\n',
                 sep='')
   prePlt1 = paste('P-values are plotted on a negative log scale  - larger values on the plot correspond to lower p-values. ',
                   sprintf('The line corresponds to the given significance level ( %f ). ', round(conf.level,4)),
@@ -256,9 +256,9 @@ plots = c(plots, paste(outdir, '/', fileName, sep=''))
 
 # Only plot 50 values if there are more
 if (ncol(data)>50){
-  p2 = plot.Bars(data[,1:50], factor, res[1:50,"adj_p_val"])
+  p2 = plot.Bars(data[,1:50], factor, res[1:50,"adj.p-val"])
 } else {
-  p2 = plot.Bars(data, factor, res[,"adj_p_val"])
+  p2 = plot.Bars(data, factor, res[,"adj.p-val"])
 }
 fileName = 'meanBars.png'
 suppressMessages(ggsave(path = outdir, filename = fileName, plot = p2))
@@ -266,8 +266,9 @@ plots = c(plots, paste(outdir, '/', fileName, sep=''))
 
 # generating other outputs
 
-
-write.table(res, file=paste(outdir,'/pvals.txt', sep=''), row.names=T, col.names=T)
+res = cbind.data.frame(names(data), res)
+names(res) = c('bins',names(res)[2:ncol(res)])
+write.table(res, file=paste(outdir,'/pvals.txt', sep=''), sep='\t', row.names=F, col.names=T)
 
 mdEncoded <- make.MDoutput(res, plots, conf.level)
 writeLines(mdEncoded, paste(outdir, "/results.Rmd", sep=''))

@@ -44,8 +44,8 @@ toplt = sort(as.numeric(toplt), decreasing = T)
 
 bins = read.table(args[['bins']], header=T, stringsAsFactors = F, sep='\t')
 if(grep('.dat',args[['pvals']])) { args[['pvals']]=gsub('.dat$','',args[['pvals']]) }
-pvals = read.table(paste(args[['pvals']],'/pvals.csv',sep=''), header=T, sep=',', stringsAsFactors = F)
-pvals_ = pvals[,'adj_p_val']
+pvals = read.table(paste(args[['pvals']],'_files/pvals.txt',sep=''), header=T, sep='\t', stringsAsFactors = F)
+pvals_ = pvals[,'adj.p-val']
 test = args[['test']]
 
 if('fact' %in% names(args) & 'factCol' %in% names(args)) {

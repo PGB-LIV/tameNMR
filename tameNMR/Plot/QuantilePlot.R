@@ -179,11 +179,11 @@ plt1 = 'QuantilePlot.png'
 if(!dir.exists(outdir)) dir.create(outdir, showWarnings = F)
 
 pltMean = ifelse(args[['pltMean']]=='Y', TRUE, FALSE)
-png(plt1, width=30, height=18, units= 'in', res=300)
+png(plt, width=30, height=18, units= 'in', res=300)
 plotQuantiles(data = t(data_), ppmRange = c(min(scale), max(scale)), ppmPlot = toplt, plotMean = pltMean)
 dev.off()
 
-mdEncoded = make.MDoutput(plts)
+mdEncoded = make.MDoutput(plt)
 writeLines(mdEncoded, paste(outdir, "/results.Rmd", sep=''))
 MDfile = markdown::markdownToHTML(file = paste(outdir,"/results.Rmd", sep=''))
 

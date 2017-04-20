@@ -230,10 +230,11 @@ SigBins = apply(TukeyFilter, 2, sum)
 #pvalsPlot = paste(args[['output']],'/pvals.png',sep='')
 #plot.ANOVA(resAnova$anova_pvals)
 
-res = data.frame(p_vals = round(resAnova$anova_pvals,3), adj.p_vals=round(resAnova$anova_pvals,3))
-rownames(res) = names(data)
-#names(res) = c('p-values', paste('adjusted p-values (',args[[adjust]],' )', sep=''))
-names(res) = c('p-values', 'adj.p-val')
+res = data.frame(bins = names(data), 
+                 p_vals = round(resAnova$anova_pvals[,2],3), 
+                 adj.p_vals=round(resAnova$anova_pvals[,3],3))
+#rownames(res) = names(data)
+#names(res) = c('p-values', 'adj.p-val')
 
 if(!dir.exists(outdir)) dir.create(outdir , showWarnings = F)
 
@@ -244,7 +245,7 @@ p = suppressMessages(plot.Pvals(resAnova$anova_pvals))
 suppressMessages(ggsave(filename = fileName, plot = p, path = outdir))
 plots = c(plots,filePath)
 
-write.table(res, file=paste(outdir,'/pvals.csv',sep=''),sep=',', row.names=T, col.names=T)
+write.table(res, file=paste(outdir,'/pvals.txt',sep=''), sep='\t', row.names=F, col.names=T)
 
 mdEncoded <- make.MDoutput(resAnova, plots, conf.level)
 writeLines(mdEncoded, paste(outdir, "/results.Rmd", sep=''))
