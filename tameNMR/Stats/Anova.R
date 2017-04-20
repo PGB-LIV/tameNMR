@@ -45,10 +45,10 @@ plot.Pvals = function(res, showLabels = F, sigLvl = 0.05, main='P_values (ANOVA)
   
   labels = rownames(res)
   X = factor(1:nrow(res))
-  sig = res[,"adj.p-val"] <= sigLvl
+  sig = res[,"adj_p_val"] <= sigLvl
   cols = ifelse(sig, "steelblue","navy")
   #cols = factor(ifelse(sig, "significant","non-significant"))
-  Y = -log10(res[,"adj.p-val"])
+  Y = -log10(res[,"adj_p_val"])
   pltTemp = data.frame(X=X, Y=Y, cols=cols)
   rownames(pltTemp) = labels
   
@@ -102,7 +102,7 @@ do_anova_Multi = function(data, groups, adjustMethod='fdr', thresh=0.05){
   anova.res = lapply(aov.res, anova)
   res<-do.call('rbind', lapply(anova.res, function(x) { c(x["F value"][1,], x["Pr(>F)"][1,])}))
   res = cbind(res,p.adjust(res[,2],method = adjustMethod))
-  colnames(res) = c('F-stat','p-val','adj.p-val')
+  colnames(res) = c('F-stat','p_val','adj_p_val')
   #sigs = which(res[,2]<=thresh)
   
   posthoc.res<-lapply(aov.res, TukeyHSD, conf.level=1-thresh)
@@ -165,10 +165,10 @@ printPvalTableInMD = function(tabl){
   #firstLine = makeLine(colnames(tabl))
   firstLine = 'bin | p-value | adjusted p-value \n'
   #tabl = as.matrix(tabl)
-  tabl_ = cbind(rownames(tabl), tabl[,2], tabl[,3])
+  tabl_ = tabl #cbind(tabl[,1], tabl[,2], tabl[,3])
   #sepBar = c(rep('---|', ncol(tabl)-1),'---\n')
   sepBar = ':--- | :---: | :---: | :---:\n'
-  res = c(firstLine, sepBar, do.call('c', lapply(1:nrow(tabl_), function(x) makeLine(tabl_[x,], rownames(tabl)[x]))))
+  res = c(firstLine, sepBar, do.call('c', lapply(1:nrow(tabl_), function(x) makeLine(tabl_[x,]))))
   paste(res, collapse=' ')
 }
 
@@ -230,9 +230,9 @@ SigBins = apply(TukeyFilter, 2, sum)
 #pvalsPlot = paste(args[['output']],'/pvals.png',sep='')
 #plot.ANOVA(resAnova$anova_pvals)
 
-res = data.frame(bins = names(data), 
+res = data.frame(bins = gsub('X','' ,names(data)), 
                  p_vals = round(resAnova$anova_pvals[,2],3), 
-                 adj.p_vals=round(resAnova$anova_pvals[,3],3))
+                 adj_p_vals=round(resAnova$anova_pvals[,3],3))
 #rownames(res) = names(data)
 #names(res) = c('p-values', 'adj.p-val')
 

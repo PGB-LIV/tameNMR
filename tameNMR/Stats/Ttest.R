@@ -55,9 +55,9 @@ ttest_all = function(data, factor, paired = F, tails = 'two.sided', conf.level =
   
   res = do.call('rbind', lapply(1:ncol(data), function(i) ttest(data[,i], factor, paired, tails, conf.level)))
   res = as.data.frame(res)
-  res$adj.p_val = round(p.adjust(res[,1], method=adjust),3)
+  res$adj_p_val = round(p.adjust(res[,1], method=adjust),3)
   rownames(res) <- colnames(data)
-  names(res) <- c('p-val', 'conf-int_1','conf-int_2','adj.p-val')
+  names(res) <- c('p_val', 'conf_int_1','conf_int_2','adj_p_val')
   res
 }
 
@@ -65,9 +65,9 @@ plot.Pvals = function(res, showLabels = F, sigLvl = 0.05, main='P_values (T-Test
   
   labels = rownames(res)
   X = factor(1:nrow(res))
-  sig = res[,"adj.p-val"] <= sigLvl
+  sig = res[,"adj_p_val"] <= sigLvl
   cols = ifelse(sig, "steelblue","navy")
-  Y = -log10(res[,"adj.p-val"])
+  Y = -log10(res[,"adj_p_val"])
   pltTemp = data.frame(X=X, Y=Y, cols=cols)
   rownames(pltTemp) = labels
   
@@ -256,9 +256,9 @@ plots = c(plots, paste(outdir, '/', fileName, sep=''))
 
 # Only plot 50 values if there are more
 if (ncol(data)>50){
-  p2 = plot.Bars(data[,1:50], factor, res[1:50,"adj.p-val"])
+  p2 = plot.Bars(data[,1:50], factor, res[1:50,"adj_p_val"])
 } else {
-  p2 = plot.Bars(data, factor, res[,"adj.p-val"])
+  p2 = plot.Bars(data, factor, res[,"adj_p_val"])
 }
 fileName = 'meanBars.png'
 suppressMessages(ggsave(path = outdir, filename = fileName, plot = p2))
