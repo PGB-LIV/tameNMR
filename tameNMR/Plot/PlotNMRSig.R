@@ -45,7 +45,7 @@ toplt = sort(as.numeric(toplt), decreasing = T)
 bins = read.table(args[['bins']], header=T, stringsAsFactors = F, sep='\t')
 if(grep('.dat',args[['pvals']])) { args[['pvals']]=gsub('.dat$','',args[['pvals']]) }
 pvals = read.table(paste(args[['pvals']],'_files/pvals.txt',sep=''), header=T, sep='\t', stringsAsFactors = F)
-pvals_ = pvals[,'adj_p_val']
+pvals_ = pvals[,'adj_p_vals']
 test = args[['test']]
 
 if('fact' %in% names(args) & 'factCol' %in% names(args)) {
@@ -271,7 +271,8 @@ make.MDoutput = function(plts){
   output
 }
 #-------------------- Results --------------------
-plt = paste(args[['outDir']],'/NMRSigPlot.png',sep='')
+outdir = args[['outDir']]
+plt = paste(outdir,'/NMRSigPlot.png',sep='')
 plt1 = 'NMRSigPlot.png'
 if(!dir.exists(args[['outDir']])) dir.create(args[['outDir']], showWarnings = F)
 
@@ -285,7 +286,7 @@ if('colourbar' %in% names(args) & args[['colourbar']]=='discrete'){
 dev.off()
 
 
-mdEncoded = make.MDoutput(plts)
+mdEncoded = make.MDoutput(list(plt))
 writeLines(mdEncoded, paste(outdir, "/results.Rmd", sep=''))
 MDfile = markdown::markdownToHTML(file = paste(outdir,"/results.Rmd", sep=''))
 

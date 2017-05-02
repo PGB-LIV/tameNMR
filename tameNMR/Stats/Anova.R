@@ -123,7 +123,7 @@ make.MDoutput = function(res, plots, conf.level){
                  Sys.Date(), '\n','---\n', sep='')
   
   intro = paste('**Total ANOVA tests performed:** ',nrow(res$anova_pvals),'\n\n',
-                '**Number of significant variables:** ', sum(res$anova_pvals[,'adj.p-val']<=conf.level),
+                '**Number of significant variables:** ', sum(res$anova_pvals[,'adj_p_val']<=conf.level),
                 '\n\n',sep='')
   prePlt1 = paste('P-values are plotted on a negative log scale  - larger values on the plot correspond to lower p-values.',
                   sprintf('The line corresponds to the given significance level ( %.3f ).', conf.level),

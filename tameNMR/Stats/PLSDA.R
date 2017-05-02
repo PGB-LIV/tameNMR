@@ -12,7 +12,7 @@ if("--help" %in% args) {
       Arguments:
       --input=path - input file path
       --output=path - output file path
-      --outdir=path - output folder
+      --outDir=path - output folder
       --factorFile=path - a path to a factorfile
       --factorCol=num - a which column to use
 
@@ -270,7 +270,7 @@ data = read.table(args[['input']], header=T, sep='\t', row.names=1, stringsAsFac
 factorFile = read.table(args[['factorFile']], header=T, sep='\t', stringsAsFactors = T, row.names=1)
 grp = factorFile[,as.numeric(args[['factorCol']])]
 grp = as.factor(grp)
-outdir = args[['outdir']]
+outdir = args[['outDir']]
 
 #factor_  = make.factorMat(factor)
 
