@@ -1,0 +1,28 @@
+
+<tool id="globalalign" name="Global alignment" version="1.0.1">
+    <description> of spectra </description>
+    <command interpreter="Rscript">
+        GlobalAlign.R --input=$input --output=$output
+    </command>
+
+    <inputs>
+        <param name="input" type="data" label="NMR Spectra" />
+    </inputs>
+
+    <outputs>
+        <data format="data" name="output" label="Aligned spectra"/>
+    </outputs>
+
+    <!--
+    <requirements>
+    </requirements>
+
+    <tests>
+    </tests>
+
+    <help>
+    </help>
+-->
+</tool>
+      
+      

@@ -43,6 +43,7 @@
       <tool file="tameNMR/ProcessSpectra/normalisation.xml" />
       <tool file="tameNMR/ProcessSpectra/peakPicking.xml" />
       <tool file="tameNMR/ProcessSpectra/alignment.xml" />
+      <tool file="tameNMR/ProcessSpectra/globalAlign.xml" />
       <tool file="tameNMR/ProcessSpectra/binning.xml" />
   </section>
   <!--section id="ident" name="Identification">

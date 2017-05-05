@@ -1,6 +1,6 @@
 
-<tool id="align" name="Spectra alignment" version="0.0.1">
-    <description> </description>
+<tool id="align" name="Local alignment" version="0.0.1">
+    <description> of spectra</description>
     <command interpreter="Rscript">
         Align.R --inData=$input --inPeaks=$peaks --output=$output
     </command>

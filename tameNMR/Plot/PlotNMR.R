@@ -52,7 +52,7 @@ if('group' %in% names(args)){
 } else groupPar = F
 
 if(groupPar & 'fact' %in% names(args) & 'factCol' %in% names(args)) {
-  groupsPar = read.table(fact, header=T, sep='\t', row.names=1)
+  groupsPar = read.table(args[['fact']], header=T, sep='\t', row.names=1)
   groupsCol = as.numeric(args[['factCol']])
   groupsPar = groupsPar[,groupsCol]
 } else {
@@ -64,9 +64,9 @@ if('aggr' %in% names(args)) {
   aggrPar = ifelse(args[['aggr']] == 'Y', T, F)
 } else aggrPar = F
 
-if('aggrAVG' %in% names(args)) {
+if('aggrAvg' %in% names(args)) {
   aggrAvgPar = args[['aggrAvg']]
-} else aggrAvg = 'median'
+} else aggrAvgPar = 'median'
 
 if('plotBins' %in% names(args)) {
   plotBinsPar = ifelse(args[['plotBins']] == 'Y', T, F)
@@ -74,7 +74,7 @@ if('plotBins' %in% names(args)) {
 
 if('bins' %in% names(args)) {
   binsPar = read.table(args[['bins']], header=T, sep='\t', stringsAsFactors = F)
-} binsPar = NULL
+} else binsPar = NULL
 
 # -------------------- Function definitions --------------------
 # Plot NMR spectra
@@ -270,11 +270,12 @@ make.MDoutput = function(plts){
   output
 }
 
-plt = paste(args[['outDir']],'/NMRplot.png',sep='')
+outdir = args[['outDir']]
+plt = paste(outdir,'/NMRplot.png',sep='')
 plt1 = 'NMRplot.png'
-if(!dir.exists(args[['outDir']])) dir.create(args[['outDir']], showWarnings = F)
+if(!dir.exists(outdir)) dir.create(outdir, showWarnings = F)
 
-png(plt, width=30, height=18, units= 'in', res=300)
+png(plt, width=15, height=9, units= 'in', res=300)
 plotNMRspectra(data_, scale, toPlot=toplt, 
                spread = spreadPar,
                group = groupPar, groups = groupsPar,
@@ -282,9 +283,11 @@ plotNMRspectra(data_, scale, toPlot=toplt,
                plotBins=plotBinsPar, bins = binsPar)
 dev.off()
 
-mdEncoded = make.MDoutput(plts)
+style = 'img {height: 720px; width: 1200px; }'
+
+mdEncoded = make.MDoutput(plt)
 writeLines(mdEncoded, paste(outdir, "/results.Rmd", sep=''))
-MDfile = markdown::markdownToHTML(file = paste(outdir,"/results.Rmd", sep=''))
+MDfile = markdown::markdownToHTML(file = paste(outdir,"/results.Rmd", sep=''), stylesheet = style)
 
 htmlFile = file(args[['output']])
 writeLines(MDfile, htmlFile)
