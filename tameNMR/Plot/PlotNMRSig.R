@@ -285,10 +285,11 @@ if('colourbar' %in% names(args) & args[['colourbar']]=='discrete'){
 }
 dev.off()
 
+style = 'img {height: 720px; width: 1200px; }'
 
 mdEncoded = make.MDoutput(list(plt))
 writeLines(mdEncoded, paste(outdir, "/results.Rmd", sep=''))
-MDfile = markdown::markdownToHTML(file = paste(outdir,"/results.Rmd", sep=''))
+MDfile = markdown::markdownToHTML(file = paste(outdir,"/results.Rmd", sep=''), stylesheet = style)
 
 htmlFile = file(args[['output']])
 writeLines(MDfile, htmlFile)

@@ -84,7 +84,7 @@ plotQuantiles<-function(data,quantiles = seq(0,1,0.05),
    
    if (mainTitle == "default"){
       mainTitle = paste("NMR Quantile Plot [",
-                        round(ppmRange[1],2),"-",round(ppmRange[2],2)," ppm ]",sep="")}
+                        round(ppmPlot[1],2),"-",round(ppmPlot[2],2)," ppm ]",sep="")}
    
    bw <- ncol(plotVals)/100
    if(ppmPlot[1] - ppmPlot[2] <= 0.1){
@@ -98,7 +98,7 @@ plotQuantiles<-function(data,quantiles = seq(0,1,0.05),
         xlab = "ppm",
         ylab = "",
         xaxt = "n", yaxt="n")
-   axis(1, at = ints, labels = round(ppms[ints], digits=digs))
+   axis(1, at = ints, labels = round(ppms[ints], digits=digs), cex=1.5)
    
    #plot the areas
    for (i in 1:(nrow(plotVals)-1)){
@@ -130,7 +130,7 @@ plotQuantiles<-function(data,quantiles = seq(0,1,0.05),
    segments(c(-2*bw,-bw),c(-bot,-bot),c(-2*bw,-bw),c(maxC-bot,maxC-bot))
    
    text(rep(-4*bw, 5), c(-bot,maxC*0.25-bot,maxC*0.5-bot,maxC*0.75-bot,maxC-bot),
-        c("0%","25%","50%","75%","100%"), cex = 0.6)
+        c("0%","25%","50%","75%","100%"), cex = 1)
 }
 
 makeHTML <- function(plt){
@@ -179,13 +179,15 @@ plt1 = 'QuantilePlot.png'
 if(!dir.exists(outdir)) dir.create(outdir, showWarnings = F)
 
 pltMean = ifelse(args[['pltMean']]=='Y', TRUE, FALSE)
-png(plt, width=30, height=18, units= 'in', res=300)
+png(plt, width=15, height=9, units= 'in', res=300)
 plotQuantiles(data = t(data_), ppmRange = c(min(scale), max(scale)), ppmPlot = toplt, plotMean = pltMean)
 dev.off()
 
+style = 'img {height: 720px; width: 1200px; }'
+
 mdEncoded = make.MDoutput(plt)
 writeLines(mdEncoded, paste(outdir, "/results.Rmd", sep=''))
-MDfile = markdown::markdownToHTML(file = paste(outdir,"/results.Rmd", sep=''))
+MDfile = markdown::markdownToHTML(file = paste(outdir,"/results.Rmd", sep=''), stylesheet = style)
 
 htmlFile = file(args[['output']])
 writeLines(MDfile, htmlFile)
