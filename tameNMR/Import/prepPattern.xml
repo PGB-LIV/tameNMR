@@ -15,11 +15,11 @@
     <inputs>
       
         <conditional name="method_choice">
-            <param name="method" type="select" label="Method">
-                <option value="uniform" selected="true">Uniform</option>
-                <option value="brukerPattern">Bruker pattern file</option>
-                <option value="csvTable">CSV table</option>
-                <option value="intelligent">Intelligent</option>
+            <param name="method" type="select" label="Source">
+                <option value="uniform" selected="true">Make uniform pattern file</option>
+                <option value="brukerPattern">Import Bruker pattern file</option>
+                <option value="csvTable">Import pattern from CSV table</option>
+                <option value="intelligent">Make pattern file using Intelligent binning(test)</option>
             </param>
             
             <when value="uniform">

@@ -55,7 +55,7 @@ do_PLSDA = function(data, groups, comp.num=0, choice='Q2'){
   datmat = as.matrix(data)
   
   # perform pls
-  plsda.cls <- train(data, groups, "pls", trControl=trainControl(method= 'CV'), tuneLength=comp.num)
+  suppressWarnings(plsda.cls <- train(data, groups, "pls", trControl=trainControl(method= 'CV'), tuneLength=comp.num))
 
   # use the classifical regression to get R2 and Q2 measure
   plsda.reg <- plsr(groups ~ datmat, method ='oscorespls', ncomp=comp.num, validation= 'CV')
@@ -245,8 +245,8 @@ make.MDoutput = function(plts, n.comp){
                  Sys.Date(), '\n','---\n', sep='')
   
   intro = paste('PLS-DA performed on the dataset using k-fold cross-validation.\n',
-                sprintf('%d PLS components were selected using Q^2 metric.',n.comp), sep='')
-  prePlt1 = 'Scores plot showing the first two PLS components.'
+                sprintf('%d PLS component%s selected using Q^2 metric.', n.comp, ifelse(n.comp==1, ' was', 's were')), sep='')
+  prePlt1 = 'Scores plot below shows the first two PLS components.'
   plt1 = sprintf('![](%s)\n', plts[1])
   prePlt2 = 'VIP plot showing up to 20 most influential variables.'
   plt2 = sprintf('![](%s)\n', plts[2])
@@ -301,8 +301,8 @@ p3 = plot_PLSDA(res, grp, type='diagnostics')
 fileName = 'Diagnostics.png'
 suppressMessages(ggsave(path = outdir, filename = fileName, plot = p3))
 plots = c(plots, paste(outdir, '/', fileName, sep=''))
-
-mdEncoded <- make.MDoutput(plots, comp.num)
+ 
+mdEncoded <- make.MDoutput(plots, res[[1]])
 writeLines(mdEncoded, paste(outdir, "/results.Rmd", sep=''))
 MDTEST = markdown::markdownToHTML(file = paste(outdir,"/results.Rmd", sep=''))
 

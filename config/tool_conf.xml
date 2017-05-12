@@ -54,6 +54,7 @@
   </section-->
   <section id="prepData" name="Data Preparation">
       <tool file="tameNMR/ProcessData/makeFactorTemplate.xml"/>
+      <tool file="tameNMR/ProcessData/transform.xml"/>
       <tool file="tameNMR/ProcessData/scaling.xml"/>
   </section>
   <section id="stats" name="Statistics">

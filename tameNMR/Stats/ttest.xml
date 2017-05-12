@@ -6,8 +6,8 @@
     </command>
 
     <inputs>
-        <param name="input" type="data" label="Dataset"/>
-        <param name="factorFile" type="data" label="Factor"/>
+        <param name="input" type="data" label="Data"/>
+        <param name="factorFile" type="data" label="Group factor"/>
         <param name="factorCol" type="integer" label="Factor column to use" value="1"/>
         <param name="way" type="select" label="Type of test">
             <option value="greater">One-way greater</option>

@@ -6,7 +6,7 @@
 
     <inputs>
         <param name="input" type="data" label="Data" />
-        <param name="factor" type="data" label="Factor" />
+        <param name="factor" type="data" label="Group factor" />
         <param name="factorCol" type="integer" value="1" label="Factor column" />
     </inputs>
 

@@ -1,0 +1,30 @@
+
+<tool id="transform" name="Transform" version="0.0.1">
+    <description> data </description>
+    <command interpreter="Rscript">
+        transform.R --input=$input --output=$output --method=$method
+    </command>
+
+    <inputs>
+        <param name="input" type="data" label="Data" />
+        <param name="method" type="select" label="Method" >
+            <option value="log">Natural log</option>
+            <option value="sqrt">Square root</option>
+        </param>
+    </inputs>
+
+    <outputs>
+        <data format="tabular" name="output" label="Transformed data"/>
+    </outputs>
+
+    <!--
+    <requirements>
+    </requirements>
+
+    <tests>
+    </tests>
+
+    <help>
+    </help>
+-->
+</tool>

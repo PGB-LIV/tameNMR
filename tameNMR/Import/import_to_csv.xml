@@ -55,11 +55,12 @@
 
         .. class:: infomark
 
-        '''INFO''' This tool requires a zip file uploaded through ftp or upload tool
-        to your account. The file should contain a Bruker nmr experiments without
+        This tool requires a zip file uploaded through the upload tool
+        to your account. The file should contain a set of Bruker NMR experiments without
         the parent directory. To make the zip file you can enter your Bruker experiment
-        folder, select all folders that you want to add to zip file, right-click, choose
-        compress and click OK.
+        folder containing folders with spectra, select all folders that you want
+        to add to zip file, right-click, choose compress and click OK. This file
+        can then be uploaded and imported.
 
     </help>
 

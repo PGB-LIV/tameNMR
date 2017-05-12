@@ -6,9 +6,9 @@
     </command>
 
     <inputs>
-        <param name="input" type="data" label="Source" />
+        <param name="input" type="data" label="NMR Spectra" />
         <param name="ppmInt" type="text" label="Interval to plot (ppm)" value="10-0" />
-        <param name="pltMean" type="select" label="Average spectrum calculate by">
+        <param name="pltMean" type="select" label="Calculate average spectrum by">
           <option value="mean" selected="True">Mean</option>
           <option value="median">Median</option>
         </param>

@@ -10,7 +10,7 @@
     </command>
 
     <inputs>
-        <param name="input" type="data" label="NMR Data"/>
+        <param name="input" type="data" label="NMR Spectra"/>
         <conditional name="method_choice">
             <param name="method" type="select" label="Normalisation method">
                 <option value="PQN">PQN</option>

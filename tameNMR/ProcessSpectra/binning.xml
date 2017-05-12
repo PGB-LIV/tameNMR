@@ -6,7 +6,7 @@
     </command>
 
     <inputs>
-        <param name="input" type="data" label="Processed Data" />
+        <param name="input" type="data" label="NMR Spectra" />
         <param name="pattern" type="data" label="Pattern File" />
     </inputs>
 

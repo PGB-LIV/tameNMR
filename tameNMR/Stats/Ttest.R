@@ -23,7 +23,6 @@ if("--help" %in% args) {
   q(save="no")
 }
 
-print(getwd())
 #knitr::knit2html(input = '~/Desktop/test2.rmd', output = '~/Desktop/out.html', quiet = T)
 
 suppressMessages(require(ggplot2))
@@ -128,7 +127,7 @@ make.SigStars = function(pvals, lvls = c(0.05, 0.01, 0.001), sgns = c('','*','**
   sapply(pvals, getSigLvl)
 }
 
-make.MDoutput = function(res, plots, conf.level){
+make.MDoutput = function(res, plots, conf.level, adjust){
   output = ''
   #header = '## T-test results\n'
   header = paste('## T-test results\n',
@@ -136,10 +135,11 @@ make.MDoutput = function(res, plots, conf.level){
                  Sys.Date(), '\n','---\n', sep='')
   
   intro = paste('**Total t-test performed:** ',nrow(res),'\n\n',
-                '**Number of significant variables:** ', sum(res[,'adj.p-val']<=conf.level),'\n\n',
+                '**Correction for multiple testing:** ', adjust,'\n\n',
+                '**Number of significant variables:** ', sum(res[,'adj_p_val']<=conf.level),'\n\n',
                 sep='')
   prePlt1 = paste('P-values are plotted on a negative log scale  - larger values on the plot correspond to lower p-values. ',
-                  sprintf('The line corresponds to the given significance level ( %f ). ', round(conf.level,4)),
+                  sprintf('The line corresponds to the given significance level ( %.4f ). ', round(conf.level,3)),
                           ' The points are colored to help distinguish the statistically significant results.', sep='')
   plt1 = paste('![](',plots[1],')\n', sep='')
   
@@ -161,6 +161,14 @@ make.MDoutput = function(res, plots, conf.level){
 #  if(conf<=0.01)
 #}
 
+fixCorMetName = function(name){
+    names = list(holm = 'Holm method', hochberg = 'Hochberg method', hommel = 'Hommel method',
+                 bonferoni = 'Bonferroni method', BH = 'Benjamini-Hochberg method',
+                 BY = 'Benjamini-Yakutieli method', 'fdr' = 'Benjamini-Hochberg method',
+                 none='None')
+    names[name]
+}
+
 printTableInMD = function(tabl){
   makeLine = function(line){
     i = paste(line, collapse=' | ')
@@ -174,18 +182,14 @@ printTableInMD = function(tabl){
 }
 
 printPvalTableInMD = function(tabl){
-  makeLine = function(line, rn){
-    i = paste(line, collapse=' | ')
-    c(paste(rn,' | ',sep=''), i,' \n')
-}
-  
-  #firstLine = makeLine(colnames(tabl))
+  makeLine = function(line){
+    tmp = paste(line, collapse=' | ')
+    c(tmp,' \n')
+  }
   firstLine = 'bin | p-value | confidence interval | adjusted p-value \n'
-  #tabl = as.matrix(tabl)
-  tabl_ = cbind(as.character(tabl[,1]), paste(tabl[,2], tabl[,3],sep='  -  '), as.character(tabl[,4]))
-  #sepBar = c(rep('---|', ncol(tabl)-1),'---\n')
+  tabl_ = cbind(as.character(tabl[,1]), as.character(tabl[,2]), paste(tabl[,3], tabl[,4],sep='  :  '), as.character(tabl[,5]))
   sepBar = ':--- | :---: | :---: | :---:\n'
-  res = c(firstLine, sepBar, do.call('c', lapply(1:nrow(tabl_), function(x) makeLine(tabl_[x,], rownames(tabl)[x]))))
+  res = c(firstLine, sepBar, do.call('c', lapply(1:nrow(tabl_), function(x) makeLine(tabl_[x,]))))
   paste(res, collapse=' ')
 }
 
@@ -270,7 +274,7 @@ res = cbind.data.frame(names(data), res)
 names(res) = c('bins',names(res)[2:ncol(res)])
 write.table(res, file=paste(outdir,'/pvals.txt', sep=''), sep='\t', row.names=F, col.names=T)
 
-mdEncoded <- make.MDoutput(res, plots, conf.level)
+mdEncoded <- make.MDoutput(res, plots, conf.level, fixCorMetName(adjust))
 writeLines(mdEncoded, paste(outdir, "/results.Rmd", sep=''))
 MDTEST = markdown::markdownToHTML(file = paste(outdir,"/results.Rmd", sep=''))
 

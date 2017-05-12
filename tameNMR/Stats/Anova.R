@@ -115,7 +115,7 @@ extract.pVals.Tukey = function(tukey.res, thresh=0.05){
   do.call('rbind', lapply(tukey.res, function(x) x[1][[1]][,'p adj']))
 }
 
-make.MDoutput = function(res, plots, conf.level){
+make.MDoutput = function(res, pvalTbl, plots, conf.level){
   output = ''
   #header = '## T-test results\n'
   header = paste('## One-way ANOVA test results\n',
@@ -133,7 +133,7 @@ make.MDoutput = function(res, plots, conf.level){
   preTabl = paste('The Following table contains the p-values (raw and adjusted).',
                   '\n\n',
                   sep='')
-  tableOfRes = c('<center>\n', printPvalTableInMD(res$anova_pvals), '\n </center> \n')
+  tableOfRes = c('<center>\n', printPvalTableInMD(pvalTbl), '\n </center> \n')
   
   preTabl2 = paste('Results of Tukey post-hoc analysis.',
                   '\n\n',
@@ -157,18 +157,18 @@ printTableInMD = function(tabl){
 }
 
 printPvalTableInMD = function(tabl){
-  makeLine = function(line, rn){
+  makeLine = function(line){
     i = paste(line, collapse=' | ')
-    c(paste(rn,' | ',sep=''), i,' \n')
+    c(i,' \n')
 }
   
   #firstLine = makeLine(colnames(tabl))
   firstLine = 'bin | p-value | adjusted p-value \n'
   #tabl = as.matrix(tabl)
-  tabl_ = tabl #cbind(tabl[,1], tabl[,2], tabl[,3])
+  #tabl_ = tabl #cbind(tabl[,1], tabl[,2], tabl[,3])
   #sepBar = c(rep('---|', ncol(tabl)-1),'---\n')
   sepBar = ':--- | :---: | :---: | :---:\n'
-  res = c(firstLine, sepBar, do.call('c', lapply(1:nrow(tabl_), function(x) makeLine(tabl_[x,]))))
+  res = c(firstLine, sepBar, do.call('c', lapply(1:nrow(tabl), function(x) makeLine(tabl[x,]))))
   paste(res, collapse=' ')
 }
 
@@ -226,15 +226,9 @@ resAnova = do_anova_Multi(data, fac)
 TukeyFilter = resAnova$tukey_pvals <= 0.05
 SigBins = apply(TukeyFilter, 2, sum)
 
-
-#pvalsPlot = paste(args[['output']],'/pvals.png',sep='')
-#plot.ANOVA(resAnova$anova_pvals)
-
-res = data.frame(bins = gsub('X','' ,names(data)), 
-                 p_vals = round(resAnova$anova_pvals[,2],3), 
+res = data.frame(bins = colnames(data),
+                 p_vals = round(resAnova$anova_pvals[,2],3),
                  adj_p_vals=round(resAnova$anova_pvals[,3],3))
-#rownames(res) = names(data)
-#names(res) = c('p-values', 'adj.p-val')
 
 if(!dir.exists(outdir)) dir.create(outdir , showWarnings = F)
 
@@ -247,7 +241,7 @@ plots = c(plots,filePath)
 
 write.table(res, file=paste(outdir,'/pvals.txt',sep=''), sep='\t', row.names=F, col.names=T)
 
-mdEncoded <- make.MDoutput(resAnova, plots, conf.level)
+mdEncoded <- make.MDoutput(resAnova, res, plots, conf.level)
 writeLines(mdEncoded, paste(outdir, "/results.Rmd", sep=''))
 MDTEST = markdown::markdownToHTML(file = paste(outdir,"/results.Rmd", sep=''))
 

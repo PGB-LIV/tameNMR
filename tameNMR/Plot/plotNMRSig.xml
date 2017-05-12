@@ -6,7 +6,7 @@
     </command>
 
     <inputs>
-        <param name="input" type="data" label="Spectra" />
+        <param name="input" type="data" label="NMR Spectra" />
         <param name="ppmInt" type="text" label="Interval to plot (ppm)" value="10-0" />
         <param name="binFile" type="data" label="Bin table" />
         <param name="pvalFile" type="data" label="ANOVA results" />

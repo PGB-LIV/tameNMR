@@ -6,9 +6,9 @@
     </command>
 
     <inputs>
-        <param name="input" type="data" label="NMR data" />
+        <param name="input" type="data" label="NMR Spectra" />
         <param name="retain" type="text" label="Retain ppm" value="10-0"/>
-        <param name="remWater" type="boolean" label="Remove water signal" checked="true" truevalue="Y" falsevalue="N"/>
+        <param name="remWater" type="boolean" label="Remove water signal (4.3 - 4.9 ppm)" checked="true" truevalue="Y" falsevalue="N"/>
     </inputs>
 
     <outputs>
