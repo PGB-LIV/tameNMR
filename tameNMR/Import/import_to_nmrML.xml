@@ -2,15 +2,15 @@
 <tool id="import_to_nmrML" name="Import" version="0.0.1">
     <description> NMR data </description>
     <command interpreter="python">
-        import2nmrML.py $input $output $output.files_path $vendor $proc
+        import2nmrML.py $input $output $proc
     </command>
 
     <inputs>
-        <param name="input" type="ftpfile" label="Source" />
-        <param name="vendor" type="select" label="NMR Vendor">
+        <param name="input" type="data" label="Zip file" />
+        <!--param name="vendor" type="select" label="NMR Vendor">
             <option value="bruker">Bruker</option>
             <option value="varian">Varian</option>
-        </param>
+        </param-->
         <param name="proc" type="select" label="Is the data processed?">
             <option value="processed">Processed</option>
             <option value="raw">Raw</option>
@@ -18,7 +18,7 @@
     </inputs>
 
     <outputs>
-        <data format="html" name="output" label="Imported NMR data"/>
+        <data format="zip" name="output" label="nmrML zip file"/>
     </outputs>
     <requirements>
         <!--requirement type="package" version="0.5">nmrglue</requirement>
