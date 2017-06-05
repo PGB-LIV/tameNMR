@@ -1,6 +1,6 @@
 
-<tool id="import_to_nmrML" name="Import" version="0.0.1">
-    <description> NMR data </description>
+<tool id="import_to_nmrML" name="Convert" version="0.0.1">
+    <description> NMR data to nmrML</description>
     <command interpreter="python">
         import2nmrML.py $input $output $proc
     </command>
