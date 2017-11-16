@@ -1,3 +1,4 @@
+.libPaths('/home/galaxy/R/x86_64-pc-linux-gnu-library/3.2/')
 
 # --- Parse the command line arguments ---
 
@@ -97,7 +98,8 @@ readBrukerPatternFile <- function(path){
 
 # -- csv table pattern file
 readcsvTable = function(path){
-  pattern = read.csv(args[['input']], header=F, stringsAsFactors = F, sep=',')
+  pattern = read.csv(path, header=F, stringsAsFactors = F, sep=',')
+  if(ncol(pattern) < 3) pattern = read.csv(path, header=F, stringsAsFactors = F, sep='\t')
   if(ncol(pattern) < 3) stop('Invalid csv table. Make sure that the table has no headers, 3 columns and is comma-delimited')
   else {
     colnames(pattern) = c('left', 'right', 'binLabel') 
