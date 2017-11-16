@@ -1,3 +1,4 @@
+.libPaths('/home/galaxy/R/x86_64-pc-linux-gnu-library/3.2/')
 
 args <- commandArgs(TRUE)
 
@@ -224,7 +225,7 @@ plotBins = function(data, scale, bins, type, ylim){
     segments(x1, 0, x2, 0, lty = 4, lwd = 0.5)
     segments(x1,y*1.01,x1,0, lty = 4, lwd = 0.5)
     segments(x2,y*1.01,x2,0, lty = 4, lwd = 0.5)
-    text(x=mean(c(x1,x2)), y=y*1.05, labels=labels[i], srt=0)
+    text(x=mean(c(x1,x2)), y=y*1.05, labels=labels[i], srt=60)
   }
   
 }
@@ -260,7 +261,7 @@ makeHTML <- function(plt){
 
 make.MDoutput = function(plts){
   output = ''
-  header = '## NMR spectra\n'
+  header = ''#'## NMR spectra\n'
   
   intro = ''
   prePlt1 = ''

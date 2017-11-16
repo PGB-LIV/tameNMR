@@ -1,3 +1,4 @@
+.libPaths('/home/galaxy/R/x86_64-pc-linux-gnu-library/3.2/')
 
 args <- commandArgs(TRUE)
 
@@ -163,7 +164,7 @@ makeHTML <- function(plt){
 
 make.MDoutput = function(plts){
   output = ''
-  header = '## NMR quantile plot\n'
+  header = ''# '## NMR quantile plot\n'
   
   intro = ''
   prePlt1 = ''

@@ -1,3 +1,4 @@
+.libPaths('/home/galaxy/R/x86_64-pc-linux-gnu-library/3.2/')
 args <- commandArgs(TRUE)
 
 if (length(args) < 1) {
@@ -113,9 +114,9 @@ plotNMRSignif = function(data, ppms, bins, pvals, toPlot=c(0,10), test='ANOVA', 
   emptySpec[emptyCols] = spec[emptyCols]
   
   dataNew = rbind(emptySpec, dataNew)
-  dataNew<- dataNew[,ppm_to_point(ppms,toPlot[1]):ppm_to_point(ppms,toPlot[2])]
+  dataNew <- dataNew[,ppm_to_point(ppms,toPlot[1]):ppm_to_point(ppms,toPlot[2])]
   
-  ppms<- ppms[ppm_to_point(ppms,toPlot[1]):ppm_to_point(ppms,toPlot[2])]
+  ppms <- ppms[ppm_to_point(ppms,toPlot[1]):ppm_to_point(ppms,toPlot[2])]
   N = ncol(dataNew)
   levs = c('Unbinned', gsub(",", " - ", levs))
   
@@ -133,9 +134,9 @@ plotNMRSignif = function(data, ppms, bins, pvals, toPlot=c(0,10), test='ANOVA', 
   abline(h=0, col='black', lty=4)
   
   for(i in 1:nrow(dataNew)){
-    lines(1:N, dataNew[i,], col=cols[i], lwd=2)
+    lines(1:N, dataNew[i,], col=cols[i], lwd=4)
   }
-  legend("top", legend=levs, fill = cols, cex=0.75, box.col='white', title = 'p-value', ncol=length(levs))
+  legend("top", legend=levs, fill = cols, cex=1.75, box.col='white', title = 'p-value', ncol=length(levs))
 }
 
 plotNMRSignif_2 = function(data, ppms, bins, pvals, toPlot=c(0,10), test='ANOVA', avgFun = 'mean', groups=NULL, plotDiff=F){
@@ -261,7 +262,7 @@ makeHTML <- function(plt){
 
 make.MDoutput = function(plts){
   output = ''
-  header = '## NMR significant bins\n'
+  header = ''#'## NMR significant bins\n'
   
   intro = ''
   prePlt1 = ''
