@@ -35,16 +35,16 @@
     </tests-->
 
     <help>
-      :: This tool normalizes NMR spectra before further processing. It is meant to correct for dilution effects in
+      This tool normalizes NMR spectra before further processing. It is meant to correct for dilution effects in
       the intensity of the spectra and make them more comparable.
       
-      :: **Normalisation methods**
+      **Normalisation methods**
       
-      :: **PQN** (probabilistic quotient normalisation) as described in Dieterle *et al.*
+      **PQN** (probabilistic quotient normalisation) as described in Dieterle *et al.*
       
-      :: **Total integral** normalises the spectra by its total integral under the curve.
+      **Total integral** normalises the spectra by its total integral under the curve.
       
-      :: **Reference peak** normalises the spectra by a user specified reference peak. 
+      **Reference peak** normalises the spectra by a user specified reference peak. 
       Enter a ppm interval in the **Peak position** box.
     </help>
     

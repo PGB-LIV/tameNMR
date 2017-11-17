@@ -36,16 +36,16 @@
 
     <help>
       
-      :: This tool normalizes a data table before further processing. It is meant to correct for dilution effects in
+      This tool normalizes a data table before further processing. It is meant to correct for dilution effects in
       the sample data and make them more comparable.
       
-      :: **Normalisation methods**
+      **Normalisation methods**
       
-      :: **PQN** (probabilistic quotient normalisation) as described in Dieterle *et al.*
+      **PQN** (probabilistic quotient normalisation) as described in Dieterle *et al.*
       
-      :: **Total integral** normalises each row in the data by the total sum of the row.
+      **Total integral** normalises each row in the data by the total sum of the row.
       
-      :: **Reference peak** normalises each row by a user specified reference column. 
+      **Reference peak** normalises each row by a user specified reference column. 
       Enter the name of the column in the **Column name** box.
       
       '''TIP''' When analysing NMR data, if possible, it is recommended to normalise the spectra before binning as

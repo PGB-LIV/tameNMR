@@ -36,12 +36,13 @@
     </tests-->
 
     <help>
-      :: This tool performs a one-way ANOVA test on each column (variable) in the dataset. The groups are specified
+      This tool performs a one-way ANOVA test on each column (variable) in the dataset. The groups are specified
       by using a factor file. 
       
-      :: **Options**
+      **Options**
       
       * *Confidence level* - the confidence level to be used for hypothesis testing.
       * *Multiple testing correction* - method for multiple testing correction of p-values.
+      
     </help>
 </tool>

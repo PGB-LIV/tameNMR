@@ -46,7 +46,7 @@
     </tests-->
 
     <help>
-      :: This tool allows adding/removing spectra from data sets as well as merging datasets. Note that the spectra
+      This tool allows adding/removing spectra from data sets as well as merging datasets. Note that the spectra
       have to be imported the same way and contain the same number of raw points.
     </help>
 </tool>

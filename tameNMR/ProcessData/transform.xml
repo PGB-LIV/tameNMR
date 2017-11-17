@@ -25,7 +25,7 @@
     </tests-->
 
     <help>
-      :: Thid tool transforms the data table using one of standard mathematical functions. 
+      Thid tool transforms the data table using one of standard mathematical functions. 
       It can sometimes help if the data is very scewed.
     </help>
 </tool>

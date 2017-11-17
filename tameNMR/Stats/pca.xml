@@ -37,16 +37,16 @@
     </tests-->
 
     <help>
-      :: This tool performs a pricipal component analysis and plots the results.
+      This tool performs a pricipal component analysis and plots the results.
       
-      :: **Options**
+      **Options**
       
-      :: **Colour by group** - colours the observations by group based on the given grouping factor.
+      **Colour by group** - colours the observations by group based on the given grouping factor.
       
-      :: **Scale by standard deviation** - scales the data by standard deviation. Useful if data is unscaled to remove
+      **Scale by standard deviation** - scales the data by standard deviation. Useful if data is unscaled to remove
       the bias introduced by variable magnitude differences.
       
-      :: **Principal component pairs** - specifies which principal component (PC) pairs to plot. Pairs are specified by
+      **Principal component pairs** - specifies which principal component (PC) pairs to plot. Pairs are specified by
       comma separated list of pairs of numbers. Each pair of numbers is separated by comma.
       
       '''EXAMPLE'''

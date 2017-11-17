@@ -26,11 +26,11 @@
     </tests-->
 
     <help>
-      :: This tool plots a quantile plot of a set of spectra. It calculates the quantiles of the spectra at each point and
+      This tool plots a quantile plot of a set of spectra. It calculates the quantiles of the spectra at each point and
       plots the quantiles as a colour gradient. The average spectrum is plotted as a black line. This can be a mean or median
       spectrum as chosen in the **Calculate average spectrum by** box.
       
-      :: quantile plots allow to easily visualise variation in the spectra in a dataset.
+      quantile plots allow to easily visualise variation in the spectra in a dataset.
       
       '''TIP''' Quantile plots can be succeptible to peak shifts in the spectra. Misaligned peaks show up as larger variation
       regions in the spectra. All regions of interest should be instpected by plotting overlapped spectra (*PlotNMR tool*).
