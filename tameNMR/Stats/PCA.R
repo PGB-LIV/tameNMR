@@ -62,12 +62,13 @@ PCA_VarAcc_Plot <- function(pc, outdir){
   filePath
 }
 
-PCA_Scores_Plot <- function(pc, groups, useLabels=F, labels = "", pcs=c(1,2), legendName="Groups", outdir){
+PCA_Scores_Plot <- function(pc, groups=NULL, useLabels=F, labels = "", pcs=c(1,2), legendName="Groups", outdir){
 
  if(useLabels & length(labels) != nrow(data)){
   print("Warning: The labels not given or given incorrectly. Using rownames.")
   labels <- rownames(data)
-  }
+ }
+  if (is.null(groups)) groups = rep('Sample', nrow(pc$x))
 
   if (length(groups)!=nrow(pc$x)) {print(paste('groups length',length(groups),' while nrow', nrow(pc), sep="") ) }
   pcdf<-data.frame(pc1=pc$x[,pcs[1]], pc2=pc$x[,pcs[2]])
@@ -198,9 +199,13 @@ parsePCs <- function(pcs){
 }
 
 data = read.table(args[['input']], header=T, row.names=1, stringsAsFactors = F, sep='\t')
-factorFile = read.table(args[['factorFile']], header=T, sep='\t', stringsAsFactors = T, row.names=1)
-colnum <- as.numeric(args[['factorCol']])
-factor = factorFile[,colnum]
+if('factorFile' %in% names(args) & 'factorCol' %in% names(args)){
+  factorFile = read.table(args[['factorFile']], header=T, sep='\t', stringsAsFactors = T, row.names=1)
+  colnum = as.numeric(args[['factorCol']])
+  factorGrp = factorFile[,colnum]
+} else {
+  factorGrp = NULL
+}
 outdir = args[['outdir']]
 
 if(!dir.exists(outdir)) dir.create(outdir, showWarnings = F)
@@ -217,8 +222,8 @@ plts = list()
 
 plts[[1]] = suppressMessages(PCA_VarAcc_Plot(pc=pc, outdir = outdir))
 for(i in 1:nrow(pcs)){
-  temp = c(suppressMessages(PCA_Scores_Plot(pc=pc, groups=factor, pcs=pcs[i,], outdir = outdir)),
-           suppressMessages(PCA_Loadings_Plot(pc=pc, groups=factor, pcs=pcs[i,], outdir = outdir)))
+  temp = c(suppressMessages(PCA_Scores_Plot(pc=pc, groups=factorGrp, pcs=pcs[i,], outdir = outdir)),
+           suppressMessages(PCA_Loadings_Plot(pc=pc, groups=factorGrp, pcs=pcs[i,], outdir = outdir)))
   plts[[i+1]] = temp
 }
 

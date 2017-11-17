@@ -17,6 +17,8 @@ if("--help" %in% args) {
       --factorCol=factCol - a factor to use for grouping
       --tails=two.tailed - a string denoting the type of the t-test ('greater','less','two.sided')
       --paired=Y - if the data is paired (Y/N)
+      --factorFile2=fact - a factor to use for grouping pairs of observations
+      --factorCol2=factCol - a factor column to use for grouping pairs of observations
 
       Example:
       ./ttest.R --input=inputFilePath --output=outputFilePath \n\n")
@@ -40,23 +42,44 @@ factorFile = read.table(args[['factorFile']], header=T, sep='\t', stringsAsFacto
 factor = factorFile[,as.numeric(args[['factorCol']])]
 
 tails = args[['tails']]
-if (args[['paired']] == 'Y') {paired=T} else {paired=F}
+if (args[['paired']] == 'Y') {
+  paired=T
+  factorFile2 = read.table(args[['factorFile2']], header=T, sep='\t', stringsAsFactors = T, row.names=1)
+  factPairs = factorFile2[,as.numeric(args[['factorCol2']])]
+  groupsP = as.numeric(factPairs)
+  
+} else {
+  paired=F
+  groupsP = NULL
+  }
+
 conf.level = as.numeric(args[['conf_level']])
 adjust = args[['adjust']]
 outdir = args[['outdir']]
 
-ttest = function(data, factor, paired = F, tails = 'two.sided', conf.level = 0.05){
-  out = t.test(data~factor, paired=paired, alternative = tails, conf.level = conf.level)
+ttest = function(data, factor, paired = F, groupsP = NULL, tails = 'two.sided', conf.level = 0.05){
+  if(!paired) out = t.test(data~factor, paired=paired, alternative = tails, conf.level = conf.level)
+  else {
+    factorTmp = as.character(factor)
+    factorTmpU = unique(factorTmp)
+    grp1 = data[groupsP > 0,]
+    grp1_f = groupsP[groupsP > 0]
+    grp2 = data[groupsP < 0,]
+    grp2_f = groupsP[groupsP < 0] * -1
+    grp1 = grp1[order(grp1_f),]
+    grp2 = grp2[order(grp2_f),]
+    out = t.test(grp1, grp2, paired=T, alternative = tails, conf.level = conf.level)
+  }
   return(round(c(out$p.value, out$conf.int[1], out$conf.int[2]),3))
 }
 
-ttest_all = function(data, factor, paired = F, tails = 'two.sided', conf.level = 0.05, adjust = 'BH'){
+ttest_all = function(data, factor, paired = F, groupsP = NULL, tails = 'two.sided', conf.level = 0.05, adjust = 'BH'){
   
-  res = do.call('rbind', lapply(1:ncol(data), function(i) ttest(data[,i], factor, paired, tails, conf.level)))
+  res = do.call('rbind', lapply(1:ncol(data), function(i) ttest(data[,i], factor, paired, groupsP, tails, conf.level)))
   res = as.data.frame(res)
-  res$adj_p_val = round(p.adjust(res[,1], method=adjust),3)
+  res$adj_p_vals = round(p.adjust(res[,1], method=adjust),3)
   rownames(res) <- colnames(data)
-  names(res) <- c('p_val', 'conf_int_1','conf_int_2','adj_p_val')
+  names(res) <- c('p_val', 'conf_int_1','conf_int_2','adj_p_vals')
   res
 }
 
@@ -64,9 +87,9 @@ plot.Pvals = function(res, showLabels = F, sigLvl = 0.05, main='P_values (T-Test
   
   labels = rownames(res)
   X = factor(1:nrow(res))
-  sig = res[,"adj_p_val"] <= sigLvl
+  sig = res[,"adj_p_vals"] <= sigLvl
   cols = ifelse(sig, "steelblue","navy")
-  Y = -log10(res[,"adj_p_val"])
+  Y = -log10(res[,"adj_p_vals"])
   pltTemp = data.frame(X=X, Y=Y, cols=cols)
   rownames(pltTemp) = labels
   
@@ -136,7 +159,7 @@ make.MDoutput = function(res, plots, conf.level, adjust){
   
   intro = paste('**Total t-test performed:** ',nrow(res),'\n\n',
                 '**Correction for multiple testing:** ', adjust,'\n\n',
-                '**Number of significant variables:** ', sum(res[,'adj_p_val']<=conf.level),'\n\n',
+                '**Number of significant variables:** ', sum(res[,'adj_p_vals']<=conf.level),'\n\n',
                 sep='')
   prePlt1 = paste('P-values are plotted on a negative log scale  - larger values on the plot correspond to lower p-values. ',
                   sprintf('The line corresponds to the given significance level ( %.4f ). ', round(conf.level,3)),
@@ -244,7 +267,7 @@ makeHTML <- function(res, pvalsPlot){
 if(!dir.exists(args[['outdir']])) dir.create(args[['outdir']], showWarnings = F)
 
 # calculations
-res = ttest_all(data, factor, paired, tails, conf.level)
+res = ttest_all(data, factor, paired, groupsP, tails, conf.level)
 
 # plotting
 plots = c()
@@ -260,9 +283,9 @@ plots = c(plots, paste(outdir, '/', fileName, sep=''))
 
 # Only plot 50 values if there are more
 if (ncol(data)>50){
-  p2 = plot.Bars(data[,1:50], factor, res[1:50,"adj_p_val"])
+  p2 = plot.Bars(data[,1:50], factor, res[1:50,"adj_p_vals"])
 } else {
-  p2 = plot.Bars(data, factor, res[,"adj_p_val"])
+  p2 = plot.Bars(data, factor, res[,"adj_p_vals"])
 }
 fileName = 'meanBars.png'
 suppressMessages(ggsave(path = outdir, filename = fileName, plot = p2))

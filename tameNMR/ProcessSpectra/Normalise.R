@@ -2,7 +2,6 @@
 
 # NMR data normalization tool for Galaxy
 
-
 # --- Normalisation functions ---
 PQN <- function(data, loc = "median"){
   if (loc == "mean") {
@@ -13,8 +12,6 @@ PQN <- function(data, loc = "median"){
     cat(sprintf("non such location metric %d", loc))
   }
 
-  #if(ncol(data)>nrow(data)) data <- t(data)
-  #data = abs(data)
   data_ = data[,2:ncol(data)]
   reference <- apply(data_,1,locFunc)
   # sometimes reference produces 0s so we turn them into 1s before division
@@ -109,8 +106,6 @@ if (args[['type']] == 'refPeak'){
   dataTemp = refPeak(data_, args[['param']])
 } else { dataTemp = normFunc(data_) }
 
-#names(dataTemp) = names(data)[2:ncol(data)]
-#data_ = cbind(data[,1], dataTemp)
 colnames(dataTemp) = names(data)
 
 # --- Write the data

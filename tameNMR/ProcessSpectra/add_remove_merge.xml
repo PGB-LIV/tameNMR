@@ -3,32 +3,34 @@
     <description> spectra</description>
     <command interpreter="Rscript">
         #if $method_choice.method == "remove"
-            norm_data.R --input=$input --output=$output --type=$method_choice.method --param=$method_choice.param
-        #else
-            norm_data.R --input=$input --output=$output --type=$method_choice.method
+            norm_data.R --input1=$input --output=$output --action=$method_choice.method --colName=$method_choice.param
+        #else if $method_choice.method == "add"
+            norm_data.R --input1=$input --input2=$input --output=$output --action=$method_choice.method --colName=$method_choice.param
+        #else if $method_choice.method == "merge"
+            norm_data.R --input1=$input --input2=$input --output=$output --action=$method_choice.method
         #end if
     </command>
 
     <inputs>
         <conditional name="action_choice">
             <param name="action" type="select" label="Choose Action">
-                <!--option value="add">Add Spectrum</option-->
+                <option value="add">Add Spectrum</option>
                 <option value="remove">Remove Spectrum</option>
-                <!--option value="merge">Merge Spectra Files</option-->
+                <option value="merge">Merge Spectra Files</option>
             </param>
-            <!--when value="add">
+            <when value="add">
                 <param name="input_from" type="data" label="From File"/>
                 <param name="input_to" type="data" label="To File"/>
                 <param name="param" type="text" label="Spectrum Name"/>
-            </when-->
+            </when>
             <when value="remove">
                 <param name="input_from" type="data" label="From File"/>
                 <param name="param" type="text" label="Spectrum Name"/>
             </when>
-            <!--when value="merge">
+            <when value="merge">
                 <param name="input_1" type="data" label="Spectra File 1"/>
                 <param name="input_2" type="data" label="Spectra File 2"/>
-            </when-->
+            </when>
         </conditional>
     </inputs>
 
@@ -41,9 +43,10 @@
     </requirements>
 
     <tests>
-    </tests>
+    </tests-->
 
     <help>
+      :: This tool allows adding/removing spectra from data sets as well as merging datasets. Note that the spectra
+      have to be imported the same way and contain the same number of raw points.
     </help>
--->
 </tool>
