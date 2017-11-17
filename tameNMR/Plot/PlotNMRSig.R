@@ -86,7 +86,9 @@ plotNMRSignif = function(data, ppms, bins, pvals, toPlot=c(0,10), test='ANOVA', 
   }
   
   # intervals of pvals - 0, 0.001, 0.01, 0.05
+  pvals[pvals==1] = 0.9999
   pvals_cut = as.character(cut(pvals, breaks = c(0,0.001,0.01,0.05,1)))
+  pvals_cut[is.na(pvals_cut)] = "(0,0.001]"
   levs =c("(0.05,1]","(0.01,0.05]","(0.001,0.01]","(0,0.001]")
   
   ppm_to_point <- function(ppm_scale, ppm){
@@ -101,7 +103,8 @@ plotNMRSignif = function(data, ppms, bins, pvals, toPlot=c(0,10), test='ANOVA', 
     dat = spec
     # turn all points except for bins of each significance level to NA
     if(lev %in% pvals_cut){
-      dat[-binsToPoints(ppms, bins[pvals_cut == lev, 1:2])] = NA
+      sigIntervals = binsToPoints(ppms, bins[pvals_cut == lev, 1:2])
+      dat[-sigIntervals] = NA
     } else {
       dat = rep(NA, length(dat))
     }

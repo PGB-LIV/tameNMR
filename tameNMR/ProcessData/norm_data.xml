@@ -3,14 +3,14 @@
     <description></description>
     <command interpreter="Rscript">
         #if $method_choice.method == "refPeak"
-            Normalise.R --input=$input --output=$output --type=$method_choice.method --param=$method_choice.param
+            norm_data.R --input=$input --output=$output --type=$method_choice.method --param=$method_choice.param
         #else
-            Normalise.R --input=$input --output=$output --type=$method_choice.method
+            norm_data.R --input=$input --output=$output --type=$method_choice.method
         #end if
     </command>
 
     <inputs>
-        <param name="input" type="data" label="NMR Spectra"/>
+        <param name="input" type="data" label="Data table"/>
         <conditional name="method_choice">
             <param name="method" type="select" label="Normalisation method">
                 <option value="PQN">PQN</option>
@@ -18,13 +18,13 @@
                 <option value="refPeak">Reference peak</option>
             </param>
             <when value="refPeak">
-                <param name="param" type="text" label="Peak position in ppm (ex. 0.01-0.011)"/>
+                <param name="param" type="text" label="Column name"/>
             </when>
         </conditional>
     </inputs>
 
     <outputs>
-        <data format="tabular" name="output" label="Normalised Spectra"/>
+        <data format="tabular" name="output" label="Normalised Data"/>
     </outputs>
 
     <!--

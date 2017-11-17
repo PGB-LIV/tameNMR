@@ -78,7 +78,7 @@ alignGlucoseLeftPeak = function(data, ppms, posPPM, low, high){
   # low/high -  the range where to look for glucose peaks
 
   #PeakPicking
-  baselineThresh <- 10 * max(apply(abs(data[1:200,]),1,max)) / 10^round(log10(mean(data[1:200,])))
+  baselineThresh <- 2 * max(apply(abs(data[1:200,]),1,max)) / 10^round(log10(mean(data[1:200,])))
   #baselineThresh = 160000
   peakList <- detectSpecPeaks(t(data[high:low,]) / 10^round(log10(mean(data[1:200,]))),
                               nDivRange = c(128),

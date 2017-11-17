@@ -11,8 +11,8 @@
         <param name="binFile" type="data" label="Bin table" />
         <param name="pvalFile" type="data" label="ANOVA results" />
         <param name="cbar" type="select" label="Colour the spectra:">
-          <option value="continuous" selected="True">Continuous</option>
-          <option value="discrete">Discrete</option>
+          <option value="continuous">Continuous</option>
+          <option value="discrete" selected="True">Discrete</option>
         </param>
     </inputs>
 
