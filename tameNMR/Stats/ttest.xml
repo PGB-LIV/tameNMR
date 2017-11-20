@@ -61,10 +61,10 @@
       **Options**
       
       * *Type of test* - allows to choose the type of alternative hypothesis ("greater", "lower" or "not equal")
-      * *Are observations paired* - choose if the observations in the data are paired. Requires a separate factor where
-      each sample is in its own group and its "partner" has the same number but negative.
+      * *Are observations paired* - choose if the observations in the data are paired. Requires a separate factor where each sample is in its own group and its "partner" has the same number but negative.
       * *Confidence level* - the confidence level to be used for hypothesis testing.
       * *Multiple testing correction* - method for multiple testing correction of p-values.
+      
       
     </help>
 </tool>

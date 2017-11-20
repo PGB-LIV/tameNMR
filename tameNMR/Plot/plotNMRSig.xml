@@ -39,7 +39,10 @@
       
       **Continuous** - colours the plot in a contunuous fashion based on p-values in the interval [0,1]
       
+      
       .. class:: warningmark 
+      
       The continuous plot is much harder to interpret and will likely be changed in the future.
+      
     </help>
 </tool>
