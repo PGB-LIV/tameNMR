@@ -19,9 +19,9 @@
     </requirements>
 
     <tests>
-    </tests>
+    </tests-->
 
     <help>
+      This tool performs a Partial least squared discriminant analysis and plots the results.
     </help>
--->
 </tool>

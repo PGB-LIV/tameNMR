@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 #!/usr/bin/env Rscript
+=======
+.libPaths('/home/galaxy/R/x86_64-pc-linux-gnu-library/3.2/')
+>>>>>>> 0df624d00182fb323d7efd8a1daa9d9f5909e916
 
 args <- commandArgs(TRUE)
 
@@ -164,7 +168,7 @@ makeHTML <- function(plt){
 
 make.MDoutput = function(plts){
   output = ''
-  header = '## NMR quantile plot\n'
+  header = ''# '## NMR quantile plot\n'
   
   intro = ''
   prePlt1 = ''

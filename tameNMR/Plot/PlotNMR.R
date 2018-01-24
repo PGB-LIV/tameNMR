@@ -119,6 +119,7 @@ plotNMRspectra = function(data, scale, toPlot=c(10, 0),
   }
   # make colours
   if(aggregate & group){
+    groups = as.factor(unique(as.character(groups)))
     cols = rainbow(ncol(data))
   } else if(group) {
     groups = as.factor(groups)
@@ -129,8 +130,10 @@ plotNMRspectra = function(data, scale, toPlot=c(10, 0),
       cols = rainbow(ncol(data))
   }
   
-  if(spread) plotSpectraSpread(data, scale, cols, plotBins=plotBins, bins=bins)
-  else plotSpectraOlap(data, scale, cols, plotBins=plotBins, bins=bins)
+  if(spread){
+    if(group) plotGroupsSpread(data, scale, groups, cols, plotBins=plotBins, bins=bins)
+    else plotSpectraSpread(data, scale, cols, plotBins=plotBins, bins=bins)
+  } else plotSpectraOlap(data, scale, cols, plotBins=plotBins, bins=bins)
 }
 
 ppm_to_point = function(ppm_scale, ppm){
@@ -211,6 +214,40 @@ plotSpectraSpread = function(data, scale, cols, labs = NULL, showLegend = F, plo
   }
 }
 
+
+plotGroupsSpread = function(data, scale, groups, cols, labs = NULL, showLegend = F, plotBins=NULL, bins=NULL, ...){
+  # Plot NMR spectra grouped and spread
+  groups = as.character(groups)
+  
+  offset = max(data)
+  ylim = c(0, offset*length(unique(groups)))#+offset*1.05)
+  xlim = c(0, nrow(data))
+  N <- nrow(data)
+  
+  x.ticks = floor(seq(1,nrow(data),length=7))
+  y.ticks = (offset * (0:(ncol(data)-1))) + 0.3 * offset
+  plot(NULL, xlim=xlim, ylim=ylim, axes=F, xlab="ppm", ylab="", ...)
+  axis(1, at=x.ticks, labels=round(scale[x.ticks],2), srt=45)
+  #if(plotBins) abline(h=0, lty=4, col='grey')
+  #axis(2, at=y.ticks, labels=labs, las=2)
+  grps = unique(groups)
+  for (g in 1:length(grps)){
+    abline(h=(g-1)*offset, col='lightgrey')
+    for (i in which(groups==grps[g])){
+      lines(1:N, data[,i] + (g-1)*offset, col=cols[i])
+    }
+      
+  }
+  
+  if(is.null(labs)) labs = grps 
+  text(x=floor(range(xlim)/100), y=y.ticks, labels = labs, cex = 0.6)
+  #if(!is.null(groups)) legend('topright', legend=levels(groups), fill = rainbow(length(levels(groups))), cex=0.75, box.col='white')
+  if(plotBins & !is.null(bins)) {
+    plotBins(data, scale, bins, type='spread', ylim=ylim)
+  }
+}
+  
+
 plotBins = function(data, scale, bins, type, ylim){
   labels = bins[,3]
   if(type=='spread') y = 0.95 * ylim[2] 
@@ -224,7 +261,7 @@ plotBins = function(data, scale, bins, type, ylim){
     segments(x1, 0, x2, 0, lty = 4, lwd = 0.5)
     segments(x1,y*1.01,x1,0, lty = 4, lwd = 0.5)
     segments(x2,y*1.01,x2,0, lty = 4, lwd = 0.5)
-    text(x=mean(c(x1,x2)), y=y*1.05, labels=labels[i], srt=0)
+    text(x=mean(c(x1,x2)), y=y*1.05, labels=labels[i], srt=60)
   }
   
 }
@@ -260,7 +297,7 @@ makeHTML <- function(plt){
 
 make.MDoutput = function(plts){
   output = ''
-  header = '## NMR spectra\n'
+  header = ''#'## NMR spectra\n'
   
   intro = ''
   prePlt1 = ''

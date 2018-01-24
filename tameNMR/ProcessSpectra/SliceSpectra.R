@@ -43,6 +43,7 @@ ppm2pos <- function(peakList, ppms){
 }
 
 parsePpmIntervals <- function(ppmInts){
+  ppmInts = gsub(' ', '', ppmInts)
   intervals <- strsplit(ppmInts, ',')[[1]]
   if (length(intervals) == 1){
     intervals = as.numeric(strsplit(intervals,'-')[[1]])

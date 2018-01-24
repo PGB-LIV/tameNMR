@@ -6,7 +6,7 @@
     </command>
 
     <inputs>
-        <param name="input" type="data" label="Data" />
+        <param name="input" type="data" label="Data table" />
         <param name="method" type="select" label="Method" >
             <option value="log">Natural log</option>
             <option value="sqrt">Square root</option>
@@ -22,9 +22,10 @@
     </requirements>
 
     <tests>
-    </tests>
+    </tests-->
 
     <help>
+      Thid tool transforms the data table using one of standard mathematical functions. 
+      It can sometimes help if the data is very scewed.
     </help>
--->
 </tool>

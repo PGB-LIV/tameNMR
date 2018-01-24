@@ -1,6 +1,8 @@
-#!/usr/bin/env Rscript
+
+#!/usr/bin/Rscript
 
 # NMR data normalization tool for Galaxy
+
 
 # --- Normalisation functions ---
 PQN <- function(data, loc = "median"){
@@ -12,7 +14,7 @@ PQN <- function(data, loc = "median"){
     cat(sprintf("non such location metric %d", loc))
   }
 
-  data_ = data[,2:ncol(data)]
+  data_ = t(data)
   reference <- apply(data_,1,locFunc)
   # sometimes reference produces 0s so we turn them into 1s before division
   # so spectrum stays unchanged
@@ -22,40 +24,24 @@ PQN <- function(data, loc = "median"){
   quotient.withLocFunc <- apply(quotient,2,locFunc)
 
   pqn.data <- t(t(data_)/quotient.withLocFunc)
-  cbind(data[,1],pqn.data)
+  pqn.data
 }
 
-# normalisation to total integral
+# normalisation to total sum
 totInt <- function(data) {
-  data_ = data[,2:ncol(data)]
   
-  meanInt = trapezoid(apply(abs(data_),1,mean))
-  scalingFactor = meanInt / apply(abs(data_),2,trapezoid)
-  data_ = t(t(data_) * scalingFactor)
-  data_ = cbind(data[,1],data_)
-  #colnames(data_) = names(data)
-  data_
+  meanInt = sum(apply(data,2,mean))
+  scalingFactor = meanInt / apply(data,1,sum)
+  data = data * scalingFactor
+  data
 }
 
 # normalisation to reference peak
 refPeak <- function(data, par) {
-  data_ = data[,2:ncol(data)]
-  bin = as.numeric(strsplit(par,'-')[[1]])
-  refPeakInt = apply(data_[data[,1] >= min(bin) & data[,1] <= max(bin),], 2, trapezoid)
-  # adjust the integral for mean peak to preserve scale of spectra in the dataset
-  refPeaksAdj = refPeakInt/mean(refPeakInt)
-  data_ = t(t(data_)/refPeaksAdj)
-  data_ = cbind(data[,1], data_)
-  #colnames(data_) = names(data)
-  data_
-}
-
-trapezoid = function(vect){
-  sum(vect[1:(length(vect)-1)] + vect[2:length(vect)] ) / (2 * (length(vect)-1))
-}
-
-writeNMRTabFile <- function(data, outpath){
-  write.table(data, file=outpath, row.names=F, col.names=T, sep='\t')
+ # Normalisation by selected peak
+  normPeak = data[,par]
+  data = data / normPeak * mean(normPeak)
+  data
 }
 
 # --- Parse the command line arguments ---
@@ -68,15 +54,15 @@ if (length(args) < 1) {
 
 if("--help" %in% args) {
   cat("
-      Normalisation of NMR spectra
+      Normalisation of a data table
 
       Arguments:
       --input=path - input file path
       --output=path - output file path
       --type=type - the type of normalisation:
                 PQN: (default) probabilistic quatient normalization
-                totInt: normalization by the total integral
-                refPeak: normalization by reference peak integral
+                totInt: normalization by the total sum
+                refPeak: normalization by reference peak value
 
       Example:
       ./Normalise.R --input=inputFilePath --output=outputFilePath --type=PQN --param=\n\n")
@@ -107,6 +93,7 @@ if (args[['type']] == 'refPeak'){
 } else { dataTemp = normFunc(data_) }
 
 colnames(dataTemp) = names(data)
+rownames(dataTemp) = rownames(data)
 
 # --- Write the data
-writeNMRTabFile(dataTemp, args[['output']])
+write.table(data, file=outpath, row.names=T, col.names=T, sep='\t')

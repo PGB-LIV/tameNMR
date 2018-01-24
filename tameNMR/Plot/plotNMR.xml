@@ -64,11 +64,33 @@
     </requirements>
 
     <tests>
-    </tests>
+    </tests-->
 
     <help>
+      This tool plots NMR spectra in a variety of arangements. As the outputs are static files it is recommended to 
+      plot limited size portions of the spectra. This can be specified by changing the interval to be plotted in the
+      **Interval to plot** box.
+      
+      **Options**
+      
+      **Spread** - spreads the spectra on the Y axis as opposed to overlapping them.
+      
+      **Group** - groups spectra according to specified grouping factor.
+     
+      **Aggregate** - aggregates spectra by calculating mean or median of all the spectra or within groups.
+      
+      **Plot Bins** - plots bins on top of the spectra. A prepared pattern file is required.
+      
+      .. class:: infomark '''TIPS'''
+      
+      The options can be used in combination. For example *spreading* spectra without grouping will show each spectrum
+      individually on a new axis while *spreading* and *grouping* spreads the groups rather than each spectrum.
+      
+      Aggregation is useful when comparing groups of spectra. *Spread + group + aggregate* is a good way of getting an
+      easy first view of differences between groups.
+      
+      Plotting bins can be useful for visualising pattern files before binning the spectra.
     </help>
--->
 </tool>
       
       
