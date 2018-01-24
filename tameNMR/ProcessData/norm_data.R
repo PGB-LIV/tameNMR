@@ -1,4 +1,3 @@
-
 #!/usr/bin/Rscript
 
 # NMR data normalization tool for Galaxy

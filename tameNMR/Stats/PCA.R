@@ -1,5 +1,5 @@
-
 #!/usr/bin/env Rscript
+
 # PCA tool for Galaxy
 
 args <- commandArgs(TRUE)

@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 
 # --- Parse the command line arguments ---
 
