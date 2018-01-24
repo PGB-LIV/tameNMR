@@ -1,3 +1,5 @@
+
+#!/usr/bin/env Rscript
 # Tool for data transformations
 
 args <- commandArgs(TRUE)

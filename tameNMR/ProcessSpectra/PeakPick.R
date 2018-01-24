@@ -1,5 +1,5 @@
 
-#!/usr/bin/Rscript
+#!/usr/bin/env Rscript
 
 # NMR data normalization tool for Galaxy
 
