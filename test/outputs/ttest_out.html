@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>T-test results</title>
+
+<script type="text/javascript">
+window.onload = function() {
+  var imgs = document.getElementsByTagName('img'), i, img;
+  for (i = 0; i < imgs.length; i++) {
+    img = imgs[i];
+    // center an image if it is the only element of its parent
+    if (img.parentElement.childElementCount === 1)
+      img.parentElement.style.textAlign = 'center';
+  }
+};
+</script>
+
+
+
+
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 13px;
+}
+
+body {
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 20px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 {
+   font-size:2.2em;
+}
+
+h2 {
+   font-size:1.8em;
+}
+
+h3 {
+   font-size:1.4em;
+}
+
+h4 {
+   font-size:1.0em;
+}
+
+h5 {
+   font-size:0.9em;
+}
+
+h6 {
+   font-size:0.8em;
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre, img {
+  max-width: 100%;
+}
+pre {
+  overflow-x: auto;
+}
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code {
+  font-size: 92%;
+  border: 1px solid #ccc;
+}
+
+code[class] {
+  background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * {
+      background: transparent !important;
+      color: black !important;
+      filter:none !important;
+      -ms-filter: none !important;
+   }
+
+   body {
+      font-size:12pt;
+      max-width:100%;
+   }
+
+   a, a:visited {
+      text-decoration: underline;
+   }
+
+   hr {
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote {
+      padding-right: 1em;
+      page-break-inside: avoid;
+   }
+
+   tr, img {
+      page-break-inside: avoid;
+   }
+
+   img {
+      max-width: 100% !important;
+   }
+
+   @page :left {
+      margin: 15mm 20mm 15mm 10mm;
+   }
+
+   @page :right {
+      margin: 15mm 10mm 15mm 20mm;
+   }
+
+   p, h2, h3 {
+      orphans: 3; widows: 3;
+   }
+
+   h2, h3 {
+      page-break-after: avoid;
+   }
+}
+</style>
+
+
+
+</head>
+
+<body>
+<h2>T-test results</h2>
+
+<h3>2018-12-03</h3>
+
+<hr/>
+
+<p><strong>Total t-test performed:</strong> 187</p>
+
+<p><strong>Correction for multiple testing:</strong> </p>
+
+<p><strong>Number of significant variables:</strong> 0</p>
+
+<p>P-values are plotted on a negative log scale  - larger values on the plot correspond to lower p-values. The line corresponds to the given significance level ( 0.0500 ).  The points are colored to help distinguish the statistically significant results.
+<img src="../outputs/ttest_out/p_Vals.png" alt=""/></p>
+
+<p>Variables are plotted as bars coloured by group.The significance is denoted by the stars drawn above each pair of bars.
+<img src="../outputs/ttest_out/meanBars.png" alt=""/></p>
+
+<p>The Following table contains the p-values (raw and adjusted) as well as confidence intervals for the mean difference.</p>
+
+<p><center></p>
+
+<table><thead>
+<tr>
+<th align="left">bin</th>
+<th align="center">p-value</th>
+<th align="center">confidence interval</th>
+<th align="center">adjusted p-value</th>
+</tr>
+</thead><tbody>
+<tr>
+<td align="left">X9.9999.9.95</td>
+<td align="center">0.112</td>
+<td align="center">253.165  :  273.449</td>
+<td align="center">0.374</td>
+</tr>
+<tr>
+<td align="left">X9.9498.9.8998</td>
+<td align="center">0.122</td>
+<td align="center">260.149  :  281.548</td>
+<td align="center">0.38</td>
+</tr>
+<tr>
+<td align="left">X9.8997.9.8497</td>
+<td align="center">0.034</td>
+<td align="center">361.726  :  382.773</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X9.8496.9.7996</td>
+<td align="center">0.045</td>
+<td align="center">359.174  :  381.417</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X9.7995.9.7495</td>
+<td align="center">0.075</td>
+<td align="center">295.505  :  316.321</td>
+<td align="center">0.31</td>
+</tr>
+<tr>
+<td align="left">X9.7493.9.6994</td>
+<td align="center">0.017</td>
+<td align="center">444.576  :  467.24</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X9.6992.9.6493</td>
+<td align="center">0.059</td>
+<td align="center">353.797  :  377.259</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X9.6491.9.5991</td>
+<td align="center">0.035</td>
+<td align="center">395.442  :  418.691</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X9.599.9.549</td>
+<td align="center">0.218</td>
+<td align="center">236.113  :  261.079</td>
+<td align="center">0.518</td>
+</tr>
+<tr>
+<td align="left">X9.5489.9.4989</td>
+<td align="center">0.027</td>
+<td align="center">452.552  :  477.765</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X9.4988.9.4488</td>
+<td align="center">0.044</td>
+<td align="center">375.182  :  398.392</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X9.4486.9.3987</td>
+<td align="center">0.092</td>
+<td align="center">317.361  :  341.26</td>
+<td align="center">0.337</td>
+</tr>
+<tr>
+<td align="left">X9.3985.9.3486</td>
+<td align="center">0.072</td>
+<td align="center">359.082  :  384.161</td>
+<td align="center">0.31</td>
+</tr>
+<tr>
+<td align="left">X9.3484.9.2984</td>
+<td align="center">0.13</td>
+<td align="center">285.599  :  309.725</td>
+<td align="center">0.392</td>
+</tr>
+<tr>
+<td align="left">X9.2983.9.2483</td>
+<td align="center">0.09</td>
+<td align="center">310.828  :  334.064</td>
+<td align="center">0.337</td>
+</tr>
+<tr>
+<td align="left">X9.2482.9.1982</td>
+<td align="center">0.03</td>
+<td align="center">457.152  :  483.188</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X9.1981.9.1481</td>
+<td align="center">0.114</td>
+<td align="center">344.324  :  372.179</td>
+<td align="center">0.374</td>
+</tr>
+<tr>
+<td align="left">X9.1479.9.098</td>
+<td align="center">0.069</td>
+<td align="center">396.145  :  423.596</td>
+<td align="center">0.31</td>
+</tr>
+<tr>
+<td align="left">X9.0978.9.0479</td>
+<td align="center">0.086</td>
+<td align="center">354.436  :  380.512</td>
+<td align="center">0.328</td>
+</tr>
+<tr>
+<td align="left">X9.0477.8.9977</td>
+<td align="center">0.101</td>
+<td align="center">326.82  :  352.048</td>
+<td align="center">0.354</td>
+</tr>
+<tr>
+<td align="left">X8.9976.8.9476</td>
+<td align="center">0.073</td>
+<td align="center">387.409  :  414.566</td>
+<td align="center">0.31</td>
+</tr>
+<tr>
+<td align="left">X8.9475.8.8975</td>
+<td align="center">0.043</td>
+<td align="center">436.705  :  463.647</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X8.8974.8.8474</td>
+<td align="center">0.06</td>
+<td align="center">394.195  :  420.512</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X8.8472.8.7973</td>
+<td align="center">0.104</td>
+<td align="center">340.112  :  366.538</td>
+<td align="center">0.354</td>
+</tr>
+<tr>
+<td align="left">X8.7971.8.7472</td>
+<td align="center">0.294</td>
+<td align="center">226.253  :  254.667</td>
+<td align="center">0.585</td>
+</tr>
+<tr>
+<td align="left">X8.747.8.697</td>
+<td align="center">0.144</td>
+<td align="center">317.021  :  344.764</td>
+<td align="center">0.427</td>
+</tr>
+<tr>
+<td align="left">X8.6969.8.6469</td>
+<td align="center">0.104</td>
+<td align="center">359.708  :  387.782</td>
+<td align="center">0.354</td>
+</tr>
+<tr>
+<td align="left">X8.6468.8.5968</td>
+<td align="center">0.051</td>
+<td align="center">409.97  :  435.971</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X8.5967.8.5467</td>
+<td align="center">0.073</td>
+<td align="center">421.692  :  451.014</td>
+<td align="center">0.31</td>
+</tr>
+<tr>
+<td align="left">X8.5465.8.4966</td>
+<td align="center">0.053</td>
+<td align="center">426.511  :  453.722</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X8.4964.8.4465</td>
+<td align="center">0.016</td>
+<td align="center">2155.081  :  2259.471</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X8.4463.8.3963</td>
+<td align="center">0.013</td>
+<td align="center">611.778  :  641.094</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X8.3962.8.3462</td>
+<td align="center">0.044</td>
+<td align="center">463.5  :  491.599</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X8.3461.8.2961</td>
+<td align="center">0.028</td>
+<td align="center">473.752  :  499.87</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X8.2959.8.246</td>
+<td align="center">0.174</td>
+<td align="center">285.44  :  312.4</td>
+<td align="center">0.484</td>
+</tr>
+<tr>
+<td align="left">X8.2458.8.1959</td>
+<td align="center">0.236</td>
+<td align="center">224.671  :  249.276</td>
+<td align="center">0.545</td>
+</tr>
+<tr>
+<td align="left">X8.1957.8.1458</td>
+<td align="center">0.038</td>
+<td align="center">642  :  680.568</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X8.1456.8.0956</td>
+<td align="center">0.009</td>
+<td align="center">516.157  :  539.593</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X8.0955.8.0455</td>
+<td align="center">0.098</td>
+<td align="center">484.102  :  520.972</td>
+<td align="center">0.352</td>
+</tr>
+<tr>
+<td align="left">X8.0454.7.9954</td>
+<td align="center">0.328</td>
+<td align="center">365.947  :  415.621</td>
+<td align="center">0.597</td>
+</tr>
+<tr>
+<td align="left">X7.9952.7.9453</td>
+<td align="center">0.572</td>
+<td align="center">257.466  :  321.543</td>
+<td align="center">0.743</td>
+</tr>
+<tr>
+<td align="left">X7.9451.7.8952</td>
+<td align="center">0.644</td>
+<td align="center">227.857  :  299.327</td>
+<td align="center">0.772</td>
+</tr>
+<tr>
+<td align="left">X7.895.7.845</td>
+<td align="center">0.679</td>
+<td align="center">297.686  :  403.83</td>
+<td align="center">0.799</td>
+</tr>
+<tr>
+<td align="left">X7.8449.7.7949</td>
+<td align="center">0.851</td>
+<td align="center">-460.742  :  -229.708</td>
+<td align="center">0.904</td>
+</tr>
+<tr>
+<td align="left">X7.7948.7.7448</td>
+<td align="center">0.274</td>
+<td align="center">-1351.381  :  -1206.862</td>
+<td align="center">0.576</td>
+</tr>
+<tr>
+<td align="left">X7.7447.7.6947</td>
+<td align="center">0.32</td>
+<td align="center">-675.924  :  -596.391</td>
+<td align="center">0.597</td>
+</tr>
+<tr>
+<td align="left">X7.6945.7.6446</td>
+<td align="center">0.183</td>
+<td align="center">695.698  :  763.333</td>
+<td align="center">0.484</td>
+</tr>
+<tr>
+<td align="left">X7.6444.7.5945</td>
+<td align="center">0.326</td>
+<td align="center">371.258  :  421.454</td>
+<td align="center">0.597</td>
+</tr>
+<tr>
+<td align="left">X7.5943.7.5443</td>
+<td align="center">0.814</td>
+<td align="center">105.833  :  182.756</td>
+<td align="center">0.883</td>
+</tr>
+<tr>
+<td align="left">X7.5442.7.4942</td>
+<td align="center">0.858</td>
+<td align="center">-192.592  :  -92.511</td>
+<td align="center">0.906</td>
+</tr>
+<tr>
+<td align="left">X7.4941.7.4441</td>
+<td align="center">0.443</td>
+<td align="center">-2502.564  :  -2127.023</td>
+<td align="center">0.643</td>
+</tr>
+<tr>
+<td align="left">X7.444.7.394</td>
+<td align="center">0.579</td>
+<td align="center">-1499.01  :  -1195.255</td>
+<td align="center">0.744</td>
+</tr>
+<tr>
+<td align="left">X7.3938.7.3439</td>
+<td align="center">0.537</td>
+<td align="center">-12106.399  :  -9883.335</td>
+<td align="center">0.709</td>
+</tr>
+<tr>
+<td align="left">X7.3437.7.2938</td>
+<td align="center">0.431</td>
+<td align="center">-12493.096  :  -10660.806</td>
+<td align="center">0.643</td>
+</tr>
+<tr>
+<td align="left">X7.2936.7.2436</td>
+<td align="center">0.513</td>
+<td align="center">-12168.477  :  -10047.347</td>
+<td align="center">0.69</td>
+</tr>
+<tr>
+<td align="left">X7.2435.7.1935</td>
+<td align="center">0.47</td>
+<td align="center">-1346.907  :  -1132.604</td>
+<td align="center">0.657</td>
+</tr>
+<tr>
+<td align="left">X7.1934.7.1434</td>
+<td align="center">0.711</td>
+<td align="center">305.742  :  430.286</td>
+<td align="center">0.821</td>
+</tr>
+<tr>
+<td align="left">X7.1433.7.0933</td>
+<td align="center">0.637</td>
+<td align="center">328.474  :  429.087</td>
+<td align="center">0.769</td>
+</tr>
+<tr>
+<td align="left">X7.0931.7.0432</td>
+<td align="center">0.809</td>
+<td align="center">-389.987  :  -229.243</td>
+<td align="center">0.883</td>
+</tr>
+<tr>
+<td align="left">X7.043.6.9931</td>
+<td align="center">0.353</td>
+<td align="center">-3647.89  :  -3190.858</td>
+<td align="center">0.612</td>
+</tr>
+<tr>
+<td align="left">X6.9929.6.9429</td>
+<td align="center">0.977</td>
+<td align="center">-39.732  :  105.883</td>
+<td align="center">0.977</td>
+</tr>
+<tr>
+<td align="left">X6.9428.6.8928</td>
+<td align="center">0.269</td>
+<td align="center">-2468.406  :  -2206.411</td>
+<td align="center">0.576</td>
+</tr>
+<tr>
+<td align="left">X6.8927.6.8427</td>
+<td align="center">0.887</td>
+<td align="center">64.271  :  166.564</td>
+<td align="center">0.919</td>
+</tr>
+<tr>
+<td align="left">X6.8426.6.7926</td>
+<td align="center">0.902</td>
+<td align="center">-135.963  :  -43.909</td>
+<td align="center">0.919</td>
+</tr>
+<tr>
+<td align="left">X6.7924.6.7425</td>
+<td align="center">0.183</td>
+<td align="center">533.699  :  585.711</td>
+<td align="center">0.484</td>
+</tr>
+<tr>
+<td align="left">X6.7423.6.6924</td>
+<td align="center">0.008</td>
+<td align="center">1441.134  :  1505.695</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X6.6922.6.6422</td>
+<td align="center">0.006</td>
+<td align="center">992.252  :  1033.625</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X6.6421.6.5921</td>
+<td align="center">0.078</td>
+<td align="center">657.622  :  704.304</td>
+<td align="center">0.31</td>
+</tr>
+<tr>
+<td align="left">X6.592.6.542</td>
+<td align="center">0.032</td>
+<td align="center">936.037  :  989.005</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X6.5419.6.4919</td>
+<td align="center">0.033</td>
+<td align="center">941.554  :  995.275</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X6.4917.6.4418</td>
+<td align="center">0.035</td>
+<td align="center">973.791  :  1030.185</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X6.4416.6.3917</td>
+<td align="center">0.033</td>
+<td align="center">988.912  :  1045.177</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X6.3915.6.3415</td>
+<td align="center">0.048</td>
+<td align="center">959.087  :  1018.863</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X6.3414.6.2914</td>
+<td align="center">0.036</td>
+<td align="center">1022.035  :  1081.202</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X6.2913.6.2413</td>
+<td align="center">0.015</td>
+<td align="center">1219.655  :  1279.305</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X6.2412.6.1912</td>
+<td align="center">0.055</td>
+<td align="center">1026.033  :  1092.089</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X6.191.6.1411</td>
+<td align="center">0.048</td>
+<td align="center">1048.06  :  1113.27</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X6.1409.6.091</td>
+<td align="center">0.029</td>
+<td align="center">1209.792  :  1277.087</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X6.0908.6.0408</td>
+<td align="center">0.062</td>
+<td align="center">1072.954  :  1144.21</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X6.0407.5.9907</td>
+<td align="center">0.03</td>
+<td align="center">1293.295  :  1365.395</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X5.9906.5.9406</td>
+<td align="center">0.08</td>
+<td align="center">1098.947  :  1177.938</td>
+<td align="center">0.312</td>
+</tr>
+<tr>
+<td align="left">X5.9405.5.8905</td>
+<td align="center">0.056</td>
+<td align="center">1189.008  :  1266.324</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X5.8903.5.8404</td>
+<td align="center">0.246</td>
+<td align="center">956.636  :  1064.72</td>
+<td align="center">0.561</td>
+</tr>
+<tr>
+<td align="left">X5.8402.5.7903</td>
+<td align="center">0.512</td>
+<td align="center">-3434.893  :  -2837.433</td>
+<td align="center">0.69</td>
+</tr>
+<tr>
+<td align="left">X5.7901.5.7401</td>
+<td align="center">0.844</td>
+<td align="center">-876.146  :  -452.274</td>
+<td align="center">0.902</td>
+</tr>
+<tr>
+<td align="left">X5.74.5.69</td>
+<td align="center">0.969</td>
+<td align="center">-245.259  :  59.119</td>
+<td align="center">0.974</td>
+</tr>
+<tr>
+<td align="left">X5.6899.5.6399</td>
+<td align="center">0.637</td>
+<td align="center">517.724  :  675.996</td>
+<td align="center">0.769</td>
+</tr>
+<tr>
+<td align="left">X5.6398.5.5898</td>
+<td align="center">0.121</td>
+<td align="center">1426.019  :  1543.48</td>
+<td align="center">0.38</td>
+</tr>
+<tr>
+<td align="left">X5.5896.5.5397</td>
+<td align="center">0.039</td>
+<td align="center">1903.125  :  2015.788</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X5.5395.5.4896</td>
+<td align="center">0.061</td>
+<td align="center">2065.579  :  2202.851</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X5.4894.5.4394</td>
+<td align="center">0.049</td>
+<td align="center">2146.44  :  2280.761</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X5.4393.5.3893</td>
+<td align="center">0.298</td>
+<td align="center">1743.392  :  1964.066</td>
+<td align="center">0.587</td>
+</tr>
+<tr>
+<td align="left">X5.3892.5.3392</td>
+<td align="center">0.405</td>
+<td align="center">1450.323  :  1685.288</td>
+<td align="center">0.626</td>
+</tr>
+<tr>
+<td align="left">X5.339.5.2891</td>
+<td align="center">0.464</td>
+<td align="center">-12035.046  :  -10146.105</td>
+<td align="center">0.657</td>
+</tr>
+<tr>
+<td align="left">X5.2889.5.239</td>
+<td align="center">0.329</td>
+<td align="center">-24002.137  :  -21125.526</td>
+<td align="center">0.597</td>
+</tr>
+<tr>
+<td align="left">X5.2388.5.1889</td>
+<td align="center">0.584</td>
+<td align="center">11155.537  :  14032.797</td>
+<td align="center">0.744</td>
+</tr>
+<tr>
+<td align="left">X5.1887.5.1387</td>
+<td align="center">0.667</td>
+<td align="center">1441.784  :  1932.607</td>
+<td align="center">0.789</td>
+</tr>
+<tr>
+<td align="left">X5.1386.5.0886</td>
+<td align="center">0.189</td>
+<td align="center">3823.403  :  4199.302</td>
+<td align="center">0.484</td>
+</tr>
+<tr>
+<td align="left">X5.0885.5.0385</td>
+<td align="center">0.193</td>
+<td align="center">4566.028  :  5019.799</td>
+<td align="center">0.486</td>
+</tr>
+<tr>
+<td align="left">X5.0383.4.9884</td>
+<td align="center">0.269</td>
+<td align="center">4978.11  :  5569.014</td>
+<td align="center">0.576</td>
+</tr>
+<tr>
+<td align="left">X4.9882.4.9383</td>
+<td align="center">0.437</td>
+<td align="center">5070.274  :  5955.079</td>
+<td align="center">0.643</td>
+</tr>
+<tr>
+<td align="left">X4.9381.4.2881</td>
+<td align="center">0.873</td>
+<td align="center">-2221.84  :  -970.866</td>
+<td align="center">0.913</td>
+</tr>
+<tr>
+<td align="left">X4.288.4.238</td>
+<td align="center">0.375</td>
+<td align="center">-18241.929  :  -15855.936</td>
+<td align="center">0.612</td>
+</tr>
+<tr>
+<td align="left">X4.2379.4.1879</td>
+<td align="center">0.41</td>
+<td align="center">-18990.084  :  -16322.629</td>
+<td align="center">0.628</td>
+</tr>
+<tr>
+<td align="left">X4.1877.4.1378</td>
+<td align="center">0.332</td>
+<td align="center">-29793.175  :  -26206.72</td>
+<td align="center">0.597</td>
+</tr>
+<tr>
+<td align="left">X4.1376.4.0877</td>
+<td align="center">0.384</td>
+<td align="center">-28733.449  :  -24895.013</td>
+<td align="center">0.612</td>
+</tr>
+<tr>
+<td align="left">X4.0875.4.0375</td>
+<td align="center">0.222</td>
+<td align="center">-31157.145  :  -28154.119</td>
+<td align="center">0.519</td>
+</tr>
+<tr>
+<td align="left">X4.0374.3.9874</td>
+<td align="center">0.29</td>
+<td align="center">-63130.944  :  -56144.047</td>
+<td align="center">0.583</td>
+</tr>
+<tr>
+<td align="left">X3.9873.3.9373</td>
+<td align="center">0.489</td>
+<td align="center">-91172.356  :  -76104.792</td>
+<td align="center">0.672</td>
+</tr>
+<tr>
+<td align="left">X3.9371.3.8872</td>
+<td align="center">0.357</td>
+<td align="center">-71378.104  :  -62360.353</td>
+<td align="center">0.612</td>
+</tr>
+<tr>
+<td align="left">X3.887.3.8371</td>
+<td align="center">0.287</td>
+<td align="center">-72330.044  :  -64374.228</td>
+<td align="center">0.583</td>
+</tr>
+<tr>
+<td align="left">X3.8369.3.787</td>
+<td align="center">0.219</td>
+<td align="center">-68003.006  :  -61478.767</td>
+<td align="center">0.518</td>
+</tr>
+<tr>
+<td align="left">X3.7868.3.7368</td>
+<td align="center">0.071</td>
+<td align="center">-91381.109  :  -85393.143</td>
+<td align="center">0.31</td>
+</tr>
+<tr>
+<td align="left">X3.7367.3.6867</td>
+<td align="center">0.652</td>
+<td align="center">-36569.154  :  -27651.791</td>
+<td align="center">0.777</td>
+</tr>
+<tr>
+<td align="left">X3.6866.3.6366</td>
+<td align="center">0.614</td>
+<td align="center">-26355.227  :  -20541.368</td>
+<td align="center">0.758</td>
+</tr>
+<tr>
+<td align="left">X3.6364.3.5865</td>
+<td align="center">0.605</td>
+<td align="center">-28256.897  :  -22167.072</td>
+<td align="center">0.754</td>
+</tr>
+<tr>
+<td align="left">X3.5863.3.5364</td>
+<td align="center">0.737</td>
+<td align="center">-9720.282  :  -6661.039</td>
+<td align="center">0.846</td>
+</tr>
+<tr>
+<td align="left">X3.5362.3.4862</td>
+<td align="center">0.874</td>
+<td align="center">3402.045  :  7827.509</td>
+<td align="center">0.913</td>
+</tr>
+<tr>
+<td align="left">X3.4861.3.4361</td>
+<td align="center">0.904</td>
+<td align="center">2946.815  :  9391.305</td>
+<td align="center">0.919</td>
+</tr>
+<tr>
+<td align="left">X3.436.3.386</td>
+<td align="center">0.817</td>
+<td align="center">10687.566  :  18603.666</td>
+<td align="center">0.883</td>
+</tr>
+<tr>
+<td align="left">X3.3859.3.3359</td>
+<td align="center">0.794</td>
+<td align="center">-1912.863  :  -1172.829</td>
+<td align="center">0.883</td>
+</tr>
+<tr>
+<td align="left">X3.3357.3.2858</td>
+<td align="center">0.215</td>
+<td align="center">-4746.547  :  -4296.227</td>
+<td align="center">0.518</td>
+</tr>
+<tr>
+<td align="left">X3.2856.3.2357</td>
+<td align="center">0.811</td>
+<td align="center">-10522.647  :  -6149.457</td>
+<td align="center">0.883</td>
+</tr>
+<tr>
+<td align="left">X3.2355.3.1855</td>
+<td align="center">0.379</td>
+<td align="center">-49907.515  :  -43310.443</td>
+<td align="center">0.612</td>
+</tr>
+<tr>
+<td align="left">X3.1854.3.1354</td>
+<td align="center">0.444</td>
+<td align="center">-15198.471  :  -12912.138</td>
+<td align="center">0.643</td>
+</tr>
+<tr>
+<td align="left">X3.1353.3.0853</td>
+<td align="center">0.328</td>
+<td align="center">-6807.2  :  -5995.683</td>
+<td align="center">0.597</td>
+</tr>
+<tr>
+<td align="left">X3.0852.3.0352</td>
+<td align="center">0.065</td>
+<td align="center">-13844.226  :  -12962.56</td>
+<td align="center">0.31</td>
+</tr>
+<tr>
+<td align="left">X3.035.2.9851</td>
+<td align="center">0.634</td>
+<td align="center">-11501.151  :  -8832.501</td>
+<td align="center">0.769</td>
+</tr>
+<tr>
+<td align="left">X2.9849.2.935</td>
+<td align="center">0.691</td>
+<td align="center">-2965.247  :  -2157.53</td>
+<td align="center">0.805</td>
+</tr>
+<tr>
+<td align="left">X2.9348.2.8848</td>
+<td align="center">0.836</td>
+<td align="center">-1206.683  :  -644.673</td>
+<td align="center">0.898</td>
+</tr>
+<tr>
+<td align="left">X2.8847.2.8347</td>
+<td align="center">0.203</td>
+<td align="center">-10115.635  :  -9177.82</td>
+<td align="center">0.499</td>
+</tr>
+<tr>
+<td align="left">X2.8346.2.7846</td>
+<td align="center">0.253</td>
+<td align="center">-8176.618  :  -7339.489</td>
+<td align="center">0.57</td>
+</tr>
+<tr>
+<td align="left">X2.7845.2.7345</td>
+<td align="center">0.078</td>
+<td align="center">-15392.094  :  -14363.138</td>
+<td align="center">0.31</td>
+</tr>
+<tr>
+<td align="left">X2.7343.2.6844</td>
+<td align="center">0.29</td>
+<td align="center">-26439.776  :  -23519.068</td>
+<td align="center">0.583</td>
+</tr>
+<tr>
+<td align="left">X2.6842.2.6343</td>
+<td align="center">0.526</td>
+<td align="center">-5561.166  :  -4564.742</td>
+<td align="center">0.703</td>
+</tr>
+<tr>
+<td align="left">X2.6341.2.5841</td>
+<td align="center">0.346</td>
+<td align="center">-4183.064  :  -3666.538</td>
+<td align="center">0.612</td>
+</tr>
+<tr>
+<td align="left">X2.584.2.534</td>
+<td align="center">0.438</td>
+<td align="center">-4442.765  :  -3782.605</td>
+<td align="center">0.643</td>
+</tr>
+<tr>
+<td align="left">X2.5339.2.4839</td>
+<td align="center">0.373</td>
+<td align="center">-7355.356  :  -6394.491</td>
+<td align="center">0.612</td>
+</tr>
+<tr>
+<td align="left">X2.4838.2.4338</td>
+<td align="center">0.542</td>
+<td align="center">-28157.071  :  -22921.606</td>
+<td align="center">0.709</td>
+</tr>
+<tr>
+<td align="left">X2.4336.2.3837</td>
+<td align="center">0.331</td>
+<td align="center">-21609.517  :  -19013.064</td>
+<td align="center">0.597</td>
+</tr>
+<tr>
+<td align="left">X2.3835.2.3336</td>
+<td align="center">0.177</td>
+<td align="center">-30835.846  :  -28146.724</td>
+<td align="center">0.484</td>
+</tr>
+<tr>
+<td align="left">X2.3334.2.2834</td>
+<td align="center">0.35</td>
+<td align="center">-47680.174  :  -41732.448</td>
+<td align="center">0.612</td>
+</tr>
+<tr>
+<td align="left">X2.2833.2.2333</td>
+<td align="center">0.471</td>
+<td align="center">-55402.585  :  -46584.255</td>
+<td align="center">0.657</td>
+</tr>
+<tr>
+<td align="left">X2.2332.2.1832</td>
+<td align="center">0.803</td>
+<td align="center">-6299.195  :  -3765.918</td>
+<td align="center">0.883</td>
+</tr>
+<tr>
+<td align="left">X2.1831.2.1331</td>
+<td align="center">0.151</td>
+<td align="center">-20797.566  :  -19085.099</td>
+<td align="center">0.434</td>
+</tr>
+<tr>
+<td align="left">X2.1329.2.083</td>
+<td align="center">0.179</td>
+<td align="center">-36667.336  :  -33455.756</td>
+<td align="center">0.484</td>
+</tr>
+<tr>
+<td align="left">X2.0828.2.0329</td>
+<td align="center">0.386</td>
+<td align="center">-48578.686  :  -42065.578</td>
+<td align="center">0.612</td>
+</tr>
+<tr>
+<td align="left">X2.0327.1.9827</td>
+<td align="center">0.331</td>
+<td align="center">-80105.734  :  -70507.888</td>
+<td align="center">0.597</td>
+</tr>
+<tr>
+<td align="left">X1.9826.1.9326</td>
+<td align="center">0.275</td>
+<td align="center">-61040.024  :  -54487.935</td>
+<td align="center">0.576</td>
+</tr>
+<tr>
+<td align="left">X1.9325.1.8825</td>
+<td align="center">0.382</td>
+<td align="center">-46237.449  :  -40089.728</td>
+<td align="center">0.612</td>
+</tr>
+<tr>
+<td align="left">X1.8824.1.8324</td>
+<td align="center">0.404</td>
+<td align="center">-25933.091  :  -22334.155</td>
+<td align="center">0.626</td>
+</tr>
+<tr>
+<td align="left">X1.8322.1.7823</td>
+<td align="center">0.391</td>
+<td align="center">-24089.681  :  -20826.928</td>
+<td align="center">0.614</td>
+</tr>
+<tr>
+<td align="left">X1.7821.1.7322</td>
+<td align="center">0.363</td>
+<td align="center">-18940.828  :  -16520.136</td>
+<td align="center">0.612</td>
+</tr>
+<tr>
+<td align="left">X1.732.1.682</td>
+<td align="center">0.38</td>
+<td align="center">-26024.732  :  -22584.606</td>
+<td align="center">0.612</td>
+</tr>
+<tr>
+<td align="left">X1.6819.1.6319</td>
+<td align="center">0.484</td>
+<td align="center">-38893.251  :  -32522.39</td>
+<td align="center">0.67</td>
+</tr>
+<tr>
+<td align="left">X1.6318.1.5818</td>
+<td align="center">0.447</td>
+<td align="center">-21966.707  :  -18636.465</td>
+<td align="center">0.643</td>
+</tr>
+<tr>
+<td align="left">X1.5817.1.5317</td>
+<td align="center">0.151</td>
+<td align="center">-21487.829  :  -19716.349</td>
+<td align="center">0.434</td>
+</tr>
+<tr>
+<td align="left">X1.5315.1.4816</td>
+<td align="center">0.195</td>
+<td align="center">-23801.328  :  -21646.598</td>
+<td align="center">0.486</td>
+</tr>
+<tr>
+<td align="left">X1.4814.1.4315</td>
+<td align="center">0.454</td>
+<td align="center">-17973.134  :  -15211.369</td>
+<td align="center">0.648</td>
+</tr>
+<tr>
+<td align="left">X1.4313.1.3813</td>
+<td align="center">0.541</td>
+<td align="center">-108236.655  :  -88179.572</td>
+<td align="center">0.709</td>
+</tr>
+<tr>
+<td align="left">X1.3812.1.3312</td>
+<td align="center">0.116</td>
+<td align="center">-113225.613  :  -104742.494</td>
+<td align="center">0.374</td>
+</tr>
+<tr>
+<td align="left">X1.3311.1.2811</td>
+<td align="center">0.805</td>
+<td align="center">-33274.062  :  -19818.06</td>
+<td align="center">0.883</td>
+</tr>
+<tr>
+<td align="left">X1.2809.1.231</td>
+<td align="center">0.33</td>
+<td align="center">-192490.636  :  -169381.829</td>
+<td align="center">0.597</td>
+</tr>
+<tr>
+<td align="left">X1.2308.1.1809</td>
+<td align="center">0.601</td>
+<td align="center">-36884.798  :  -29014.285</td>
+<td align="center">0.754</td>
+</tr>
+<tr>
+<td align="left">X1.1807.1.1308</td>
+<td align="center">0.05</td>
+<td align="center">62651.204  :  66513.308</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X1.1306.1.0806</td>
+<td align="center">0.127</td>
+<td align="center">-3824.196  :  -3527.952</td>
+<td align="center">0.389</td>
+</tr>
+<tr>
+<td align="left">X1.0805.1.0305</td>
+<td align="center">0.025</td>
+<td align="center">-15204.9  :  -14411.019</td>
+<td align="center">0.305</td>
+</tr>
+<tr>
+<td align="left">X1.0304.0.9804</td>
+<td align="center">0.186</td>
+<td align="center">-10781.596  :  -9818.045</td>
+<td align="center">0.484</td>
+</tr>
+<tr>
+<td align="left">X0.9802.0.9303</td>
+<td align="center">0.424</td>
+<td align="center">-76589.84  :  -65527.883</td>
+<td align="center">0.643</td>
+</tr>
+<tr>
+<td align="left">X0.9301.0.8802</td>
+<td align="center">0.44</td>
+<td align="center">-69437.577  :  -59069.066</td>
+<td align="center">0.643</td>
+</tr>
+<tr>
+<td align="left">X0.88.0.83</td>
+<td align="center">0.275</td>
+<td align="center">-101937.9  :  -90954.524</td>
+<td align="center">0.576</td>
+</tr>
+<tr>
+<td align="left">X0.8299.0.7799</td>
+<td align="center">0.891</td>
+<td align="center">-4089.984  :  -1514.406</td>
+<td align="center">0.919</td>
+</tr>
+<tr>
+<td align="left">X0.7798.0.7298</td>
+<td align="center">0.904</td>
+<td align="center">107.908  :  341.912</td>
+<td align="center">0.919</td>
+</tr>
+<tr>
+<td align="left">X0.7297.0.6797</td>
+<td align="center">0.784</td>
+<td align="center">257.077  :  409.08</td>
+<td align="center">0.883</td>
+</tr>
+<tr>
+<td align="left">X0.6795.0.6296</td>
+<td align="center">0.794</td>
+<td align="center">238.415  :  389.162</td>
+<td align="center">0.883</td>
+</tr>
+<tr>
+<td align="left">X0.6294.0.5795</td>
+<td align="center">0.605</td>
+<td align="center">356.759  :  454.778</td>
+<td align="center">0.754</td>
+</tr>
+<tr>
+<td align="left">X0.5793.0.5293</td>
+<td align="center">0.952</td>
+<td align="center">-1.34  :  76.866</td>
+<td align="center">0.962</td>
+</tr>
+<tr>
+<td align="left">X0.5292.0.4792</td>
+<td align="center">0.747</td>
+<td align="center">-198.949  :  -134.188</td>
+<td align="center">0.852</td>
+</tr>
+<tr>
+<td align="left">X0.4791.0.4291</td>
+<td align="center">0.616</td>
+<td align="center">-265.023  :  -206.188</td>
+<td align="center">0.758</td>
+</tr>
+<tr>
+<td align="left">X0.429.0.379</td>
+<td align="center">0.693</td>
+<td align="center">-190.677  :  -138.4</td>
+<td align="center">0.805</td>
+</tr>
+<tr>
+<td align="left">X0.3788.0.3289</td>
+<td align="center">0.585</td>
+<td align="center">-225.883  :  -179.507</td>
+<td align="center">0.744</td>
+</tr>
+<tr>
+<td align="left">X0.3287.0.2788</td>
+<td align="center">0.378</td>
+<td align="center">-352.595  :  -306.076</td>
+<td align="center">0.612</td>
+</tr>
+<tr>
+<td align="left">X0.2786.0.2286</td>
+<td align="center">0.503</td>
+<td align="center">-271.766  :  -225.468</td>
+<td align="center">0.687</td>
+</tr>
+<tr>
+<td align="left">X0.2285.0.1785</td>
+<td align="center">0.363</td>
+<td align="center">-327.332  :  -285.434</td>
+<td align="center">0.612</td>
+</tr>
+<tr>
+<td align="left">X0.1784.0.1284</td>
+<td align="center">0.266</td>
+<td align="center">-427.565  :  -382.376</td>
+<td align="center">0.576</td>
+</tr>
+<tr>
+<td align="left">X0.1283.0.0783</td>
+<td align="center">0.187</td>
+<td align="center">-516.62  :  -470.362</td>
+<td align="center">0.484</td>
+</tr>
+<tr>
+<td align="left">X0.0781.0.0282</td>
+<td align="center">0.277</td>
+<td align="center">-2271.055  :  -2026.176</td>
+<td align="center">0.576</td>
+</tr>
+</tbody></table>
+
+<p></center> </p>
+
+</body>
+
+</html>
