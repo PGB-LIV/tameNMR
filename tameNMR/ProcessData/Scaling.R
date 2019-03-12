@@ -55,9 +55,9 @@ if (args[['method']] == 'auto'){
   data_ = apply(data_, 2, AutoScale)
 } else if (args[['method']] == 'pareto'){
   data_ = apply(data_, 2, ParetoScale)
-} else if (args[['range']]) {
+} else if (args[['method']] == 'range') {
   data_ = apply(data_, 2, RangeScale)
-} else if (args[['mean']]) {
+} else if (args[['method']] == 'mean') {
   data_ = scale(data_, center=T, scale=F)
 }
 

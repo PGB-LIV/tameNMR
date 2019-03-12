@@ -44,7 +44,12 @@ scale = data[,1]
 toplt = strsplit(args[['ppmInt']], '-')[[1]]
 toplt = sort(as.numeric(toplt), decreasing = T)
 
-bins = read.table(args[['bins']], header=T, stringsAsFactors = F, sep='\t')
+bins = read.table(args[['bins']], header=F, stringsAsFactors = F, sep='\t')
+if (is.numeric(bins$V3)) {
+  bins$V3 = paste0('X',as.character(bins$V3)) 
+  bins$V3 = sapply(bins$V3, function(x) gsub('-','.',x))
+}
+
 if(grep('.dat',args[['pvals']])) { args[['pvals']]=gsub('.dat$','',args[['pvals']]) }
 pvals = read.table(paste(args[['pvals']],'_files/pvals.txt',sep=''), header=T, sep='\t', stringsAsFactors = F)
 pvals_ = pvals[,'adj_p_vals']
@@ -116,7 +121,6 @@ plotNMRSignif = function(data, ppms, bins, pvals, toPlot=c(0,10), test='ANOVA', 
   emptySpec = rep(NA, ncol(dataNew))
   emptyCols = apply(dataNew, 2, function(x) all(is.na(x)))
   emptySpec[emptyCols] = spec[emptyCols]
-  
   dataNew = rbind(emptySpec, dataNew)
   dataNew <- dataNew[,ppm_to_point(ppms,toPlot[1]):ppm_to_point(ppms,toPlot[2])]
   
@@ -283,10 +287,10 @@ if(!dir.exists(args[['outDir']])) dir.create(args[['outDir']], showWarnings = F)
 
 png(plt, width=30, height=18, units= 'in', res=300)
 if('colourbar' %in% names(args) & args[['colourbar']]=='discrete'){
-  plotNMRSignif(data_, scale, bins[,2:3], pvals_, toPlot = toplt, test=test, groups=groups, plotDiff=plotDiff, avgFun = avgFun)
+  plotNMRSignif(data_, scale, bins[,1:2], pvals_, toPlot = toplt, test=test, groups=groups, plotDiff=plotDiff, avgFun = avgFun)
 } else {
     
-  plotNMRSignif_2(data_, scale, bins[,2:3], pvals_, toPlot = toplt, test=test, groups=groups, plotDiff=plotDiff, avgFun = avgFun)
+  plotNMRSignif_2(data_, scale, bins[,1:2], pvals_, toPlot = toplt, test=test, groups=groups, plotDiff=plotDiff, avgFun = avgFun)
 }
 dev.off()
 

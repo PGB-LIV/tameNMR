@@ -43,18 +43,32 @@ writeNMRPeakFile <- function(data, outpath){
   write.table(data, file=outpath, row.names=F, col.names = T, sep='\t')
 }
 
+# Window function that finds a decent baseline threshold for minimum peak levels
+min_window = function(data, wwidth=100){
+  n_points = nrow(data)
+  starts = seq(1, n_points, by=round(wwidth/5))
+  starts = starts[(starts+wwidth) < nrow(data)]
+  windows = do.call(rbind, lapply(starts, function(x) colMeans(data[x:(x+wwidth-1),])))
+  idx_min = which.min(rowMeans(windows))
+  max(windows[idx_min,])
+}
+
 # ---------------------------------------------------------
 
 # --- Read the data ---
 data = readNMRTabFile(args[['input']])
 
 # -- Perform peak picking
-baselineThresh <- 10 * max(apply(abs(data[1:200,]),1,max)) / 10^round(log10(mean(data[1:200,])))
-X <- t(data[,2:ncol(data)]) / 10^round(log10(mean(data[1:200,])))
+#baselineThresh <- 10 * max(apply(abs(data[1:200, 2:ncol(data)]),1,max)) / 10^round(log10(mean(data[1:200,2:ncol(data)])))
+#X <- t(data[,2:ncol(data)]) / 10^round(log10(mean(data[1:200,2:ncol(data)])))
+X = data[,2:ncol(data)]
+#X = X / 10^round(log10(mean(X)))
+baselineThresh = 5 * min_window(X)
+
 #SCALECONST = 10^round(log10(mean(data[1:200,])))
 #X <- t(data[,2:ncol(data)])  / SCALECONST
 #baselineThresh <- 2 * max(apply(abs(X[,1:200]),2,max))
-peakList <- detectSpecPeaks(X,
+peakList <- detectSpecPeaks(t(X),
                             nDivRange = c(128),
                             scales = seq(1, 16, 2),
                             baselineThresh = baselineThresh,

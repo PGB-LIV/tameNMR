@@ -31,7 +31,7 @@ args = as.list(as.character(argsDF[,2]))
 names(args) <- argsDF[,1]
 
 suppressMessages(require(speaq))
-suppressMessages(require(rSFA))
+#suppressMessages(require(rSFA))
 # -------------------- Functions for bin tables for NMR spectra --------------------
 
 # -- Uniform binning
