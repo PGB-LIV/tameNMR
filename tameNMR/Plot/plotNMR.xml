@@ -21,6 +21,11 @@
           --plotBins=N
         #end if
         
+        #if $splitPlot_choice.splitPlot == "Y":
+          --splitPlot=Y --splitPpm=$splitPlot_choice.splitRange
+        #else
+          --splitPlot=N
+        #end if
     </command>
 
     <inputs>
@@ -52,7 +57,13 @@
             <param name="bins" type="data" label="Bin table" />
           </when>
         </conditional>
-        
+
+        <conditional name="splitPlot_choice">
+          <param name="splitPlot" type="boolean" label="Split plot in intervals" checked="False" truevalue="Y" falsevalue="N" />
+          <when value="Y">
+            <param name="splitRange" type="integer" label="Range width (in ppm)" value="1" />
+          </when>
+        </conditional>
     </inputs>
 
     <outputs>

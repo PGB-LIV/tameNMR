@@ -181,7 +181,7 @@ if(!dir.exists(outdir)) dir.create(outdir, showWarnings = F)
 
 pltMean = ifelse(args[['pltMean']]=='Y', TRUE, FALSE)
 png(plt, width=15, height=9, units= 'in', res=300)
-plotQuantiles(data = t(data_), ppmRange = c(min(scale), max(scale)), ppmPlot = toplt, plotMean = pltMean)
+plotQuantiles(data = t(data_), ppmRange = c(max(scale), min(scale)), ppmPlot = toplt, plotMean = pltMean)
 dev.off()
 
 style = 'img {height: 720px; width: 1200px; }'
