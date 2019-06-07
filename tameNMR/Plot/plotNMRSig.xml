@@ -7,7 +7,7 @@
 
     <inputs>
         <param name="input" type="data" label="NMR Spectra" />
-        <param name="ppmInt" type="text" label="Interval to plot (ppm)" value="10-0" />
+        <param name="ppmInt" type="text" label="Interval to plot (ppm)" value="10:0" />
         <param name="binFile" type="data" label="Pattern file" />
         <param name="pvalFile" type="data" label="Statistical test results" />
         <param name="cbar" type="select" label="Colour the spectra:">

@@ -25,7 +25,7 @@
 
     <inputs>
         <param name="input" type="data" label="NMR Spectra" />
-        <param name="ppmInt" type="text" label="Interval to plot (ppm)" value="10-0" />
+        <param name="ppmInt" type="text" label="Interval to plot (ppm)" value="10:0" />
         <param name="spread" type="boolean" label="Spread" checked="False" truevalue="Y" falsevalue="N"/>
             
         <conditional name="groups_choice">

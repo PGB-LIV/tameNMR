@@ -25,7 +25,7 @@ if("--help" %in% args) {
       --colourbar=discrete {discrete, continuous} - draw discrete (5 intervals) or continuous colourbar
 
       Example:
-      ./plotNMRSig.R --input=inputFilePath --output=outputFilePath --outDir=outputDirPath --ppmInt=10-0 --bins=Binfile --pvals=PvalTable\n\n")
+      ./plotNMRSig.R --input=inputFilePath --output=outputFilePath --outDir=outputDirPath --ppmInt=10:0 --bins=Binfile --pvals=PvalTable\n\n")
   q(save="no")
 }
 
@@ -41,7 +41,7 @@ data = as.matrix(data)
 data_ = data[,2:ncol(data)]
 scale = data[,1]
 
-toplt = strsplit(args[['ppmInt']], '-')[[1]]
+toplt = strsplit(args[['ppmInt']], ':')[[1]]
 toplt = sort(as.numeric(toplt), decreasing = T)
 
 bins = read.table(args[['bins']], header=F, stringsAsFactors = F, sep='\t')

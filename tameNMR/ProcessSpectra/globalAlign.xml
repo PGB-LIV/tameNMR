@@ -2,11 +2,16 @@
 <tool id="globalalign" name="Global alignment" version="1.0.1">
     <description> of spectra </description>
     <command interpreter="Rscript">
-        GlobalAlign.R --input=$input --output=$output
+        GlobalAlign.R --input=$input --output=$output --alignTo=$peak
     </command>
 
     <inputs>
         <param name="input" type="data" label="NMR Spectra" />
+        <param name="peak" type="select" label="Align to:">
+                <option value="tsp">TSP</option>
+                <option value="glucose">Glucose</option>
+                <option value="chloroform">Chloroform</option>
+        </param>
     </inputs>
 
     <outputs>

@@ -25,7 +25,7 @@ if("--help" %in% args) {
       --bins=path - path to bins file
 
       Example:
-      ./plotNMR.R --input=inputFilePath --output=outputFilePath --outDir=outputDirPath --ppmInt=10-0 spread=Y \n\n")
+      ./plotNMR.R --input=inputFilePath --output=outputFilePath --outDir=outputDirPath --ppmInt=10:0 spread=Y \n\n")
   q(save="no")
 }
 
@@ -41,7 +41,7 @@ data = as.matrix(data)
 data_ = data[,2:ncol(data)]
 scale = data[,1]
 
-toplt = strsplit(args[['ppmInt']], '-')[[1]]
+toplt = strsplit(args[['ppmInt']], ':')[[1]]
 toplt = sort(as.numeric(toplt), decreasing = T)
 
 if('spread' %in% names(args)){

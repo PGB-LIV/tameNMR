@@ -62,6 +62,7 @@ def main(args):
         shutil.rmtree(infile)
     except FileNotFoundError as e:
         print(e.message)
+        
 ################################################################################
 # functions #
 ################################################################################
@@ -119,42 +120,68 @@ def readBruker(path):
 
     name.replace(' ','_')
     dic, data = ng.bruker.read_pdata(path+'/pdata/1/')
+
     ppm_scale = np.linspace(max(ppm_scale), min(ppm_scale), len(data))
     return((name, ppm_scale, data))
 
 def writeCsv(fileList, outFile):
-    lengths = []
-    for i in range(len(fileList)):
-        lengths.append(fileList[i][2].shape[0])
-    if lengths[:-1] == lengths[1:]:  # chscking if all lengths are the same
-        dataDF = fileList2DataFrame(fileList)
-        dataDF.to_csv(outFile, sep='\t', index=True, header=True)
-    else:
-        fileList = interpolateSpectra(fileList)
-        dataDF = fileList2DataFrame(fileList)
-        dataDF.to_csv(outFile, sep='\t', index=True, header=True)
-
-#TODO: implement spectra interpolation
-def interpolateSpectra(fileList):
-    pass
+    dataDF = fileList2DataFrame(fileList)
+    dataDF.to_csv(outFile, sep='\t', index=True, header=True)
 
 def fileList2DataFrame(fileList):
-    data = {x[0]:x[2] for x in fileList}
-    ppm = fileList[0][1]
+    
+    fileList_ = align_scales(fileList)
+    
+    data = {x[0]:x[2] for x in fileList_}
+    ppm = fileList_[0][1]
     dataDF = pd.DataFrame.from_dict(data, orient='columns')
     dataDF.index = ppm
     return(dataDF)
 
+def align_scales(list_of_spectra):
+    """
+    Aligning all spectra scales in ppm taking into account offsets after processing in Topspin
+    """
+    
+    ex_ppm = list_of_spectra[0][1]
+    ppm_per_pt = (max(ex_ppm) - min(ex_ppm))/ex_ppm.shape[0]
+    
+    min_ppm, max_ppm = 666, -666
+    
+    for spec in list_of_spectra:
+        if spec[1][0] > max_ppm:
+            max_ppm = spec[1][0]
+        if spec[1][-1] < min_ppm:
+            min_ppm = spec[1][-1]
+            
+    n_pts = (max_ppm - min_ppm)/ppm_per_pt
+    new_ppm = np.linspace(max_ppm, min_ppm, n_pts)
+    
+    print(new_ppm[0], new_ppm[-1])
+    
+    output = []
+    for i in range(len(list_of_spectra)):
+        output.append((list_of_spectra[i][0],
+                       new_ppm,
+                       extend_spec(list_of_spectra[i][2], list_of_spectra[i][1], new_ppm)))
+    
+    return output
+    
+def extend_spec(data, ppm_old, ppm_new):
+    """
+    Pad spectra with zeroes to fill a new ppm range
+    """
 
+    idx_max = np.argmin(abs(ppm_new - ppm_old[0]))
+    
+    pad_start = idx_max
+    pad_end = (ppm_new.shape[0] - ppm_old.shape[0] - pad_start)
+    
+    if pad_end<0:
+        pad_start = pad_start-1
+        pad_end = 0
 
-# not used anymore
-#def calcPpms(dic, Npoints):
-#    offset = (float(dic['acqus']['SW']) / 2) - (float(dic['acqus']['O1']) / float(dic['acqus']['BF1']))
-#    start = float(dic['acqus']['SW']) - offset
-#    end = -offset
-#    step = float(dic['acqus']['SW']) / zero_fill_size
-#    ppms = np.arange(start, end, -step)[:zero_fill_size]
-#    return ppms
+    return(np.concatenate((np.zeros(pad_start), data, np.zeros(pad_end)), axis=0))
 
 if __name__ == "__main__":
     main(sys.argv[1:])

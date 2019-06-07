@@ -39,29 +39,27 @@ min_window = function(data, wwidth=100){
 
 # ==================== Global spectra alignment ====================
 
-GlobalAlign = function(data){
+
+GlobalAlign = function(data, peak2align){
+
+  low_ppm = peak2align[1]
+  high_ppm = peak2align[2]
+  pos_ppm = peak2align[3]
+  isDoublet = peak2align[4] == 'doublet'
   
   data_ = as.matrix(data[,2:ncol(data)])
   ppms = data[,1]
   # alignment
-  low = which.min(abs(ppms-5.12))
-  high = which.min(abs(ppms-5.3))
+  low = which.min(abs(ppms-low_ppm))
+  high = which.min(abs(ppms-high_ppm))
   
-  outList = alignGlucoseLeftPeak(data_, ppms, posPPM = 5.22475, low, high)
-  # removed [47,48,71,87]
-  #patients1 = patients1[-c(47,48,71,87)]
-  #conditions1 = conditions1[-c(47,48,71,87)]
-  
-  #data2_ = alignGlucoseLeftPeak(data2, ppms2, 5.20475, low, high)
-  # no spectra removed
-  
-  #dataFinal = cbind(data_$data, data2_$data)
-  #ppmsFinal = data_$ppms + 0.003 # better bin alignment
+  outList = alignGlucoseLeftPeak(data_, ppms, posPPM = pos_ppm, low, high)
+
   out = cbind(outList$ppms, outList$data)
   out
 }
 
-findLeftGlucPeak <- function(pList, spec){
+findLeftDoubletPeak <- function(pList, spec){
   amplitudes = spec[pList]
   maxPeakPos = which.max(amplitudes)
   maxPeakPos2 = which.max(amplitudes[-maxPeakPos])
@@ -78,21 +76,16 @@ offsetSpectra = function(spec, ppms, posOfPeak, targetPos=5.20475){
   out
 }
 
-require(speaq)
-alignGlucoseLeftPeak = function(data, ppms, posPPM, low, high){
-  # aligns left glucose peak to the given ppm value
+suppressMessages(require(speaq))
+alignDoubletLeftPeak = function(data, ppms, posPPM, low, high){
+  # aligns left doublet peak to the given ppm value
   # data - a dataframe with data in columns
   # ppms - a vector with the ppm scale (length = nrow(data))
-  # posPPM - a ppms value to which to align left glucose peak
-  # low/high -  the range where to look for glucose peaks
+  # posPPM - a ppms value to which to align left doublet peak
+  # low/high -  the range where to look for doublet peaks
 
   
-  #SCALECONST = 10^round(log10(mean(data[1:200,])))
-  #X <- t(data[,2:ncol(data)])  / SCALECONST
-  #baselineThresh <- 2 * max(apply(abs(X[,1:200]),2,max))
-
   #PeakPicking
-  #baselineThresh = 160000
   baselineThresh = 5 * min_window(data)
   peakList <- detectSpecPeaks(t(data[high:low,]),
                               nDivRange = c(128),
@@ -101,21 +94,14 @@ alignGlucoseLeftPeak = function(data, ppms, posPPM, low, high){
                               SNR.Th = -1,
                               verbose=FALSE)
   
-  #baselineThresh <- 2 * max(apply(abs(data[1:200,]),1,max)) / 10^round(log10(mean(data[1:200,])))
-  #peakList <- detectSpecPeaks(t(data[high:low,]) / 10^round(log10(mean(data[1:200,]))),
-  #                            nDivRange = c(128),
-  #                            scales = seq(1, 16, 2),
-  #                            baselineThresh = baselineThresh,
-  #                            SNR.Th = -1,
-  #                            verbose=FALSE)
-
-  #removeNoGlucSamples
+  #removeNoGlucSamples (' maybe error instead?')
   rems = which(sapply(peakList, length)<2)
   if(length(rems) != 0){
     for (i in rems) print(paste('removing',i, sep='-'))
     data = data[,-rems]
     peakList = peakList[-rems]
   }
+
   # left glucose peak position in the subset
   leftGluPeaks = sapply(1:ncol(data), function(i) {findLeftGlucPeak(peakList[[i]], data[high:low,i])})
   # left glucose peak position in the whole spectra
@@ -145,7 +131,16 @@ if('input' %in% names(args)){
 #if('alignTo' %in% names(args)){
 #} else stop('Aligning to Glucose peak at ...')
 
-data = GlobalAlign(data)
+# peak positions for various molecules
+peakList = list(
+  tsp = c(-0.2,0.01, 0, 'singlet'), 
+  glucose = c(5.12, 5.3, 5.22475, 'doublet'),
+  chloroform = c(1.336, 1.37, 1.4861, 'doublet'))
+
+peak = args[['alignTo']]
+if (peak %in% names(peakList)) peak = peakList[['peak']]
+
+data = GlobalAlign(data, peak)
 
 # -- write the output
 write.table(data, file=args[['output']], row.names=T, col.names=T, sep='\t')
