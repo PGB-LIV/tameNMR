@@ -18,7 +18,7 @@
                 <option value="refPeak">Reference peak</option>
             </param>
             <when value="refPeak">
-                <param name="param" type="text" label="Peak position in ppm (ex. 0.01-0.011)"/>
+                <param name="param" type="text" label="Peak position in ppm (ex. 0.01:0.011)"/>
             </when>
         </conditional>
     </inputs>

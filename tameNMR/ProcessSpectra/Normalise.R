@@ -40,7 +40,7 @@ totInt <- function(data) {
 # normalisation to reference peak
 refPeak <- function(data, par) {
   data_ = data[,2:ncol(data)]
-  bin = as.numeric(strsplit(par,'-')[[1]])
+  bin = as.numeric(strsplit(par,':')[[1]])
   refPeakInt = apply(data_[data[,1] >= min(bin) & data[,1] <= max(bin),], 2, trapezoid)
   # adjust the integral for mean peak to preserve scale of spectra in the dataset
   refPeaksAdj = refPeakInt/mean(refPeakInt)

@@ -46,7 +46,7 @@ parsePpmIntervals <- function(ppmInts){
   ppmInts = gsub(' ', '', ppmInts)
   intervals <- strsplit(ppmInts, ',')[[1]]
   if (length(intervals) == 1){
-    intervals = as.numeric(strsplit(intervals,'-')[[1]])
+    intervals = as.numeric(strsplit(intervals,':')[[1]])
   } else {
     intervals <- do.call('rbind', lapply(intervals, function(x) strsplit(x,'-')[[1]]))
     intervals <- cbind(as.numeric(intervals[,1]),as.numeric(intervals[,2]))
