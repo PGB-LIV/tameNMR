@@ -44,7 +44,8 @@ Following packages are required in order to run all the tools:
     * nmrglue
     * pandas
 
-## How to install a local instance of Galaxy with tameNMR (tested on Ubuntu 18.04)
+## How to install a local instance of Galaxy with tameNMR 
+### (tested on Ubuntu 18.04)
 
 NOTE: this is only meant for individual users running a local galaxy server on a workstation and is not guaranteed to work with multiple users.
 
@@ -78,6 +79,7 @@ run config file to configure without all galaxy links (to reduce impact and also
 ```bash
 cp ~/galaxy/tameNMR/config/tool-conf.xml ~/galaxy/galaxy/config/
 cp ~/galaxy/tameNMR/static/* ~/galaxy/galaxy/static/
+cp ~/galaxy/tameNMR/extras/upload.py ~/galaxy/galaxy/tools/data_source/
 ```
 
 install R and a number of packages required for tameNMR
@@ -87,6 +89,19 @@ R -e "install.packages(c('ellipse', 'markdown', 'knitr', 'viridis','ggrepel','pl
 R -e "source("https://bioconductor.org/biocLite.R");biocLite("MassSpecWavelet")"
 R -e "install.packages('speaq', repos='https://cran.ma.imperial.ac.uk/')"
 
+```
+
+You will likely be prompted to install the packages into a local folder. Note the path to that folder.
+If this happens we need to tell R where the packages are so they can be used by Galaxy.
+Check if the path you noted now contains a number of folders some of which are names of packages you have just installed.
+If so open the file ~/galaxy/tameNMR/extras/prependLibPath.sh in a plain text editor and change the path in the 3rd line of the file:
+Currently it says: *LIBPATH=".libPaths('/home/galaxy/R/x86_64-pc-linux-gnu-library/3.2/')"* 
+Change the part in the brackets to the path you have installe your R packages to. It is likely to have a similar structure to the given one.
+Now run this file - this will prepend an instruction to each R script in tameNMR pointing at the location of the additional packages. 
+
+```bash
+cd ~/galaxy/tameNMR/extras
+sh prependLibPath ~/galaxy/galaxy/tools/tameNMR/
 ```
 
 run galaxy (it may take ~60 seconds on first boot):
@@ -117,7 +132,7 @@ and replace it with: sanitize_all_html = False
 (remove the hashtag and change True to False)
 
 
-Prepend a libPath (edit scripts in galaxy to point to correct r location):
+Prepend a libPath (edit scripts in galaxy to point to correct location of R libraries):
 ```bash
 sh ~/galaxy/prependRScripts.sh ~/galaxy/galaxy/tools/tameNMR
 ```
