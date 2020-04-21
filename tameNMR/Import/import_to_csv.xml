@@ -39,11 +39,9 @@
         <data format="tabular" name="output" label="Imported NMR data"/>
     </outputs>
     <requirements>
-        <requirement type="package" version="0.5">nmrglue</requirement>
-        <requirement type="package" version="1.11.3">numpy</requirement>
-        <requirement type="package" version="0.19.2">pandas</requirement>
-        <!--requirement type="package">scipy</requirement>
-        <requirement type="package">pandas</requirement-->
+        <requirement type="package">nmrglue</requirement>
+        <requirement type="package">numpy</requirement>
+        <requirement type="package">pandas</requirement>
     </requirements>
 
     <!--
