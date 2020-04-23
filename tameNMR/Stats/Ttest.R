@@ -40,7 +40,7 @@ names(args) <- argsDF[,1]
 # reading data and parameters
 data = read.table(args[['input']], header=T, sep='\t', row.names=1, stringsAsFactors = F)
 factorFile = read.table(args[['factorFile']], header=T, sep='\t', stringsAsFactors = T, row.names=1)
-factor = factorFile[,as.numeric(args[['factorCol']])]
+factor_ = factorFile[,as.numeric(args[['factorCol']])]
 
 tails = args[['tails']]
 if (args[['paired']] == 'Y') {
@@ -58,10 +58,18 @@ conf.level = as.numeric(args[['conf_level']])
 adjust = args[['adjust']]
 outdir = args[['outdir']]
 
-ttest = function(data, factor, paired = F, groupsP = NULL, tails = 'two.sided', conf.level = 0.05){
-  if(!paired) out = t.test(data~factor, paired=paired, alternative = tails, conf.level = conf.level)
+calc_fc = function(data, grp, log2fc=F){
+  # calculates fold changes of each column by the 2-group factor
+  grpU = unique(as.character(grp))
+  fcs = sapply(1:ncol(data), function(i) mean(data[grp==grpU[1],i])/mean(data[grp==grpU[2],i]))
+  if (log2fc) fcs = log2(fcs)
+  list(fcs=fcs, ratioLab=paste0(grpU[1],'/',grpU[2]))
+}
+
+ttest = function(data, factor_, paired = F, groupsP = NULL, tails = 'two.sided', conf.level = 0.05){
+  if(!paired) out = t.test(data~factor_, paired=paired, alternative = tails, conf.level = conf.level)
   else {
-    factorTmp = as.character(factor)
+    factorTmp = as.character(factor_)
     factorTmpU = unique(factorTmp)
     grp1 = data[groupsP > 0,]
     grp1_f = groupsP[groupsP > 0]
@@ -74,9 +82,9 @@ ttest = function(data, factor, paired = F, groupsP = NULL, tails = 'two.sided', 
   return(round(c(out$p.value, out$conf.int[1], out$conf.int[2]),3))
 }
 
-ttest_all = function(data, factor, paired = F, groupsP = NULL, tails = 'two.sided', conf.level = 0.05, adjust = 'BH'){
+ttest_all = function(data, factor_, paired = F, groupsP = NULL, tails = 'two.sided', conf.level = 0.05, adjust = 'BH'){
   
-  res = do.call('rbind', lapply(1:ncol(data), function(i) ttest(data[,i], factor, paired, groupsP, tails, conf.level)))
+  res = do.call('rbind', lapply(1:ncol(data), function(i) ttest(data[,i], factor_, paired, groupsP, tails, conf.level)))
   res = as.data.frame(res)
   res$adj_p_vals = round(p.adjust(res[,1], method=adjust),3)
   rownames(res) <- colnames(data)
@@ -140,6 +148,35 @@ plot.Bars = function(data, fact, pvals, xlabName='Bins', ylabName='Mean intensit
   p
 }
 
+plot_volcano = function(fc, pval, labels=NULL, coff = 0.05, title='', logged=F){
+    
+    if (!logged) fc = log2(fc)
+    if (is.null(labels)) labels = ''
+    data = data.frame(fc = fc, 
+                      pval = (-log10(pval)), 
+                      labels = labels,
+                      colour = 'steelblue',
+                      stringsAsFactors = F)
+    coff = -log10(coff)
+    data$labels[data$pval < coff] = ''
+    data$colour[data$pval >= coff] = 'red'
+    
+    p = ggplot(data, aes(x=fc, y=pval, label=labels))+
+        geom_point(aes(fill=colour), col='black', pch=21, size=4)+
+        geom_hline(yintercept=coff, linetype='dashed', col='red')
+    
+    if(!is.null(labels)) p = p + geom_text_repel()
+    
+    p = p+ 
+        scale_fill_discrete(guide=F)+
+        theme_bw(base_size=18) +
+        xlab('Fold-change (log)')+
+        ylab('P-value (-log10)')+
+        ggtitle(title)+
+        theme(plot.title = element_text(hjust = 0.5))
+    p
+}
+
 make.SigStars = function(pvals, lvls = c(0.05, 0.01, 0.001), sgns = c('','*','**','***')){
   getSigLvl = function(x){
     for(i in 1:length(lvls)){
@@ -165,19 +202,22 @@ make.MDoutput = function(res, plots, conf.level, adjust){
   prePlt1 = paste('P-values are plotted on a negative log scale  - larger values on the plot correspond to lower p-values. ',
                   sprintf('The line corresponds to the given significance level ( %.4f ). ', round(conf.level,3)),
                           ' The points are colored to help distinguish the statistically significant results.', sep='')
-  plt1 = paste('![](',plots[1],')\n', sep='')
+  plt1 = paste('![](',plots[['p_vals']],')\n', sep='')
   
   prePlt2 = paste('Variables are plotted as bars coloured by group.',
                   'The significance is denoted by the stars drawn above each pair of bars.',
                   sep='')
-  plt2 = paste('![](',plots[2],')\n', sep='')
+  plt2 = paste('![](',plots[['bars']],')\n', sep='')
+  
+  prePlt3 = paste('A volcano plot of the t-tests.')
+  plt3 = paste('![](',plots[['bars']],')\n', sep='')
   
   preTabl = paste('The Following table contains the p-values (raw and adjusted) as well as confidence intervals for the mean difference.',
                   '\n\n',
                   sep='')
   tableOfRes = c('<center>\n', printPvalTableInMD(res), '\n </center> \n')
   
-  output = c(output,header, intro, prePlt1, plt1, prePlt2, plt2, preTabl, tableOfRes)
+  output = c(output,header, intro, prePlt1, plt1, prePlt2, plt2, prePlt3, plt3,preTabl, tableOfRes)
   
 }
 
@@ -268,10 +308,10 @@ makeHTML <- function(res, pvalsPlot){
 if(!dir.exists(args[['outdir']])) dir.create(args[['outdir']], showWarnings = F)
 
 # calculations
-res = ttest_all(data, factor, paired, groupsP, tails, conf.level)
+res = ttest_all(data, factor_, paired, groupsP, tails, conf.level)
 
 # plotting
-plots = c()
+plots = list()
 
 if (nrow(res)>50){
   p1 = plot.Pvals(res[1:50,], showLabels = T, sigLvl = conf.level)
@@ -280,17 +320,27 @@ if (nrow(res)>50){
 }
 fileName = 'p_Vals.png'
 suppressMessages(ggsave(path = outdir, filename = fileName, plot = p1))
-plots = c(plots, paste(outdir, '/', fileName, sep=''))
+plots[['p_vals']] = paste(outdir, '/', fileName, sep='')
 
 # Only plot 50 values if there are more
 if (ncol(data)>50){
-  p2 = plot.Bars(data[,1:50], factor, res[1:50,"adj_p_vals"])
+  p2 = plot.Bars(data[,1:50], factor_, res[1:50,"adj_p_vals"])
 } else {
-  p2 = plot.Bars(data, factor, res[,"adj_p_vals"])
+  p2 = plot.Bars(data, factor_, res[,"adj_p_vals"])
 }
+
 fileName = 'meanBars.png'
 suppressMessages(ggsave(path = outdir, filename = fileName, plot = p2))
-plots = c(plots, paste(outdir, '/', fileName, sep=''))
+plots[['bars']] = paste(outdir, '/', fileName, sep='')
+
+# Plot volcano
+fcs = calc_fc(data, factor_)
+p3 = plot_volcano(fcs[['fcs']], res[,'adj_p_vals'], coff = 0.05, 
+                  title = sprintf('Volcano plot ( %s , cut-off: %.2f)', fcs[['ratioLab']], conf.level), logged = F)
+
+fileName = 'volcano.png'
+suppressMessages(ggsave(path = outdir, filename = fileName, plot = p3))
+plots[['volcano']] = paste(outdir, '/', fileName, sep='')
 
 # generating other outputs
 
