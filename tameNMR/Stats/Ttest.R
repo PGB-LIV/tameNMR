@@ -210,7 +210,7 @@ make.MDoutput = function(res, plots, conf.level, adjust){
   plt2 = paste('![](',plots[['bars']],')\n', sep='')
   
   prePlt3 = paste('A volcano plot of the t-tests.')
-  plt3 = paste('![](',plots[['bars']],')\n', sep='')
+  plt3 = paste('![](',plots[['volcano']],')\n', sep='')
   
   preTabl = paste('The Following table contains the p-values (raw and adjusted) as well as confidence intervals for the mean difference.',
                   '\n\n',
