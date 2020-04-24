@@ -200,7 +200,7 @@ make.MDoutput = function(res, plots, conf.level, adjust){
                 '**Number of significant variables:** ', sum(res[,'adj_p_vals']<=conf.level),'\n\n',
                 sep='')
   prePlt1 = paste('P-values are plotted on a negative log scale  - larger values on the plot correspond to lower p-values. ',
-                  sprintf('The line corresponds to the given significance level ( %.4f ). ', round(conf.level,3)),
+                  sprintf('The line corresponds to the given significance level ( %.2f ). ', round(conf.level,3)),
                           ' The points are colored to help distinguish the statistically significant results.', sep='')
   plt1 = paste('![](',plots[['p_vals']],')\n', sep='')
   
