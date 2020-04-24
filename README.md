@@ -80,12 +80,12 @@ It is worth running the container in Read-only mode at first as a test. This mea
 
 #### Running Galaxy-tameNMR container in read-only mode
 
-To run the container in read-only mode type the following command in your docker command line (or any terminal emulator in linux):
+To run the container in read-only mode type the following command in your Docker command line (or any terminal emulator in linux):
 
 ```bash
 docker run -d -p 8080:80 -p 8021:21 arturasg/galaxy-tamenmr
 ```
-Here ```docker run``` tells docker to run the container, ```-d``` specifies to run it in daemon mode meaning that it will run in the background, ```-p 8080:80``` and ```-p 8021:21``` specify that we would like to map the ports inside the container to be accessible from the outside so we can access the Galaxy instance running within the container and ```arturasg/galaxy-tamenmr``` refers to the id of the container. The first time the container won't be found locally and will be downloaded from the Docker repository instead.
+Here ```docker run``` tells Docker to run the container, ```-d``` specifies to run it in "daemon" mode meaning that it will run in the background, ```-p 8080:80``` and ```-p 8021:21``` specify that we would like to map the ports inside the container to be accessible from the outside so we can access the Galaxy instance running within the container and ```arturasg/galaxy-tamenmr``` refers to the id of the container. The first time the container won't be found locally and will be downloaded from the Docker repository instead.
 
 If the command is successful you will see text in the console indicating the download and set-up process. Once the process is complete you will get back the control of the terminal and the container will be running in the background. To test that the container is running you can run the following command:
 
@@ -101,7 +101,7 @@ If your container is running you should be able to access the Galaxy in your bro
 
 If the page doesn't load at first give it some time. It might take a minute for all the services to be activated (this depends on the speed of your computer).
 
-**NOTE:** if you are running on **Windows 10 Home** edition and therefore in Docker Toolbox there is an additional step. Docker Toolbox runs a virtual machine in the background and uses its own ip address (instead of mapping to localhost). You will find it out by running the following command in your docker command line:
+**NOTE:** if you are running on **Windows 10 Home** edition and therefore in Docker Toolbox there is an additional step. Docker Toolbox runs a virtual machine in the background and uses its own ip address (instead of mapping to localhost). You will find it out by running the following command in your Docker command line:
 
 ```bash
 docker-machine ip
