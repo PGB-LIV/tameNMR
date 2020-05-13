@@ -61,9 +61,6 @@ get_spectrum = function(root){
 tree = xmlTreeParse(input_file)
 root = xmlRoot(tree)
 
-fid = get_fid(root)
-fid_DF = data.frame(xaxis=1:length(fid),Real=Re(fid), Imaginary=Im(fid))
-
 spec = get_spectrum(root)
 
 write.table(data, file=output_path, col.names = T, row.names = F, sep='\t')

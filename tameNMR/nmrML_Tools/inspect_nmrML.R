@@ -33,6 +33,8 @@ library(ggplot2)
 
 input_file = args[['inData']]
 output_path = args[['output']]
+outdir = args[['outDir']]
+if(!dir.exists(outdir)) dir.create(outdir, showWarnings = F)
 
 # ==================== Functions ====================  
 
@@ -137,19 +139,19 @@ make.MDoutput = function(plts){
 }
 
 
-ggsave(filename = 'fid_real.png', plot = p_fid_real, path = output_path)
-ggsave(filename = 'fid_im.png', plot = p_fid_imag, path = output_path)
-ggsave(filename = 'spec.png', plot = p_proc, path = output_path)
+ggsave(filename = 'fid_real.png', plot = p_fid_real, path = outdir)
+ggsave(filename = 'fid_im.png', plot = p_fid_imag, path = outdir)
+ggsave(filename = 'spec.png', plot = p_proc, path = outdir)
 
-plts = list(paste0(output_path,'/fid_real.png'),
-            paste0(output_path,'/fid_im.png'),
-            paste0(output_path,'/spec.png'))
+plts = list(paste0(outdir,'/fid_real.png'),
+            paste0(outdir,'/fid_im.png'),
+            paste0(outdir,'/spec.png'))
 
 mdEncoded <- make.MDoutput(plts)
-writeLines(mdEncoded, paste(output_path, "/results.Rmd", sep=''))
-MDfile = markdown::markdownToHTML(file = paste(output_path,"/results.Rmd", sep=''))
-output_path_ = paste0(output_path,'2')
-htmlFile <- file(output_path_)
+writeLines(mdEncoded, paste(outdir, "/results.Rmd", sep=''))
+MDfile = markdown::markdownToHTML(file = paste(outdir,"/results.Rmd", sep=''))
+
+htmlFile <- file(output_path)
 writeLines(MDfile, htmlFile)
 close(htmlFile)
 
