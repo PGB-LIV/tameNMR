@@ -38,7 +38,7 @@ names(args) <- argsDF[,1]
 data = read.table(args[['input']], header=T, sep='\t', stringsAsFactors = F)
 data = as.matrix(data)
 
-data_ = data[,2:ncol(data)]
+data_ = data[,2:ncol(data), drop=F]
 scale = data[,1]
 
 toplt = strsplit(args[['ppmInt']], ':')[[1]]
