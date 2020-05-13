@@ -139,9 +139,9 @@ make.MDoutput = function(plts){
 }
 
 
-ggsave(filename = 'fid_real.png', plot = p_fid_real, path = outdir)
-ggsave(filename = 'fid_im.png', plot = p_fid_imag, path = outdir)
-ggsave(filename = 'spec.png', plot = p_proc, path = outdir)
+suppressMessages(ggsave(filename = 'fid_real.png', plot = p_fid_real, path = outdir))
+suppressMessages(ggsave(filename = 'fid_im.png', plot = p_fid_imag, path = outdir))
+suppressMessages(ggsave(filename = 'spec.png', plot = p_proc, path = outdir))
 
 plts = list(paste0(outdir,'/fid_real.png'),
             paste0(outdir,'/fid_im.png'),

@@ -63,4 +63,4 @@ root = xmlRoot(tree)
 
 spec = get_spectrum(root)
 
-write.table(data, file=output_path, col.names = T, row.names = F, sep='\t')
+write.table(spec, file=output_path, col.names = T, row.names = F, sep='\t')
