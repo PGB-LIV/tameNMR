@@ -1,0 +1,30 @@
+<tool id="import_nmrml" name="Import" version="0.0.1">
+    <description> data from nmrML file </description>
+    <command interpreter="Rscript">
+            read_nmrML.R --inData=$input --output=$output
+    </command>
+
+    <inputs>
+        <param name="input" type="data" label="nmrML file" />
+    </inputs>
+
+    <outputs>
+        <data format="tabular" name="output" label="Imported nmrML"/>
+    </outputs>
+    <requirements>
+    </requirements>
+
+    <!--
+    <tests>
+    </tests>
+-->
+
+    <help>
+        
+        This tool reads an nmrML file and writes the spectrum to a format used internaly within tameNMR.
+        
+        .. class:: infomark
+
+    </help>
+
+</tool>

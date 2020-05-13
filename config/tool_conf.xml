@@ -38,6 +38,10 @@
 	  <tool file="tameNMR/Import/import_to_csv.xml" />
 	  <tool file="tameNMR/Import/prepPattern.xml" />
   </section>
+    <section id="nmrml" name="nmrML Tools">
+      <tool file="tameNMR/nmrML_tools/import_nmrML.xml"/>
+      <tool file="tameNMR/nmrML_tools/inspect_nmrML.xml"/>
+  </section>
   <section id="procSpectra" name="Spectra Processing">
       <tool file="tameNMR/ProcessSpectra/slice.xml" />
       <tool file="tameNMR/ProcessSpectra/normalisation.xml" />
@@ -46,12 +50,6 @@
       <tool file="tameNMR/ProcessSpectra/globalAlign.xml" />
       <tool file="tameNMR/ProcessSpectra/binning.xml" />
   </section>
-  <!--section id="ident" name="Identification">
-      <tool file="tameNMR/ident/ident.xml" />
-  </section-->
-  <!--section id="quant" name="Quantification">
-      <tool file="tameNMR/quant/quant.xml" />
-  </section-->
   <section id="prepData" name="Data Preparation">
       <tool file="tameNMR/ProcessData/makeFactorTemplate.xml"/>
       <tool file="tameNMR/ProcessData/transform.xml"/>
@@ -65,7 +63,6 @@
   </section>
   <section id="plot" name="Plots">
       <tool file="tameNMR/Plot/plotNMR.xml"/>
-      <!--tool file="tameNMR/Plot/plotNMRBins.xml"/-->
       <tool file="tameNMR/Plot/plotNMRSig.xml"/>
       <tool file="tameNMR/Plot/quantilePlot.xml"/>
   </section>

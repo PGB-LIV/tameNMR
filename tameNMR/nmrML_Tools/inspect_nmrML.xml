@@ -1,0 +1,30 @@
+<tool id="inspect_nmrml" name="Inspect" version="0.0.1">
+    <description> nmrML file </description>
+    <command interpreter="Rscript">
+            read_nmrML.R --inData=$input --output=$output
+    </command>
+
+    <inputs>
+        <param name="input" type="data" label="nmrML file" />
+    </inputs>
+
+    <outputs>
+        <data format="html" name="output" label="nmrML view"/>
+    </outputs>
+    <requirements>
+    </requirements>
+
+    <!--
+    <tests>
+    </tests>
+-->
+
+    <help>
+        
+        This tool reads an nmrML file and summarises its contents.
+        
+        .. class:: infomark
+
+    </help>
+
+</tool>
