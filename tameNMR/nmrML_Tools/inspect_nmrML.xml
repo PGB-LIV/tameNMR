@@ -1,7 +1,7 @@
 <tool id="inspect_nmrml" name="Inspect" version="0.0.1">
     <description> nmrML file </description>
     <command interpreter="Rscript">
-            read_nmrML.R --inData=$input --output=$output
+            inspect_nmrML.R --inData=$input --output=$output
     </command>
 
     <inputs>
