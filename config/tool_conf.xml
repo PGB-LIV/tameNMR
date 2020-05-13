@@ -39,8 +39,8 @@
 	  <tool file="tameNMR/Import/prepPattern.xml" />
   </section>
     <section id="nmrml" name="nmrML Tools">
-      <tool file="tameNMR/nmrML_tools/import_nmrML.xml"/>
-      <tool file="tameNMR/nmrML_tools/inspect_nmrML.xml"/>
+      <tool file="tameNMR/nmrML_Tools/import_nmrML.xml"/>
+      <tool file="tameNMR/nmrML_Tools/inspect_nmrML.xml"/>
   </section>
   <section id="procSpectra" name="Spectra Processing">
       <tool file="tameNMR/ProcessSpectra/slice.xml" />
