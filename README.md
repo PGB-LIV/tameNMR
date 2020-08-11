@@ -11,14 +11,17 @@ The package includes the following tools:
 
 1. Import - Import of NMR data (from Bruker raw files)
     * Bruker to csv
-    * Bruker to nmrML
+    * nmrML to csv
+    * import/prepare pattern files
 2. ProcessSpectra
     * Normalisation
     * Peak Picking
     * Spectra alignment
     * Binning
 3. ProcessData
+    * Normalisation
     * Scaling
+    * Transformation
     * Make factor template (for grouping observations)
 4. Stats - univariate and multivariate statistics
     * t-tests
@@ -43,6 +46,8 @@ Following packages are required in order to run all the tools:
     * numpy
     * nmrglue
     * pandas
+
+There is a docker container that allows running a self-contained version without installing a local instance of Galaxy on the machine. To install a locan Galaxy with tameNMR or a docker instance read the instructions below.
 
 ## How to run a local instance of Galaxy with tameNMR using Docker (easy)
 ### (tested on Windows 10, Mac OS and Ubuntu 18.04)
