@@ -74,7 +74,7 @@ if('plotBins' %in% names(args)) {
 } else plotBinsPar = F
 
 if('bins' %in% names(args)) {
-  binsPar = read.table(args[['bins']], header=T, sep='\t', stringsAsFactors = F)
+  binsPar = read.table(args[['bins']], header=F, sep='\t', stringsAsFactors = F)
 } else binsPar = NULL
 
 if('splitPlot' %in% names(args) & 'splitPpm' %in% names(args)){

@@ -65,4 +65,4 @@ data_ = as.data.frame(data_)
 rownames(data_) = rownames(data)
 colnames(data_) = colnames(data)
 
-write.table(data_, file=args[['output']], sep='\t', row.names=T, col.names=T)
+write.table(data_, file=args[['output']], sep='\t', row.names=T, col.names=NA)

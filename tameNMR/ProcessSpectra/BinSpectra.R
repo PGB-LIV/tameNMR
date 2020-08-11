@@ -61,6 +61,8 @@ patternBasedBinning <- function(data, ppms, pattern){
   #convert ppms to positions in the data matrix
   bins = do.call('rbind', lapply(1:nrow(pattern), function(i) ppmInterval2Pos(ppms, pattern[i,1:2])))
   binSize = abs(bins[,2] - bins[,1]) + 1
+  print(bins)
+  print(dim(bins))
   dataInt = do.call('cbind', lapply(1:nrow(bins), function(i) apply(data[bins[i,1]:bins[i,2],], 2, sum)/binSize[i]))
   dataInt = as.data.frame(dataInt, stringsAsFactors=F)
 
@@ -89,4 +91,4 @@ if('pattern' %in% names(args)){
 data = patternBasedBinning(data[,2:ncol(data)], data[,1], patternFile)
 
 # -- write the output
-write.table(data, file=args[['output']], row.names=T, col.names=T, sep='\t')
+write.table(data, file=args[['output']], row.names=T, col.names=NA, sep='\t')

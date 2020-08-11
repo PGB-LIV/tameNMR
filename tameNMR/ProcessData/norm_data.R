@@ -74,7 +74,7 @@ args = as.list(as.character(argsDF[,2]))
 names(args) <- argsDF[,1]
 
 # --- Read the data ---
-data = read.table(args[['input']], header=T, sep='\t', stringsAsFactors = F)
+data = read.table(args[['input']], row.names=1, header=T, sep='\t', stringsAsFactors = F)
 data_ = as.matrix(data)
 
 # --- Normalise the data ---
@@ -95,4 +95,4 @@ colnames(dataTemp) = names(data)
 rownames(dataTemp) = rownames(data)
 
 # --- Write the data
-write.table(data, file=outpath, row.names=T, col.names=T, sep='\t')
+write.table(data, file=outpath, row.names=T, col.names=NA, sep='\t')
