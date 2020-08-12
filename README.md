@@ -135,6 +135,15 @@ docker run -d -p 8080:80 -p 8021:21 -v C:/Users/user1/Documents/Galaxy_data/:/ex
 
 Here we added ```-v``` parameter with the value that consists of two parts separated by a colon. ```C:/Users/user1/Documents/Galaxy_data/``` refers to the path to your local folder while ```/export/``` refers to the folder inside the container where galaxy saves its data. The first time you run this the folder you created will be empty and Galaxy will populate it with its database, configuration files etc. From then on since the folder won't be empty Galaxy will know to use the data stored in that folder.
 
+#### Updating your Galaxy-tameNMR container
+
+The Galaxy-tameNMR container receives updates as the bugs are fixed or new features added. This will not automatically update your local version of the container. To update your Galaxy-tameNMR container to the newest version run the following command:
+
+```bash
+docker pull arturasg/galaxy-tamenmr
+```
+
+You can check for updates [HERE!](https://hub.docker.com/r/arturasg/galaxy-tamenmr)
 
 ## How to install a local instance of Galaxy with tameNMR (advanced)
 ### (tested on Ubuntu 18.04)
