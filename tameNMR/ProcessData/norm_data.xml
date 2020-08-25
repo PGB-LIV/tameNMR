@@ -1,5 +1,5 @@
 
-<tool id="normalise_data" name="Normalise" version="0.0.1">
+<tool id="normaliseData" name="Normalise" version="0.0.1">
     <description>a data table</description>
     <command interpreter="Rscript">
         #if $method_choice.method == "refPeak"

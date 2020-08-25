@@ -54,7 +54,7 @@
       <tool file="tameNMR/ProcessData/makeFactorTemplate.xml"/>
       <tool file="tameNMR/ProcessData/transform.xml"/>
       <tool file="tameNMR/ProcessData/scaling.xml"/>
-      <!--tool file="tameNMR/ProcessData/norm_data.xml"/-->
+      <tool file="tameNMR/ProcessData/norm_data.xml"/>
   </section>
   <section id="stats" name="Statistics">
       <tool file="tameNMR/Stats/ttest.xml" />
