@@ -154,7 +154,7 @@ def align_scales(list_of_spectra):
         if spec[1][-1] < min_ppm:
             min_ppm = spec[1][-1]
             
-    n_pts = (max_ppm - min_ppm)/ppm_per_pt
+    n_pts = int(np.round((max_ppm - min_ppm)/ppm_per_pt))
     new_ppm = np.linspace(max_ppm, min_ppm, n_pts)
     
     print(new_ppm[0], new_ppm[-1])
